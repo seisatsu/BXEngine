@@ -5,6 +5,7 @@ Started from example code written by Sean J. McKiernan 'Mekire'
 * https://github.com/Mekire/pygame-samples/blob/master/drag_text.py
 """
 
+import json
 import os
 import sys
 
@@ -12,7 +13,6 @@ import pygame as pg
 
 
 CAPTION = "Backrooms Alpha"
-SCREEN_SIZE = (800, 600)
 
 
 class Cursor(object):
@@ -26,6 +26,7 @@ class Cursor(object):
 		"""
 		self.click = False
 		self.pos = [0, 0]
+		self.nav = None
 
 	def update(self):
 		self.pos = pg.mouse.get_pos()
@@ -36,7 +37,7 @@ class App(object):
 	"""
 	A class to manage our event, game loop, and overall program flow.
 	"""
-	def __init__(self, images):
+	def __init__(self, config, images):
 		"""
 		Get a reference to the screen (created in main); define necessary
 		attributes; and create our player (draggable rect).
@@ -48,6 +49,7 @@ class App(object):
 		self.done = False
 		self.keys = pg.key.get_pressed()
 		self.cursor = Cursor()
+		self.config = config
 		self.images = images
 
 	def event_loop(self):
@@ -67,33 +69,41 @@ class App(object):
 			elif event.type in (pg.KEYUP, pg.KEYDOWN):
 				self.keys = pg.key.get_pressed() 
 
-	def draw_nav_ind(self):
+	def demarc_nav_indicator(self):
 		"""
-		This is a method to draw an appropriate nagigation indicator.
+		This is a method to demarcate an appropriate nagigation indicator.
+		It does some irritating math to figure out if our cursor is in a region where a click would trigger navigation,
+		And then updates the cursor object with the current navigation region if any, and draws the indicator.
 		"""
-		ss_min_x = SCREEN_SIZE[0] // 4
-		ss_max_x = SCREEN_SIZE[0] // 4 * 3
-		ss_margin_left = SCREEN_SIZE[0] // 8
-		ss_margin_right = SCREEN_SIZE[0] // 8 * 7
-		ss_min_y = SCREEN_SIZE[1] // 4
-		ss_max_y = SCREEN_SIZE[1] // 4 * 3
-		ss_margin_up = SCREEN_SIZE[1] // 8
-		ss_margin_down = SCREEN_SIZE[1] // 8 * 7
+		ss_min_x = self.config["window"]["size"][0] * self.config["navigation"]["edge_margin_width"] // 1
+		ss_max_x = self.config["window"]["size"][0] - ss_min_x
+		ss_region_left = self.config["window"]["size"][0] * self.config["navigation"]["edge_region_breadth"] // 1
+		ss_region_right = self.config["window"]["size"][0] - ss_region_left
+		ss_min_y = self.config["window"]["size"][1] * self.config["navigation"]["edge_margin_width"] // 1
+		ss_max_y = self.config["window"]["size"][1] - ss_min_y
+		ss_region_up = self.config["window"]["size"][1] * self.config["navigation"]["edge_region_breadth"] // 1
+		ss_region_down = self.config["window"]["size"][1] - ss_region_up
 		
 		x, y = self.cursor.pos
 		
-		if x < ss_margin_left and ss_margin_up < y < ss_margin_down:
-			blit_loc = (10, SCREEN_SIZE[1] // 2 - self.images["chevron_left"].get_height() // 2)
+		if x < ss_region_left and ss_min_y < y < ss_max_y:
+			blit_loc = (10, self.config["window"]["size"][1] // 2 - self.images["chevron_left"].get_height() // 2)
 			self.screen.blit(self.images["chevron_left"], blit_loc)
-		elif x > ss_margin_right and ss_margin_up < y < ss_margin_down:
-			blit_loc = (SCREEN_SIZE[0] - self.images["chevron_right"].get_width() - 10, SCREEN_SIZE[1] // 2 - self.images["chevron_right"].get_height() // 2)
+			self.cursor.nav = "left"
+		elif x > ss_region_right and ss_min_y < y < ss_max_y:
+			blit_loc = (self.config["window"]["size"][0] - self.images["chevron_right"].get_width() - 10, self.config["window"]["size"][1] // 2 - self.images["chevron_right"].get_height() // 2)
 			self.screen.blit(self.images["chevron_right"], blit_loc)
-		elif y < ss_margin_up and ss_margin_left < x < ss_margin_right:
-			blit_loc = (SCREEN_SIZE[0] // 2 - self.images["chevron_up"].get_width() // 2, 10)
+			self.cursor.nav = "right"
+		elif y < ss_region_up and ss_min_x < x < ss_max_x:
+			blit_loc = (self.config["window"]["size"][0] // 2 - self.images["chevron_up"].get_width() // 2, 10)
 			self.screen.blit(self.images["chevron_up"], blit_loc)
-		elif y > ss_margin_down and ss_margin_left < x < ss_margin_right:
-			blit_loc = (SCREEN_SIZE[0] // 2 - self.images["chevron_down"].get_width() // 2, SCREEN_SIZE[1] - self.images["chevron_down"].get_height() - 10)
+			self.cursor.nav = "up"
+		elif y > ss_region_down and ss_min_x < x < ss_max_x:
+			blit_loc = (self.config["window"]["size"][0] // 2 - self.images["chevron_down"].get_width() // 2, self.config["window"]["size"][1] - self.images["chevron_down"].get_height() - 10)
 			self.screen.blit(self.images["chevron_down"], blit_loc)
+			self.cursor.nav = "down"
+		else:
+			self.cursor.nav = None
 		
 	def render(self):
 		"""
@@ -102,7 +112,7 @@ class App(object):
 		"""
 		self.screen.fill(pg.Color("black"))
 		self.screen.blit(self.images["room"], (0,0))
-		self.draw_nav_ind()
+		self.demarc_nav_indicator()
 		pg.display.update()
 
 	def main_loop(self):
@@ -122,18 +132,20 @@ def main():
 	Prepare our environment, create a display, and start the program.
 	"""
 	images = {}
+	with open("config.json") as f:
+		config = json.load(f)
 	os.environ['SDL_VIDEO_CENTERED'] = '1'
 	pg.init()
 	pg.display.set_caption(CAPTION)
-	pg.display.set_mode(SCREEN_SIZE)
+	pg.display.set_mode(config["window"]["size"])
 	
-	images["room"] = pg.image.load("room1.jpg")
-	images["chevron_left"] = pg.image.load("chevron_left.png")
-	images["chevron_right"] = pg.image.load("chevron_right.png")
-	images["chevron_up"] = pg.image.load("chevron_up.png")
-	images["chevron_down"] = pg.image.load("chevron_down.png")
+	images["room"] = pg.transform.scale(pg.image.load("room1.jpg"), config["window"]["size"])
+	images["chevron_left"] = pg.transform.scale(pg.image.load("chevron_left.png"), config["navigation"]["indicator_size"])
+	images["chevron_right"] = pg.transform.scale(pg.image.load("chevron_right.png"), config["navigation"]["indicator_size"])
+	images["chevron_up"] = pg.transform.scale(pg.image.load("chevron_up.png"), config["navigation"]["indicator_size"])
+	images["chevron_down"] = pg.transform.scale(pg.image.load("chevron_down.png"), config["navigation"]["indicator_size"])
 	
-	App(images).main_loop()
+	App(config, images).main_loop()
 	pg.quit()
 	sys.exit()
 	

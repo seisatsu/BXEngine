@@ -1,6 +1,6 @@
 Started from example code written by Sean J. McKiernan 'Mekire'
 * https://github.com/Mekire/pygame-samples/blob/master/drag_text.py
 
-Chevron Icons
+Chevron Icons, Arrow Icons (Modified)
 * https://www.iconfinder.com/iconsets/ionicons
 

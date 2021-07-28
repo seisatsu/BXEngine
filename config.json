@@ -1,0 +1,11 @@
+{
+	"window": {
+		"size": [800, 600]
+	},
+	"navigation": {
+		"indicator_size": [64, 64],
+		"edge_margin_width": 0.25,
+		"edge_region_breadth": 0.125,
+		"forward_region_width": 0.20
+	}
+}
