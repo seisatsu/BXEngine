@@ -73,7 +73,7 @@ class Room(object):
 	def load(self):
 		with open("{0}/{1}".format(self.world.dir, self.file)) as f:
 			self.vars = json.load(f)
-		self.image = pygame.transform.scale(pygame.image.load("{0}/{1}".format(self.world.dir, self.vars["image"])), self.config["window"]["size"])
+		self.image = pygame.transform.scale(pygame.image.load(resource_path("{0}/{1}".format(self.world.dir, self.vars["image"]))), self.config["window"]["size"])
 
 
 class App(object):
@@ -284,6 +284,19 @@ class App(object):
 			self.gui.update(time_delta)
 
 
+def resource_path(relative_path):
+	"""
+	Thanks to https://stackoverflow.com/questions/54210392/how-can-i-convert-pygame-to-exe
+	"""
+	try:
+	# PyInstaller creates a temp folder and stores path in _MEIPASS
+		base_path = sys._MEIPASS
+	except Exception:
+		base_path = os.path.abspath(".")
+
+	return os.path.join(base_path, relative_path)
+
+
 def load_config():
 	with open("config.json") as f:
 		config = json.load(f)
@@ -292,18 +305,18 @@ def load_config():
 
 def load_images(config):
 	images = {}
-	images["chevron_left"] = pygame.transform.scale(pygame.image.load("images/chevron_left.png"), config["navigation"]["indicator_size"])
-	images["chevron_right"] = pygame.transform.scale(pygame.image.load("images/chevron_right.png"), config["navigation"]["indicator_size"])
-	images["chevron_up"] = pygame.transform.scale(pygame.image.load("images/chevron_up.png"), config["navigation"]["indicator_size"])
-	images["chevron_down"] = pygame.transform.scale(pygame.image.load("images/chevron_down.png"), config["navigation"]["indicator_size"])
-	images["arrow_forward"] = pygame.transform.scale(pygame.image.load("images/arrow_forward.png"), config["navigation"]["indicator_size"])
-	images["arrow_backward"] = pygame.transform.scale(pygame.image.load("images/arrow_backward.png"), config["navigation"]["indicator_size"])
-	images["arrow_double"] = pygame.transform.scale(pygame.image.load("images/arrow_double.png"), config["navigation"]["indicator_size"])
-	images["look"] = pygame.transform.scale(pygame.image.load("images/look.png"), config["navigation"]["indicator_size"])
-	images["use"] = pygame.transform.scale(pygame.image.load("images/use.png"), config["navigation"]["indicator_size"])
-	images["lookuse"] = pygame.transform.scale(pygame.image.load("images/lookuse.png"), config["navigation"]["indicator_size"])
-	images["go"] = pygame.transform.scale(pygame.image.load("images/go.png"), config["navigation"]["indicator_size"])
-	images["lookgo"] = pygame.transform.scale(pygame.image.load("images/lookgo.png"), config["navigation"]["indicator_size"])
+	images["chevron_left"] = pygame.transform.scale(pygame.image.load(resource_path("images/chevron_left.png")), config["navigation"]["indicator_size"])
+	images["chevron_right"] = pygame.transform.scale(pygame.image.load(resource_path("images/chevron_right.png")), config["navigation"]["indicator_size"])
+	images["chevron_up"] = pygame.transform.scale(pygame.image.load(resource_path("images/chevron_up.png")), config["navigation"]["indicator_size"])
+	images["chevron_down"] = pygame.transform.scale(pygame.image.load(resource_path("images/chevron_down.png")), config["navigation"]["indicator_size"])
+	images["arrow_forward"] = pygame.transform.scale(pygame.image.load(resource_path("images/arrow_forward.png")), config["navigation"]["indicator_size"])
+	images["arrow_backward"] = pygame.transform.scale(pygame.image.load(resource_path("images/arrow_backward.png")), config["navigation"]["indicator_size"])
+	images["arrow_double"] = pygame.transform.scale(pygame.image.load(resource_path("images/arrow_double.png")), config["navigation"]["indicator_size"])
+	images["look"] = pygame.transform.scale(pygame.image.load(resource_path("images/look.png")), config["navigation"]["indicator_size"])
+	images["use"] = pygame.transform.scale(pygame.image.load(resource_path("images/use.png")), config["navigation"]["indicator_size"])
+	images["lookuse"] = pygame.transform.scale(pygame.image.load(resource_path("images/lookuse.png")), config["navigation"]["indicator_size"])
+	images["go"] = pygame.transform.scale(pygame.image.load(resource_path("images/go.png")), config["navigation"]["indicator_size"])
+	images["lookgo"] = pygame.transform.scale(pygame.image.load(resource_path("images/lookgo.png")), config["navigation"]["indicator_size"])
 	return images
 
 
