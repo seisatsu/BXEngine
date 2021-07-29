@@ -121,6 +121,8 @@ class App(object):
 						self.do_action("look")
 					elif "use" in self.cursor.action:
 						self.do_action("use")
+					elif "go" in self.cursor.action:
+						self.do_action("go")
 				elif self.cursor.pos == self.cursor.last_click and self.cursor.nav:
 					# A complete click has happened on a navigation indicator.
 					print("FULL LEFT CLICK IN NAV REGION {0}".format(self.cursor.nav))
@@ -141,6 +143,8 @@ class App(object):
 					print("FULL RIGHT CLICK IN ACTION ZONE")
 					if "use" in self.cursor.action:
 						self.do_action("use")
+					elif "go" in self.cursor.action:
+						self.do_action("go")
 				elif self.cursor.pos == self.cursor.last_click and self.cursor.nav in ["backward", "double"]:
 					# We have right clicked on a backward or double arrow; attempt to go backward.
 					print("FULL RIGHT CLICK IN NAV REGION {0}".format(self.cursor.nav))
@@ -164,10 +168,14 @@ class App(object):
 				rect = action["rect"]
 				if "look" in action and "use" in action:
 					act_icon = "lookuse"
+				elif "look" in action and "go" in action:
+					act_icon = "lookgo"
 				elif "look" in action:
 					act_icon = "look"
 				elif "use" in action:
 					act_icon = "use"
+				elif "go" in action:
+					act_icon = "go"
 				if rect[0] < x < rect[2] and rect[1] < y < rect[3]:
 					blit_x = (rect[0] + ((rect[2] - rect[0]) // 2)) - (self.images[act_icon].get_width() // 2)
 					blit_y = (rect[1] + ((rect[3] - rect[1]) // 2)) - (self.images[act_icon].get_height() // 2)
@@ -246,6 +254,9 @@ class App(object):
 			gui_rect = pygame.Rect(self.config["gui"]["textbox_margin_sides"], wsize[1] - self.config["gui"]["textbox_margin_bottom"] - self.config["gui"]["textbox_height"],
 						wsize[0] - self.config["gui"]["textbox_margin_sides"] * 2, self.config["gui"]["textbox_height"])
 			self.text_dialog = pygame_gui.elements.ui_text_box.UITextBox(self.cursor.action[act_type]["contents"], gui_rect, self.gui)
+		elif self.cursor.action[act_type]["result"] == "exit":
+			print(self.cursor.action[act_type]["contents"])
+			self.world.change_room(self.cursor.action[act_type]["contents"])
 			
 
 	def render(self):
@@ -291,6 +302,8 @@ def load_images(config):
 	images["look"] = pygame.transform.scale(pygame.image.load("images/look.png"), config["navigation"]["indicator_size"])
 	images["use"] = pygame.transform.scale(pygame.image.load("images/use.png"), config["navigation"]["indicator_size"])
 	images["lookuse"] = pygame.transform.scale(pygame.image.load("images/lookuse.png"), config["navigation"]["indicator_size"])
+	images["go"] = pygame.transform.scale(pygame.image.load("images/go.png"), config["navigation"]["indicator_size"])
+	images["lookgo"] = pygame.transform.scale(pygame.image.load("images/lookgo.png"), config["navigation"]["indicator_size"])
 	return images
 
 

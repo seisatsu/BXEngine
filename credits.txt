@@ -9,5 +9,10 @@ Chevron Icons, Arrow Icons (Modified), Look Icon
 Use Icon
 * https://www.iconfinder.com/iconsets/ios-11-glyphs
 
+Go Icon
+* https://thenounproject.com/term/footsteps/863315/
+* footsteps by b farias from the Noun Project
+
 Room Images
 * Taken from various places, will be removed before the project goes public.
+
