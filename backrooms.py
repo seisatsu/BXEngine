@@ -110,11 +110,14 @@ class App(object):
 				self.done = True
 			elif event.type == pygame.MOUSEBUTTONDOWN and event.button in [1, 3]:
 				self.cursor.click = True
-				self.cursor.last_click = self.cursor.pos
+				if self.cursor.action:
+					self.cursor.last_click = id(self.cursor.action)
+				elif self.cursor.nav:
+					self.cursor.last_click = self.cursor.nav
 				print("CLICK")
 			elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
 				self.cursor.click = False
-				if self.cursor.pos == self.cursor.last_click and self.cursor.action:
+				if self.cursor.action and id(self.cursor.action) == self.cursor.last_click:
 					# A complete click has happened on an action zone.
 					print("FULL LEFT CLICK IN ACTION ZONE")
 					if "look" in self.cursor.action:
@@ -123,7 +126,7 @@ class App(object):
 						self.do_action("use")
 					elif "go" in self.cursor.action:
 						self.do_action("go")
-				elif self.cursor.pos == self.cursor.last_click and self.cursor.nav:
+				elif self.cursor.nav and self.cursor.nav == self.cursor.last_click:
 					# A complete click has happened on a navigation indicator.
 					print("FULL LEFT CLICK IN NAV REGION {0}".format(self.cursor.nav))
 					if self.cursor.nav == "double":
@@ -139,13 +142,13 @@ class App(object):
 						self.text_dialog = None
 			elif event.type == pygame.MOUSEBUTTONUP and event.button == 3:
 				self.cursor.click = False
-				if self.cursor.pos == self.cursor.last_click and self.cursor.action:
+				if self.cursor.action and id(self.cursor.action) == self.cursor.last_click:
 					print("FULL RIGHT CLICK IN ACTION ZONE")
 					if "use" in self.cursor.action:
 						self.do_action("use")
 					elif "go" in self.cursor.action:
 						self.do_action("go")
-				elif self.cursor.pos == self.cursor.last_click and self.cursor.nav in ["backward", "double"]:
+				elif self.cursor.nav in ["backward", "double"] and self.cursor.nav == self.cursor.last_click:
 					# We have right clicked on a backward or double arrow; attempt to go backward.
 					print("FULL RIGHT CLICK IN NAV REGION {0}".format(self.cursor.nav))
 					self.world.navigate("backward")
