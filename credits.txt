@@ -1,4 +1,4 @@
-Written by Sei Satzparad, released under the MIT License.
+Written by Michael D. Reiley, released under the MIT License.
 
 Started from example code written by Sean J. McKiernan 'Mekire'
 * https://github.com/Mekire/pygame-samples/blob/master/drag_text.py
