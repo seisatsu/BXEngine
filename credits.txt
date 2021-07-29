@@ -9,3 +9,5 @@ Chevron Icons, Arrow Icons (Modified), Look Icon
 Use Icon
 * https://www.iconfinder.com/iconsets/ios-11-glyphs
 
+Room Images
+* Taken from various places, will be removed before the project goes public.
