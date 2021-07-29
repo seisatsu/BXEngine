@@ -37,9 +37,10 @@ class Room(object):
     A class to represent the current room.
     """
 
-    def __init__(self, config, world, room_file):
+    def __init__(self, config, world, resource, room_file):
         self.config = config
         self.world = world
+        self.resource = resource
         self.file = room_file
         self.vars = None
         self.image = None
@@ -48,7 +49,9 @@ class Room(object):
         """
         Load the room descriptor JSON file. Also load the room image.
         """
-        with open("{0}/{1}".format(self.world.dir, self.file)) as f:
-            self.vars = json.load(f)
+        self.vars = self.resource.load_json("{0}/{1}".format(self.world.dir, self.file))
+        if not self.vars:
+            return False
         self.image = pygame.transform.scale(pygame.image.load(
             resource_path("{0}/{1}".format(self.world.dir, self.vars["image"]))), self.config["window"]["size"])
+        return True

@@ -35,30 +35,35 @@ class World(object):
     A class to represent the game world.
     """
 
-    def __init__(self, config):
+    def __init__(self, config, resource):
         self.config = config
         self.dir = self.config["world"]
         self.vars = None
         self.room = None
+        self.resource = resource
 
     def load(self):
         """
         Load the world descriptor JSON file.
         """
-        with open("{0}/world.json".format(self.dir)) as f:
-            self.vars = json.load(f)
-        self.change_room(self.vars["first_room"])
+        self.vars = self.resource.load_json("{0}/world.json".format(self.dir))
+        if not self.vars:
+            return False
+        return self.change_room(self.vars["first_room"])
 
     def navigate(self, direction):
         """
         Change rooms by exit name in the current room.
         """
         if direction in self.room.vars["exits"]:
-            self.change_room(self.room.vars["exits"][direction])
+            return self.change_room(self.room.vars["exits"][direction])
 
     def change_room(self, room_file):
         """
         Change rooms by room descriptor filename.
         """
-        self.room = Room(self.config, self, room_file)
+        self.room = Room(self.config, self, self.resource, room_file)
         self.room.load()
+        if not self.room.vars:
+            return False
+        return True

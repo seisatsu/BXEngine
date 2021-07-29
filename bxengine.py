@@ -40,19 +40,12 @@ import pygame
 import pygame_gui
 
 from lib.app import App
+from lib.logger import Logger
+from lib.resourcemanager import ResourceManager
 from lib.world import World
 from lib.util import resource_path
 
-CAPTION = "Backrooms Alpha"
-
-
-def load_config():
-    """
-    Load the JSON config file.
-    """
-    with open("config.json") as f:
-        config = json.load(f)
-    return config
+VERSION = "Backrooms PreAlpha"
 
 
 def load_images(config):
@@ -94,16 +87,25 @@ def main():
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()
 
-    config = load_config()
-    images = load_images(config)
+    print("Welcome to {0}.".format(VERSION))
+    print("Starting up...")
 
-    pygame.display.set_caption(CAPTION)
+    resource = ResourceManager()
+
+    config = resource.load_initial_config("config.json")
+    images = load_images(config)
+    log = Logger("bxengine")
+
+    pygame.display.set_caption(VERSION)
     pygame.display.set_mode(config["window"]["size"])
     gui = pygame_gui.UIManager(config["window"]["size"])
 
-    world = World(config)
-    world.load()
-    App(config, images, world, gui).main_loop()
+    world = World(config, resource)
+    if not world.load():
+        log.critical("Unable to initialize world: {0}".format(config["world"]))
+        sys.exit(5)
+
+    App(config, images, world, gui, resource).main_loop()
     pygame.quit()
     sys.exit()
 

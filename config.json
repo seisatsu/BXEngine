@@ -14,6 +14,12 @@
 		"textbox_height": 80,
 		"textbox_margin_bottom": 20,
 		"textbox_margin_sides": 60
+	},
+	"log": {
+		"wait_on_critical": true,
+		"level": "info",
+		"stdout": true,
+		"file": "bxengine.log"
 	}
 }
 

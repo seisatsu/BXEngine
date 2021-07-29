@@ -36,7 +36,7 @@ class App(object):
     A class to manage our event, game loop, and overall program flow.
     """
 
-    def __init__(self, config, images, world, gui):
+    def __init__(self, config, images, world, gui, resource):
         """
         Get a reference to the screen (created in main); define necessary attributes.
         """
@@ -51,7 +51,9 @@ class App(object):
         self.images = images
         self.world = world
         self.gui = gui
+        self.resource = resource
         self.text_dialog = None
+        self.vars = {}
 
     def event_loop(self):
         """
