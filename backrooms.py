@@ -49,6 +49,10 @@ class World(object):
 			self.vars = json.load(f)
 		self.change_room(self.vars["first_room"])
 	
+	def navigate(self, direction):
+		if direction in self.room.vars["exits"]:
+			self.change_room(self.room.vars["exits"][direction])
+	
 	def change_room(self, room_file):
 		self.room = Room(self.config, self, room_file)
 		self.room.load()
@@ -100,7 +104,7 @@ class App(object):
 		for event in pg.event.get():
 			if event.type == pg.QUIT or self.keys[pg.K_ESCAPE]:
 				self.done = True
-			elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+			elif event.type == pg.MOUSEBUTTONDOWN and event.button in [1, 3]:
 				self.cursor.click = True
 				self.cursor.last_click = self.cursor.pos
 				print("CLICK")
@@ -108,7 +112,17 @@ class App(object):
 				self.cursor.click = False
 				if self.cursor.pos == self.cursor.last_click and (self.cursor.nav or self.cursor.action):
 					# A complete click has happened on a navigation indicator or an action zone.
-					print("FULL CLICK IN NAV REGION {0}".format(self.cursor.nav))
+					print("FULL LEFT CLICK IN NAV REGION {0}".format(self.cursor.nav))
+					if self.cursor.nav == "double":
+						self.world.navigate("forward")
+					else:
+						self.world.navigate(self.cursor.nav)
+			elif event.type == pg.MOUSEBUTTONUP and event.button == 3:
+				self.cursor.click = False
+				if self.cursor.pos == self.cursor.last_click and self.cursor.nav in ["backward", "double"]:
+					# We have right clicked on a backward or double arrow; attempt to go backward.
+					print("FULL RIGHT CLICK IN NAV REGION {0}".format(self.cursor.nav))
+					self.world.navigate("backward")
 			elif event.type in (pg.KEYUP, pg.KEYDOWN):
 				self.keys = pg.key.get_pressed() 
 
@@ -150,10 +164,19 @@ class App(object):
 			blit_loc = (self.config["window"]["size"][0] // 2 - self.images["chevron_down"].get_width() // 2, self.config["window"]["size"][1] - self.images["chevron_down"].get_height() - pad)
 			self.screen.blit(self.images["chevron_down"], blit_loc)
 			self.cursor.nav = "down"
-		elif nf_min_x < x < nf_max_x and nf_min_y < y < nf_max_y and "forward" in self.world.room.vars["exits"]:
-			blit_loc = (self.config["window"]["size"][0] // 2 - self.images["arrow_forward"].get_width() // 2, self.config["window"]["size"][1] // 2 - self.images["arrow_forward"].get_height() // 2)
-			self.screen.blit(self.images["arrow_forward"], blit_loc)
-			self.cursor.nav = "forward"
+		elif nf_min_x < x < nf_max_x and nf_min_y < y < nf_max_y and ("forward" in self.world.room.vars["exits"] or "backward" in self.world.room.vars["exits"]):
+			if "forward" in self.world.room.vars["exits"] and "backward" in self.world.room.vars["exits"]:
+				blit_loc = (self.config["window"]["size"][0] // 2 - self.images["arrow_double"].get_width() // 2, self.config["window"]["size"][1] // 2 - self.images["arrow_double"].get_height() // 2)
+				self.screen.blit(self.images["arrow_double"], blit_loc)
+				self.cursor.nav = "double"
+			elif "forward" in self.world.room.vars["exits"]:
+				blit_loc = (self.config["window"]["size"][0] // 2 - self.images["arrow_forward"].get_width() // 2, self.config["window"]["size"][1] // 2 - self.images["arrow_forward"].get_height() // 2)
+				self.screen.blit(self.images["arrow_forward"], blit_loc)
+				self.cursor.nav = "forward"
+			elif "backward" in self.world.room.vars["exits"]:
+				blit_loc = (self.config["window"]["size"][0] // 2 - self.images["arrow_backward"].get_width() // 2, self.config["window"]["size"][1] // 2 - self.images["arrow_backward"].get_height() // 2)
+				self.screen.blit(self.images["arrow_backward"], blit_loc)
+				self.cursor.nav = "backward"
 		else:
 			self.cursor.nav = None
 		
@@ -192,6 +215,8 @@ def load_images(config):
 	images["chevron_up"] = pg.transform.scale(pg.image.load("images/chevron_up.png"), config["navigation"]["indicator_size"])
 	images["chevron_down"] = pg.transform.scale(pg.image.load("images/chevron_down.png"), config["navigation"]["indicator_size"])
 	images["arrow_forward"] = pg.transform.scale(pg.image.load("images/arrow_forward.png"), config["navigation"]["indicator_size"])
+	images["arrow_backward"] = pg.transform.scale(pg.image.load("images/arrow_backward.png"), config["navigation"]["indicator_size"])
+	images["arrow_double"] = pg.transform.scale(pg.image.load("images/arrow_double.png"), config["navigation"]["indicator_size"])
 	images["look"] = pg.transform.scale(pg.image.load("images/look.png"), config["navigation"]["indicator_size"])
 	images["use"] = pg.transform.scale(pg.image.load("images/use.png"), config["navigation"]["indicator_size"])
 	return images

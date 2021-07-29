@@ -1,0 +1,8 @@
+{
+	"image": "room03.jpg",
+	"exits": {
+		"left": "room01.json",
+		"backward": "room01.json",
+		"forward": "room02.json"
+	}
+}
