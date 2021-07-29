@@ -2,7 +2,7 @@
 
 #####################
 # BXEngine          #
-# backrooms.py      #
+# bxengine.py       #
 # Copyright 2021    #
 # Michael D. Reiley #
 #####################

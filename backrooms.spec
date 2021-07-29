@@ -11,8 +11,8 @@ print(pygame_gui_path)
 block_cipher = None
 
 
-a = Analysis(['backrooms.py'],
-             pathex=['C:\\Users\\user\\Documents\\Share\\Backrooms'],
+a = Analysis(['bxengine.py'],
+             pathex=[os.getcwd()],
              binaries=[],
              datas=[('images/*', 'images/'), ('test_world/*', 'test_world/'), (pygame_gui_path + '*', 'pygame_gui/')],
              hiddenimports=[],
