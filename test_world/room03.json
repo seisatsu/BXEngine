@@ -8,27 +8,39 @@
 	"actions": [
 		{
 			"rect": [215, 172, 260, 335],
-			"type": "look",
-			"result": "text",
-			"contents": "You see an old broom in the corner."
+			"look": {
+				"result": "text",
+				"contents": "You see an old broom in the corner."
+			}
 		},
 		{
 			"rect": [10, 350, 110, 465],
-			"type": "look",
-			"result": "text",
-			"contents": "There are some buckets sitting on the ground here."
+			"use": {
+				"result": "text",
+				"contents": "You lightly kick one of the buckets.<br>It makes a nostalgic sound."
+			}
 		},
 		{
 			"rect": [675, 135, 780, 215],
-			"type": "use",
-			"result": "text",
-			"contents": "You see a couple of piles of books on the nightstand.<br>You flip through them but you can't understand the language."
+			"look": {
+				"result": "text",
+				"contents": "You see a couple of piles of books on the nightstand."
+			},
+			"use": {
+				"result": "text",
+				"contents": "You flip through the books but you can't understand the language."
+			}
 		},
 		{
 			"rect": [325, 315, 480, 415],
-			"type": "use",
-			"result": "text",
-			"contents": "You see a couple of piles of books on the floor.<br>You flip through them a bit.<br>They are all filled with bizarre and unsettling diagrams."
+			"look": {
+				"result": "text",
+				"contents": "You see a couple of piles of books on the floor."
+			},
+			"use": {
+				"result": "text",
+				"contents": "You flip through the books for a while.<br>They are all filled with bizarre and unsettling diagrams."
+			}
 		}
 	]
 }

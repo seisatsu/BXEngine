@@ -117,7 +117,10 @@ class App(object):
 				if self.cursor.pos == self.cursor.last_click and self.cursor.action:
 					# A complete click has happened on an action zone.
 					print("FULL LEFT CLICK IN ACTION ZONE")
-					self.do_action()
+					if "look" in self.cursor.action:
+						self.do_action("look")
+					elif "use" in self.cursor.action:
+						self.do_action("use")
 				elif self.cursor.pos == self.cursor.last_click and self.cursor.nav:
 					# A complete click has happened on a navigation indicator.
 					print("FULL LEFT CLICK IN NAV REGION {0}".format(self.cursor.nav))
@@ -134,7 +137,11 @@ class App(object):
 						self.text_dialog = None
 			elif event.type == pygame.MOUSEBUTTONUP and event.button == 3:
 				self.cursor.click = False
-				if self.cursor.pos == self.cursor.last_click and self.cursor.nav in ["backward", "double"]:
+				if self.cursor.pos == self.cursor.last_click and self.cursor.action:
+					print("FULL RIGHT CLICK IN ACTION ZONE")
+					if "use" in self.cursor.action:
+						self.do_action("use")
+				elif self.cursor.pos == self.cursor.last_click and self.cursor.nav in ["backward", "double"]:
 					# We have right clicked on a backward or double arrow; attempt to go backward.
 					print("FULL RIGHT CLICK IN NAV REGION {0}".format(self.cursor.nav))
 					self.world.navigate("backward")
@@ -155,11 +162,17 @@ class App(object):
 		if "actions" in self.world.room.vars:
 			for action in self.world.room.vars["actions"]:
 				rect = action["rect"]
+				if "look" in action and "use" in action:
+					act_icon = "lookuse"
+				elif "look" in action:
+					act_icon = "look"
+				elif "use" in action:
+					act_icon = "use"
 				if rect[0] < x < rect[2] and rect[1] < y < rect[3]:
-					blit_x = (rect[0] + ((rect[2] - rect[0]) // 2)) - (self.images[action["type"]].get_width() // 2)
-					blit_y = (rect[1] + ((rect[3] - rect[1]) // 2)) - (self.images[action["type"]].get_height() // 2)
+					blit_x = (rect[0] + ((rect[2] - rect[0]) // 2)) - (self.images[act_icon].get_width() // 2)
+					blit_y = (rect[1] + ((rect[3] - rect[1]) // 2)) - (self.images[act_icon].get_height() // 2)
 					blit_loc = (blit_x, blit_y)
-					self.screen.blit(self.images[action["type"]], blit_loc)
+					self.screen.blit(self.images[act_icon], blit_loc)
 					self.cursor.action = action
 					return True
 		self.cursor.action = None
@@ -219,20 +232,20 @@ class App(object):
 		else:
 			self.cursor.nav = None
 
-	def do_action(self):
+	def do_action(self, act_type):
 		"""
 		Perform a room action, possibly creating a UI element.
 		"""
 		wsize = self.config["window"]["size"]
 		
-		if self.cursor.action["result"] == "text":
-			print(self.cursor.action["contents"])
+		if self.cursor.action[act_type]["result"] == "text":
+			print(self.cursor.action[act_type]["contents"])
 			if self.text_dialog:
 				self.text_dialog.kill()
 				self.text_dialog = None
 			gui_rect = pygame.Rect(self.config["gui"]["textbox_margin_sides"], wsize[1] - self.config["gui"]["textbox_margin_bottom"] - self.config["gui"]["textbox_height"],
 						wsize[0] - self.config["gui"]["textbox_margin_sides"] * 2, self.config["gui"]["textbox_height"])
-			self.text_dialog = pygame_gui.elements.ui_text_box.UITextBox(self.cursor.action["contents"], gui_rect, self.gui)
+			self.text_dialog = pygame_gui.elements.ui_text_box.UITextBox(self.cursor.action[act_type]["contents"], gui_rect, self.gui)
 			
 
 	def render(self):
@@ -277,6 +290,7 @@ def load_images(config):
 	images["arrow_double"] = pygame.transform.scale(pygame.image.load("images/arrow_double.png"), config["navigation"]["indicator_size"])
 	images["look"] = pygame.transform.scale(pygame.image.load("images/look.png"), config["navigation"]["indicator_size"])
 	images["use"] = pygame.transform.scale(pygame.image.load("images/use.png"), config["navigation"]["indicator_size"])
+	images["lookuse"] = pygame.transform.scale(pygame.image.load("images/lookuse.png"), config["navigation"]["indicator_size"])
 	return images
 
 
