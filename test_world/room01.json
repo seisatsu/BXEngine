@@ -3,6 +3,20 @@
 	"exits": {
 		"forward": "room02.json",
 		"right": "room03.json"
-	}
+	},
+	"actions": [
+		{
+			"rect": [750, 250, 800, 310],
+			"type": "look",
+			"result": "text",
+			"contents": "There is a sculpture of a humanoid figure."
+		},
+		{
+			"rect": [460, 330, 630, 435],
+			"type": "look",
+			"result": "text",
+			"contents": "You see a bed. It looks comfy and it is surrounded by water."
+		}
+	]
 }
 

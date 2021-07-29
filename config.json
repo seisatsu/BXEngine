@@ -9,6 +9,11 @@
 		"edge_margin_width": 0.25,
 		"edge_region_breadth": 0.125,
 		"forward_region_width": 0.30
+	},
+	"gui": {
+		"textbox_height": 80,
+		"textbox_margin_bottom": 20,
+		"textbox_margin_sides": 60
 	}
 }
 

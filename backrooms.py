@@ -9,7 +9,8 @@ import json
 import os
 import sys
 
-import pygame as pg
+import pygame
+import pygame_gui
 
 
 CAPTION = "Backrooms Alpha"
@@ -31,7 +32,7 @@ class Cursor(object):
 		self.action = None
 
 	def update(self):
-		self.pos = pg.mouse.get_pos()
+		self.pos = pygame.mouse.get_pos()
 
 
 class World(object):
@@ -72,43 +73,46 @@ class Room(object):
 	def load(self):
 		with open("{0}/{1}".format(self.world.dir, self.file)) as f:
 			self.vars = json.load(f)
-		self.image = pg.transform.scale(pg.image.load("{0}/{1}".format(self.world.dir, self.vars["image"])), self.config["window"]["size"])
+		self.image = pygame.transform.scale(pygame.image.load("{0}/{1}".format(self.world.dir, self.vars["image"])), self.config["window"]["size"])
 
 
 class App(object):
 	"""
 	A class to manage our event, game loop, and overall program flow.
 	"""
-	def __init__(self, config, images, world):
+	def __init__(self, config, images, world, gui):
 		"""
 		Get a reference to the screen (created in main); define necessary
 		attributes.
 		"""
-		self.screen = pg.display.get_surface()
+		self.screen = pygame.display.get_surface()
 		self.screen_rect = self.screen.get_rect()
-		self.clock = pg.time.Clock()
+		self.clock = pygame.time.Clock()
 		self.fps = 60
 		self.done = False
-		self.keys = pg.key.get_pressed()
+		self.keys = pygame.key.get_pressed()
 		self.cursor = Cursor()
 		self.config = config
 		self.images = images
 		self.world = world
+		self.gui = gui
+		self.text_dialog = None
 
 	def event_loop(self):
 		"""
 		This is the event loop for the whole program.
 		Regardless of the complexity of a program, there should never be a need
 		to have more than one event loop.
+		We handle clicks and navigation and cleaning up UI elements here.
 		"""
-		for event in pg.event.get():
-			if event.type == pg.QUIT or self.keys[pg.K_ESCAPE]:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT or self.keys[pygame.K_ESCAPE]:
 				self.done = True
-			elif event.type == pg.MOUSEBUTTONDOWN and event.button in [1, 3]:
+			elif event.type == pygame.MOUSEBUTTONDOWN and event.button in [1, 3]:
 				self.cursor.click = True
 				self.cursor.last_click = self.cursor.pos
 				print("CLICK")
-			elif event.type == pg.MOUSEBUTTONUP and event.button == 1:
+			elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
 				self.cursor.click = False
 				if self.cursor.pos == self.cursor.last_click and self.cursor.action:
 					# A complete click has happened on an action zone.
@@ -121,14 +125,29 @@ class App(object):
 						self.world.navigate("forward")
 					else:
 						self.world.navigate(self.cursor.nav)
-			elif event.type == pg.MOUSEBUTTONUP and event.button == 3:
+					if self.text_dialog:
+						self.text_dialog.kill()
+						self.text_dialog = None
+				elif self.cursor.pos:
+					if self.text_dialog:
+						self.text_dialog.kill()
+						self.text_dialog = None
+			elif event.type == pygame.MOUSEBUTTONUP and event.button == 3:
 				self.cursor.click = False
 				if self.cursor.pos == self.cursor.last_click and self.cursor.nav in ["backward", "double"]:
 					# We have right clicked on a backward or double arrow; attempt to go backward.
 					print("FULL RIGHT CLICK IN NAV REGION {0}".format(self.cursor.nav))
 					self.world.navigate("backward")
-			elif event.type in (pg.KEYUP, pg.KEYDOWN):
-				self.keys = pg.key.get_pressed() 
+					if self.text_dialog:
+						self.text_dialog.kill()
+						self.text_dialog = None
+				elif self.cursor.pos:
+					if self.text_dialog:
+						self.text_dialog.kill()
+						self.text_dialog = None
+			elif event.type in (pygame.KEYUP, pygame.KEYDOWN):
+				self.keys = pygame.key.get_pressed() 
+			self.gui.process_events(event)
 
 	def demarc_action_indicator(self):
 		x, y = self.cursor.pos
@@ -201,19 +220,32 @@ class App(object):
 			self.cursor.nav = None
 
 	def do_action(self):
-		if self.cursor.action["type"] == "look":
+		"""
+		Perform a room action, possibly creating a UI element.
+		"""
+		wsize = self.config["window"]["size"]
+		
+		if self.cursor.action["result"] == "text":
 			print(self.cursor.action["contents"])
+			if self.text_dialog:
+				self.text_dialog.kill()
+				self.text_dialog = None
+			gui_rect = pygame.Rect(self.config["gui"]["textbox_margin_sides"], wsize[1] - self.config["gui"]["textbox_margin_bottom"] - self.config["gui"]["textbox_height"],
+						wsize[0] - self.config["gui"]["textbox_margin_sides"] * 2, self.config["gui"]["textbox_height"])
+			self.text_dialog = pygame_gui.elements.ui_text_box.UITextBox(self.cursor.action["contents"], gui_rect, self.gui)
+			
 
 	def render(self):
 		"""
 		All drawing should be found here.
 		This is the only place that pygame.display.update() should be found.
 		"""
-		self.screen.fill(pg.Color("black"))
+		self.screen.fill(pygame.Color("black"))
 		self.screen.blit(self.world.room.image, (0,0))
 		if not self.demarc_action_indicator():
 			self.demarc_nav_indicator()
-		pg.display.update()
+		self.gui.draw_ui(self.screen)
+		pygame.display.update()
 
 	def main_loop(self):
 		"""
@@ -223,8 +255,9 @@ class App(object):
 		while not self.done:
 			self.event_loop()
 			self.render()
-			self.clock.tick(self.fps)
+			time_delta = self.clock.tick(self.fps) / 1000.0
 			self.cursor.update()
+			self.gui.update(time_delta)
 
 
 def load_config():
@@ -235,15 +268,15 @@ def load_config():
 
 def load_images(config):
 	images = {}
-	images["chevron_left"] = pg.transform.scale(pg.image.load("images/chevron_left.png"), config["navigation"]["indicator_size"])
-	images["chevron_right"] = pg.transform.scale(pg.image.load("images/chevron_right.png"), config["navigation"]["indicator_size"])
-	images["chevron_up"] = pg.transform.scale(pg.image.load("images/chevron_up.png"), config["navigation"]["indicator_size"])
-	images["chevron_down"] = pg.transform.scale(pg.image.load("images/chevron_down.png"), config["navigation"]["indicator_size"])
-	images["arrow_forward"] = pg.transform.scale(pg.image.load("images/arrow_forward.png"), config["navigation"]["indicator_size"])
-	images["arrow_backward"] = pg.transform.scale(pg.image.load("images/arrow_backward.png"), config["navigation"]["indicator_size"])
-	images["arrow_double"] = pg.transform.scale(pg.image.load("images/arrow_double.png"), config["navigation"]["indicator_size"])
-	images["look"] = pg.transform.scale(pg.image.load("images/look.png"), config["navigation"]["indicator_size"])
-	images["use"] = pg.transform.scale(pg.image.load("images/use.png"), config["navigation"]["indicator_size"])
+	images["chevron_left"] = pygame.transform.scale(pygame.image.load("images/chevron_left.png"), config["navigation"]["indicator_size"])
+	images["chevron_right"] = pygame.transform.scale(pygame.image.load("images/chevron_right.png"), config["navigation"]["indicator_size"])
+	images["chevron_up"] = pygame.transform.scale(pygame.image.load("images/chevron_up.png"), config["navigation"]["indicator_size"])
+	images["chevron_down"] = pygame.transform.scale(pygame.image.load("images/chevron_down.png"), config["navigation"]["indicator_size"])
+	images["arrow_forward"] = pygame.transform.scale(pygame.image.load("images/arrow_forward.png"), config["navigation"]["indicator_size"])
+	images["arrow_backward"] = pygame.transform.scale(pygame.image.load("images/arrow_backward.png"), config["navigation"]["indicator_size"])
+	images["arrow_double"] = pygame.transform.scale(pygame.image.load("images/arrow_double.png"), config["navigation"]["indicator_size"])
+	images["look"] = pygame.transform.scale(pygame.image.load("images/look.png"), config["navigation"]["indicator_size"])
+	images["use"] = pygame.transform.scale(pygame.image.load("images/use.png"), config["navigation"]["indicator_size"])
 	return images
 
 
@@ -252,20 +285,22 @@ def main():
 	Prepare our environment, create a display, and start the program.
 	"""
 	os.environ['SDL_VIDEO_CENTERED'] = '1'
-	pg.init()
+	pygame.init()
 	
 	config = load_config()
 	images = load_images(config)
 	
-	pg.display.set_caption(CAPTION)
-	pg.display.set_mode(config["window"]["size"])
+	pygame.display.set_caption(CAPTION)
+	pygame.display.set_mode(config["window"]["size"])
+	gui = pygame_gui.UIManager(config["window"]["size"])
 	
 	world = World(config)
 	world.load()
-	App(config, images, world).main_loop()
-	pg.quit()
+	App(config, images, world, gui).main_loop()
+	pygame.quit()
 	sys.exit()
 	
 
 if __name__ == "__main__":
 	main()
+

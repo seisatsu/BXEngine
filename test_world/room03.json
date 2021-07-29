@@ -16,19 +16,19 @@
 			"rect": [10, 350, 110, 465],
 			"type": "look",
 			"result": "text",
-			"contents": "There are some buckets sitting here."
+			"contents": "There are some buckets sitting on the ground here."
 		},
 		{
 			"rect": [675, 135, 780, 215],
-			"type": "look",
+			"type": "use",
 			"result": "text",
-			"contents": "You see a pile of books on the nightstand."
+			"contents": "You see a couple of piles of books on the nightstand.<br>You flip through them but you can't understand the language."
 		},
 		{
 			"rect": [325, 315, 480, 415],
-			"type": "look",
+			"type": "use",
 			"result": "text",
-			"contents": "You see a couple of piles of books on the floor."
+			"contents": "You see a couple of piles of books on the floor.<br>You flip through them a bit.<br>They are all filled with bizarre and unsettling diagrams."
 		}
 	]
 }
