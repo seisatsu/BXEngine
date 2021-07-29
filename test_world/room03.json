@@ -4,5 +4,32 @@
 		"left": "room01.json",
 		"backward": "room01.json",
 		"forward": "room02.json"
-	}
+	},
+	"actions": [
+		{
+			"rect": [215, 172, 260, 335],
+			"type": "look",
+			"result": "text",
+			"contents": "You see an old broom in the corner."
+		},
+		{
+			"rect": [10, 350, 110, 465],
+			"type": "look",
+			"result": "text",
+			"contents": "There are some buckets sitting here."
+		},
+		{
+			"rect": [675, 135, 780, 215],
+			"type": "look",
+			"result": "text",
+			"contents": "You see a pile of books on the nightstand."
+		},
+		{
+			"rect": [325, 315, 480, 415],
+			"type": "look",
+			"result": "text",
+			"contents": "You see a couple of piles of books on the floor."
+		}
+	]
 }
+

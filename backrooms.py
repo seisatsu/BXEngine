@@ -110,8 +110,12 @@ class App(object):
 				print("CLICK")
 			elif event.type == pg.MOUSEBUTTONUP and event.button == 1:
 				self.cursor.click = False
-				if self.cursor.pos == self.cursor.last_click and (self.cursor.nav or self.cursor.action):
-					# A complete click has happened on a navigation indicator or an action zone.
+				if self.cursor.pos == self.cursor.last_click and self.cursor.action:
+					# A complete click has happened on an action zone.
+					print("FULL LEFT CLICK IN ACTION ZONE")
+					self.do_action()
+				elif self.cursor.pos == self.cursor.last_click and self.cursor.nav:
+					# A complete click has happened on a navigation indicator.
 					print("FULL LEFT CLICK IN NAV REGION {0}".format(self.cursor.nav))
 					if self.cursor.nav == "double":
 						self.world.navigate("forward")
@@ -125,6 +129,22 @@ class App(object):
 					self.world.navigate("backward")
 			elif event.type in (pg.KEYUP, pg.KEYDOWN):
 				self.keys = pg.key.get_pressed() 
+
+	def demarc_action_indicator(self):
+		x, y = self.cursor.pos
+		
+		if "actions" in self.world.room.vars:
+			for action in self.world.room.vars["actions"]:
+				rect = action["rect"]
+				if rect[0] < x < rect[2] and rect[1] < y < rect[3]:
+					blit_x = (rect[0] + ((rect[2] - rect[0]) // 2)) - (self.images[action["type"]].get_width() // 2)
+					blit_y = (rect[1] + ((rect[3] - rect[1]) // 2)) - (self.images[action["type"]].get_height() // 2)
+					blit_loc = (blit_x, blit_y)
+					self.screen.blit(self.images[action["type"]], blit_loc)
+					self.cursor.action = action
+					return True
+		self.cursor.action = None
+		return False
 
 	def demarc_nav_indicator(self):
 		"""
@@ -179,7 +199,11 @@ class App(object):
 				self.cursor.nav = "backward"
 		else:
 			self.cursor.nav = None
-		
+
+	def do_action(self):
+		if self.cursor.action["type"] == "look":
+			print(self.cursor.action["contents"])
+
 	def render(self):
 		"""
 		All drawing should be found here.
@@ -187,7 +211,8 @@ class App(object):
 		"""
 		self.screen.fill(pg.Color("black"))
 		self.screen.blit(self.world.room.image, (0,0))
-		self.demarc_nav_indicator()
+		if not self.demarc_action_indicator():
+			self.demarc_nav_indicator()
 		pg.display.update()
 
 	def main_loop(self):
