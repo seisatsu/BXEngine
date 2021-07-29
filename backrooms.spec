@@ -1,13 +1,20 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 
+import os
+import pygame_gui
+
+
+pygame_gui_path = os.path.dirname(pygame_gui.__file__).replace('\\', '/')
+print(pygame_gui_path)
+
 block_cipher = None
 
 
 a = Analysis(['backrooms.py'],
              pathex=['C:\\Users\\user\\Documents\\Share\\Backrooms'],
              binaries=[],
-             datas=[('images/*', 'images/'), ('test_world/*', 'test_world/'), ('c:/users/user/appdata/local/programs/python/python39/lib/site-packages/pygame_gui*', 'pygame_gui/')],
+             datas=[('images/*', 'images/'), ('test_world/*', 'test_world/'), (pygame_gui_path + '*', 'pygame_gui/')],
              hiddenimports=[],
              hookspath=[],
              hooksconfig={},
