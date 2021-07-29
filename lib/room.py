@@ -25,12 +25,6 @@
 # IN THE SOFTWARE.
 # **********
 
-import json
-
-import pygame
-
-from lib.util import resource_path
-
 
 class Room(object):
     """

@@ -25,8 +25,6 @@
 # IN THE SOFTWARE.
 # **********
 
-import json
-
 from lib.room import Room
 
 

@@ -32,7 +32,6 @@ Started from example code written by Sean J. McKiernan 'Mekire'
 * https://github.com/Mekire/pygame-samples/blob/master/drag_text.py
 """
 
-import json
 import os
 import sys
 
@@ -43,7 +42,6 @@ from lib.app import App
 from lib.logger import Logger
 from lib.resourcemanager import ResourceManager
 from lib.world import World
-from lib.util import resource_path
 
 VERSION = "Backrooms PreAlpha"
 
