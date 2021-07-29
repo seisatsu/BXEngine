@@ -48,35 +48,25 @@ from lib.util import resource_path
 VERSION = "Backrooms PreAlpha"
 
 
-def load_images(config):
+def load_images(config, resource):
     """
     We load the common images here that are needed by the rest of the engine.
     This includes navigation and action indicators.
     """
-    images = {"chevron_left": pygame.transform.scale(pygame.image.load(resource_path("images/chevron_left.png")),
-                                                     config["navigation"]["indicator_size"]),
-              "chevron_right": pygame.transform.scale(pygame.image.load(resource_path("images/chevron_right.png")),
-                                                      config["navigation"]["indicator_size"]),
-              "chevron_up": pygame.transform.scale(pygame.image.load(resource_path("images/chevron_up.png")),
-                                                   config["navigation"]["indicator_size"]),
-              "chevron_down": pygame.transform.scale(pygame.image.load(resource_path("images/chevron_down.png")),
-                                                     config["navigation"]["indicator_size"]),
-              "arrow_forward": pygame.transform.scale(pygame.image.load(resource_path("images/arrow_forward.png")),
-                                                      config["navigation"]["indicator_size"]),
-              "arrow_backward": pygame.transform.scale(pygame.image.load(resource_path("images/arrow_backward.png")),
-                                                       config["navigation"]["indicator_size"]),
-              "arrow_double": pygame.transform.scale(pygame.image.load(resource_path("images/arrow_double.png")),
-                                                     config["navigation"]["indicator_size"]),
-              "look": pygame.transform.scale(pygame.image.load(resource_path("images/look.png")),
-                                             config["navigation"]["indicator_size"]),
-              "use": pygame.transform.scale(pygame.image.load(resource_path("images/use.png")),
-                                            config["navigation"]["indicator_size"]),
-              "lookuse": pygame.transform.scale(pygame.image.load(resource_path("images/lookuse.png")),
-                                                config["navigation"]["indicator_size"]),
-              "go": pygame.transform.scale(pygame.image.load(resource_path("images/go.png")),
-                                           config["navigation"]["indicator_size"]),
-              "lookgo": pygame.transform.scale(pygame.image.load(resource_path("images/lookgo.png")),
-                                               config["navigation"]["indicator_size"])}
+    images = {
+        "chevron_left": resource.load_image("images/chevron_left.png", config["navigation"]["indicator_size"]),
+        "chevron_right": resource.load_image("images/chevron_right.png", config["navigation"]["indicator_size"]),
+        "chevron_up": resource.load_image("images/chevron_up.png", config["navigation"]["indicator_size"]),
+        "chevron_down": resource.load_image("images/chevron_down.png", config["navigation"]["indicator_size"]),
+        "arrow_forward": resource.load_image("images/arrow_forward.png", config["navigation"]["indicator_size"]),
+        "arrow_backward": resource.load_image("images/arrow_backward.png", config["navigation"]["indicator_size"]),
+        "arrow_double": resource.load_image("images/arrow_double.png", config["navigation"]["indicator_size"]),
+        "look": resource.load_image("images/look.png", config["navigation"]["indicator_size"]),
+        "use": resource.load_image("images/use.png", config["navigation"]["indicator_size"]),
+        "lookuse": resource.load_image("images/lookuse.png", config["navigation"]["indicator_size"]),
+        "go": resource.load_image("images/go.png", config["navigation"]["indicator_size"]),
+        "lookgo": resource.load_image("images/lookgo.png", config["navigation"]["indicator_size"])
+    }
     return images
 
 
@@ -93,8 +83,12 @@ def main():
     resource = ResourceManager()
 
     config = resource.load_initial_config("config.json")
-    images = load_images(config)
     log = Logger("bxengine")
+
+    images = load_images(config, resource)
+    if None in images.values():
+        log.critical("Unable to load required images")
+        sys.exit(4)
 
     pygame.display.set_caption(VERSION)
     pygame.display.set_mode(config["window"]["size"])

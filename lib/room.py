@@ -52,6 +52,6 @@ class Room(object):
         self.vars = self.resource.load_json("{0}/{1}".format(self.world.dir, self.file))
         if not self.vars:
             return False
-        self.image = pygame.transform.scale(pygame.image.load(
-            resource_path("{0}/{1}".format(self.world.dir, self.vars["image"]))), self.config["window"]["size"])
+        self.image = self.resource.load_image("{0}/{1}".format(self.world.dir, self.vars["image"]),
+                                              self.config["window"]["size"])
         return True

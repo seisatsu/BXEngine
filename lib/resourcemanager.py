@@ -29,8 +29,10 @@ import json
 import traceback
 import sys
 
-from lib.logger import timestamp
-from lib.logger import init, Logger
+import pygame
+
+from lib.logger import init, timestamp, Logger
+from lib.util import resource_path
 
 
 class ResourceManager(object):
@@ -102,3 +104,16 @@ class ResourceManager(object):
         #    self.logger.error("JSON schema validation error from defaults config file: {0}".format(filename))
         #    print(traceback.format_exc(1))
         #    return None
+
+    def load_image(self, filename, scale=None):
+        if filename in self.resources:
+            return self.resources[filename]
+        try:
+            if scale:
+                rsrc = pygame.transform.scale(pygame.image.load(resource_path(filename)), scale)
+            else:
+                rsrc = pygame.image.load(resource_path(filename))
+            self.resources[filename] = rsrc
+            return self.resources[filename]
+        except:
+            self.logger.error("Could not load image file: {0}".format(filename))
