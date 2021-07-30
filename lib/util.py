@@ -24,10 +24,3 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 # **********
-
-import os
-import sys
-
-
-def resource_path(relative_path):
-    return relative_path

@@ -32,7 +32,6 @@ import sys
 import pygame
 
 from lib.logger import init, timestamp, Logger
-from lib.util import resource_path
 
 
 class ResourceManager(object):
@@ -112,11 +111,11 @@ class ResourceManager(object):
             return self.resources[filename]
         try:
             if scale:
-                rsrc = pygame.transform.scale(pygame.image.load(resource_path(filename)), scale)
+                rsrc = pygame.transform.scale(pygame.image.load(filename), scale)
                 self.log.info("Loading image file: {0}, at scale: {1}".format(filename, scale))
             else:
                 self.log.info("Loading image file: {0}".format(filename))
-                rsrc = pygame.image.load(resource_path(filename))
+                rsrc = pygame.image.load(filename)
             self.resources[filename] = rsrc
             self.log.info("Finished loading image file: {0}".format(filename))
             return self.resources[filename]
