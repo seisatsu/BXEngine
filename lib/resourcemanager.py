@@ -65,7 +65,7 @@ class ResourceManager(object):
                 self.resources["filename"] = rsrc
                 self.config = rsrc
                 init(self.config)
-                self.logger = Logger("resource")
+                self.logger = Logger("Resource")
                 return self.config
         except (OSError, IOError):
             print("{0} [config#critical] Could not open bxengine config file: {1}".format(
@@ -117,3 +117,4 @@ class ResourceManager(object):
             return self.resources[filename]
         except:
             self.logger.error("Could not load image file: {0}".format(filename))
+            return None

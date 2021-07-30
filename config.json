@@ -17,7 +17,7 @@
 	},
 	"log": {
 		"wait_on_critical": true,
-		"level": "info",
+		"level": "debug",
 		"stdout": true,
 		"file": "bxengine.log"
 	}
