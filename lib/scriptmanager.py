@@ -47,7 +47,7 @@ class ScriptManager:
         """
         ScriptManager class initializer.
         """
-        self.logger = Logger("script")
+        self.log = Logger("script")
 
         # Dictionary of module instances mapped by filename.
         self.__modules = {}
@@ -60,9 +60,9 @@ class ScriptManager:
         if ret not in [None, False]:
             return ret
         elif ret is False:
-            self.logger.error("no such module: {0}".format(item))
+            self.log.error("no such module: {0}".format(item))
         else:
-            self.logger.error("error from module: {0}".format(item))
+            self.log.error("error from module: {0}".format(item))
         return None
 
     def call(self, filename: str, func: str, *args: Any) -> Any:
@@ -83,7 +83,7 @@ class ScriptManager:
         try:
             return getattr(self[filename], func)(*args)
         except:
-            self.logger.error("call: error from function: {0}: {1}\n{2}".format(filename, func + "()",
+            self.log.error("call: error from function: {0}: {1}\n{2}".format(filename, func + "()",
                                                                                 traceback.format_exc().rstrip()))
             return None
 
@@ -116,7 +116,7 @@ class ScriptManager:
             filename: Filename of the python script to load.
         """
         if not os.path.exists(filename):
-            self.logger.error("__load: no such script: {0}".format(filename))
+            self.log.error("__load: no such script: {0}".format(filename))
             return False
 
         mname = os.path.splitext(os.path.split(filename)[-1])[0]
@@ -128,9 +128,9 @@ class ScriptManager:
             spec.loader.exec_module(mod)
             self.__modules[filename] = mod
 
-            self.logger.info("loaded: {0}".format(filename))
+            self.log.info("loaded: {0}".format(filename))
             return True
 
         except:
-            self.logger.error("__load: error from script: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))
+            self.log.error("__load: error from script: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))
             return None

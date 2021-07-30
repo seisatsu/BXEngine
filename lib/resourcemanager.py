@@ -39,7 +39,7 @@ class ResourceManager(object):
     def __init__(self):
         self.resources = {}
         self.config = None
-        self.logger = None
+        self.log = None
 
     def __contains__(self, item):
         if item in self.resources:
@@ -65,7 +65,7 @@ class ResourceManager(object):
                 self.resources["filename"] = rsrc
                 self.config = rsrc
                 init(self.config)
-                self.logger = Logger("Resource")
+                self.log = Logger("Resource")
                 return self.config
         except (OSError, IOError):
             print("{0} [config#critical] Could not open bxengine config file: {1}".format(
@@ -87,21 +87,23 @@ class ResourceManager(object):
         if filename in self.resources:
             return self.resources[filename]
         try:
+            self.log.info("Loading JSON file: {0}".format(filename))
             with open(filename) as f:
                 rsrc = json.load(f)
                 # jsonschema.validate(self.config, schema["defaults"])
                 self.resources["filename"] = rsrc
+                self.log.info("Finished loading JSON file: {0}".format(filename))
                 return self.resources["filename"]
         except (OSError, IOError):
-            self.logger.error("Could not open JSON file: {0}".format(filename))
+            self.log.error("Could not open JSON file: {0}".format(filename))
             print(traceback.format_exc(1))
             return None
         except json.JSONDecodeError:
-            self.logger.error("JSON error from bxengine config file: {0}".format(filename))
+            self.log.error("JSON error from bxengine config file: {0}".format(filename))
             print(traceback.format_exc(1))
             return None
         #except jsonschema.ValidationError:
-        #    self.logger.error("JSON schema validation error from defaults config file: {0}".format(filename))
+        #    self.log.error("JSON schema validation error from defaults config file: {0}".format(filename))
         #    print(traceback.format_exc(1))
         #    return None
 
@@ -111,10 +113,13 @@ class ResourceManager(object):
         try:
             if scale:
                 rsrc = pygame.transform.scale(pygame.image.load(resource_path(filename)), scale)
+                self.log.info("Loading image file: {0}, at scale: {1}".format(filename, scale))
             else:
+                self.log.info("Loading image file: {0}".format(filename))
                 rsrc = pygame.image.load(resource_path(filename))
             self.resources[filename] = rsrc
+            self.log.info("Finished loading image file: {0}".format(filename))
             return self.resources[filename]
         except:
-            self.logger.error("Could not load image file: {0}".format(filename))
+            self.log.error("Could not load image file: {0}".format(filename))
             return None

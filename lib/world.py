@@ -40,7 +40,7 @@ class World(object):
         self.vars = None
         self.room = None
         self.resource = resource
-        self.logger = Logger("World")
+        self.log = Logger("World")
 
     def load(self):
         """
@@ -48,9 +48,9 @@ class World(object):
         """
         self.vars = self.resource.load_json("{0}/world.json".format(self.dir))
         if not self.vars:
-            self.logger.critical("Unable to load game world: {0}".format(self.config["world"]))
+            self.log.critical("Unable to load game world: {0}".format(self.config["world"]))
             return False
-        self.logger.info("Finished loading game world: {0}".format(self.config["world"]))
+        self.log.info("Finished loading game world: {0}".format(self.config["world"]))
         return self.change_room(self.vars["first_room"])
 
     def navigate(self, direction):
@@ -59,7 +59,7 @@ class World(object):
         """
         if direction in self.room.vars["exits"]:
             return self.change_room(self.room.vars["exits"][direction])
-        self.logger.warn("Attempt to navigate through non-existent exit: {0}".format(direction))
+        self.log.warn("Attempt to navigate through non-existent exit: {0}".format(direction))
 
     def change_room(self, room_file):
         """

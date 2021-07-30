@@ -55,7 +55,7 @@ class App(object):
         self.resource = resource
         self.text_dialog = None
         self.vars = {}
-        self.logger = Logger("App")
+        self.log = Logger("App")
 
     def event_loop(self):
         """
@@ -72,14 +72,14 @@ class App(object):
                 elif self.cursor.nav:
                     self.cursor.last_click = self.cursor.nav
                 if event.button == 1:
-                    self.logger.debug("LEFT MOUSE BUTTON DOWN")
+                    self.log.debug("LEFT MOUSE BUTTON DOWN")
                 elif event.button == 3:
-                    self.logger.debug("RIGHT MOUSE BUTTON DOWN")
+                    self.log.debug("RIGHT MOUSE BUTTON DOWN")
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 self.cursor.click = False
                 if self.cursor.action and id(self.cursor.action) == self.cursor.last_click:
                     # A complete click has happened on an action zone.
-                    self.logger.debug("FULL LEFT CLICK IN ACTION ZONE")
+                    self.log.debug("FULL LEFT CLICK IN ACTION ZONE")
                     if "look" in self.cursor.action:
                         self.do_action("look")
                     elif "use" in self.cursor.action:
@@ -88,7 +88,7 @@ class App(object):
                         self.do_action("go")
                 elif self.cursor.nav and self.cursor.nav == self.cursor.last_click:
                     # A complete click has happened on a navigation indicator.
-                    self.logger.debug("FULL LEFT CLICK IN NAV REGION: {0}".format(self.cursor.nav))
+                    self.log.debug("FULL LEFT CLICK IN NAV REGION: {0}".format(self.cursor.nav))
                     if self.cursor.nav == "double":
                         self.world.navigate("forward")
                     else:
@@ -103,14 +103,14 @@ class App(object):
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 3:
                 self.cursor.click = False
                 if self.cursor.action and id(self.cursor.action) == self.cursor.last_click:
-                    self.logger.debug("FULL RIGHT CLICK IN ACTION ZONE")
+                    self.log.debug("FULL RIGHT CLICK IN ACTION ZONE")
                     if "use" in self.cursor.action:
                         self.do_action("use")
                     elif "go" in self.cursor.action:
                         self.do_action("go")
                 elif self.cursor.nav in ["backward", "double"] and self.cursor.nav == self.cursor.last_click:
                     # We have right clicked on a backward or double arrow; attempt to go backward.
-                    self.logger.debug("FULL RIGHT CLICK IN NAV REGION: {0}".format(self.cursor.nav))
+                    self.log.debug("FULL RIGHT CLICK IN NAV REGION: {0}".format(self.cursor.nav))
                     self.world.navigate("backward")
                     if self.text_dialog:
                         self.text_dialog.kill()
@@ -225,7 +225,7 @@ class App(object):
         wsize = self.config["window"]["size"]
 
         if self.cursor.action[act_type]["result"] == "text":
-            self.logger.debug("ACTION TEXT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
+            self.log.debug("ACTION TEXT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
             if self.text_dialog:
                 self.text_dialog.kill()
                 self.text_dialog = None
@@ -237,7 +237,7 @@ class App(object):
             self.text_dialog = pygame_gui.elements.ui_text_box.UITextBox(self.cursor.action[act_type]["contents"],
                                                                          gui_rect, self.gui)
         elif self.cursor.action[act_type]["result"] == "exit":
-            self.logger.debug("ACTION EXIT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
+            self.log.debug("ACTION EXIT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
             self.world.change_room(self.cursor.action[act_type]["contents"])
 
     def render(self):
@@ -257,7 +257,7 @@ class App(object):
         This is the game loop for the entire program.
         Like the event_loop, there should not be more than one game_loop.
         """
-        self.logger.info("Entering main loop.")
+        self.log.info("Entering main loop.")
         while not self.done:
             self.event_loop()
             self.render()

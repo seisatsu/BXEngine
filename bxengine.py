@@ -39,11 +39,11 @@ import pygame
 import pygame_gui
 
 from lib.app import App
-from lib.logger import Logger
+from lib.logger import Logger, timestamp
 from lib.resourcemanager import ResourceManager
 from lib.world import World
 
-VERSION = "Backrooms PreAlpha"
+VERSION = "BXEngine PreAlpha"
 
 
 def load_images(config, resource):
@@ -80,6 +80,7 @@ def main():
 
     resource = ResourceManager()
 
+    print("Loading configuration...")
     config = resource.load_initial_config("config.json")
     logger = Logger("BXEngine")
 
