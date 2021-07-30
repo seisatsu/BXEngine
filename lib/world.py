@@ -25,6 +25,8 @@
 # IN THE SOFTWARE.
 # **********
 
+import pygame
+
 from lib.logger import Logger
 from lib.room import Room
 
@@ -50,7 +52,8 @@ class World(object):
         if not self.vars:
             self.log.critical("Unable to load game world: {0}".format(self.config["world"]))
             return False
-        self.log.info("Finished loading game world: {0}".format(self.config["world"]))
+        self.log.info("Finished loading game world: {0} ({1})".format(self.config["world"], self.vars["name"]))
+        pygame.display.set_caption(self.vars["name"])
         return self.change_room(self.vars["first_room"])
 
     def navigate(self, direction):
