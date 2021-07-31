@@ -30,6 +30,7 @@ import pygame_gui
 
 from lib.cursor import Cursor
 from lib.logger import Logger
+from lib.scriptmanager import ScriptManager
 
 
 class App(object):
@@ -56,8 +57,9 @@ class App(object):
         self.text_dialog = None
         self.vars = {}
         self.log = Logger("App")
+        self.script = ScriptManager(self, self.cursor, self.resource, self.world)
 
-    def event_loop(self):
+    def __event_loop(self):
         """
         This is the event loop for the whole program.
         We handle clicks and navigation and cleaning up UI elements here.
@@ -81,11 +83,11 @@ class App(object):
                     # A complete click has happened on an action zone.
                     self.log.debug("FULL LEFT CLICK IN ACTION ZONE")
                     if "look" in self.cursor.action:
-                        self.do_action("look")
+                        self.__do_action("look")
                     elif "use" in self.cursor.action:
-                        self.do_action("use")
+                        self.__do_action("use")
                     elif "go" in self.cursor.action:
-                        self.do_action("go")
+                        self.__do_action("go")
                 elif self.cursor.nav and self.cursor.nav == self.cursor.last_click:
                     # A complete click has happened on a navigation indicator.
                     self.log.debug("FULL LEFT CLICK IN NAV REGION: {0}".format(self.cursor.nav))
@@ -105,9 +107,9 @@ class App(object):
                 if self.cursor.action and id(self.cursor.action) == self.cursor.last_click:
                     self.log.debug("FULL RIGHT CLICK IN ACTION ZONE")
                     if "use" in self.cursor.action:
-                        self.do_action("use")
+                        self.__do_action("use")
                     elif "go" in self.cursor.action:
-                        self.do_action("go")
+                        self.__do_action("go")
                 elif self.cursor.nav in ["backward", "double"] and self.cursor.nav == self.cursor.last_click:
                     # We have right clicked on a backward or double arrow; attempt to go backward.
                     self.log.debug("FULL RIGHT CLICK IN NAV REGION: {0}".format(self.cursor.nav))
@@ -123,7 +125,7 @@ class App(object):
                 self.keys = pygame.key.get_pressed()
             self.gui.process_events(event)
 
-    def demarc_action_indicator(self):
+    def __demarc_action_indicator(self):
         """
         This is a method to demarcate an appropriate action indicator.
         For each action enumerated in the room, it figures out whether our cursor is in that action's region,
@@ -156,7 +158,7 @@ class App(object):
         self.cursor.action = None
         return False
 
-    def demarc_nav_indicator(self):
+    def __demarc_nav_indicator(self):
         """
         This is a method to demarcate an appropriate navigation indicator.
         It does some irritating math to figure out if our cursor is in a region where a click would trigger navigation,
@@ -218,7 +220,7 @@ class App(object):
         else:
             self.cursor.nav = None
 
-    def do_action(self, act_type):
+    def __do_action(self, act_type):
         """
         Perform a room action, possibly creating a UI element.
         """
@@ -239,28 +241,33 @@ class App(object):
         elif self.cursor.action[act_type]["result"] == "exit":
             self.log.debug("ACTION EXIT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
             self.world.change_room(self.cursor.action[act_type]["contents"])
+        elif self.cursor.action[act_type]["result"] == "script":
+            self.log.debug("ACTION SCRIPT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
+            script_result_split = self.cursor.action[act_type]["contents"].split(':')
+            script_result_args = script_result_split[1].split(',')
+            self.script.call(script_result_split[0], *script_result_args)
 
-    def render(self):
+    def __render(self):
         """
         All drawing should be found here.
         This is the only place that pygame.display.update() should be found.
         """
         self.screen.fill(pygame.Color("black"))
         self.screen.blit(self.world.room.image, (0, 0))
-        if not self.demarc_action_indicator():
-            self.demarc_nav_indicator()
+        if not self.__demarc_action_indicator():
+            self.__demarc_nav_indicator()
         self.gui.draw_ui(self.screen)
         pygame.display.update()
 
-    def main_loop(self):
+    def _main_loop(self):
         """
         This is the game loop for the entire program.
         Like the event_loop, there should not be more than one game_loop.
         """
         self.log.info("Entering main loop.")
         while not self.done:
-            self.event_loop()
-            self.render()
+            self.__event_loop()
+            self.__render()
             time_delta = self.clock.tick(self.fps) / 1000.0
-            self.cursor.update()
+            self.cursor._update()
             self.gui.update(time_delta)

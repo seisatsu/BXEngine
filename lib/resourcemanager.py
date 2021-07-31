@@ -54,7 +54,7 @@ class ResourceManager(object):
     #def load_schema(self):
     #    pass
 
-    def load_initial_config(self, filename):
+    def _load_initial_config(self, filename):
         if self.config:
             return self.config
         try:

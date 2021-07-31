@@ -69,7 +69,7 @@ class World(object):
         Change rooms by room descriptor filename.
         """
         self.room = Room(self.config, self, self.resource, room_file)
-        self.room.load()
+        self.room._load()
         if not self.room.vars:
             return False
         return True

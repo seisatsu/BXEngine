@@ -1,6 +1,6 @@
 #####################
 # BXEngine          #
-# cursor.py         #
+# apicontext.py     #
 # Copyright 2021    #
 # Michael D. Reiley #
 #####################
@@ -25,23 +25,20 @@
 # IN THE SOFTWARE.
 # **********
 
-import pygame
+from lib.logger import Logger
 
 
-class Cursor(object):
+class APIContext(object):
     """
-    A class to represent our cursor.
+    An instance of this class is given to each event script as an access point to the engine API.
     """
-
-    def __init__(self):
-        self.click = False
-        self.last_click = None
-        self.pos = [0, 0]
-        self.nav = None
-        self.action = None
-
-    def _update(self):
-        """
-        Update the cursor position.
-        """
-        self.pos = pygame.mouse.get_pos()
+    def __init__(self, filename, app, cursor, resource, script, world):
+        self.this = filename
+        self.app = app
+        self.cursor = cursor
+        self.log = Logger(filename)
+        self.resource = resource
+        self.room = world.room
+        self.script = script
+        self.world = world
+        self.vars = app.vars

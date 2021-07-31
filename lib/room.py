@@ -42,7 +42,7 @@ class Room(object):
         self.image = None
         self.log = Logger("Room")
 
-    def load(self):
+    def _load(self):
         """
         Load the room descriptor JSON file. Also load the room image.
         """

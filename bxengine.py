@@ -81,27 +81,27 @@ def main():
     resource = ResourceManager()
 
     print("Loading configuration...")
-    config = resource.load_initial_config("config.json")
-    logger = Logger("BXEngine")
+    config = resource._load_initial_config("config.json")
+    log = Logger("BXEngine")
 
-    logger.info("Loading required images...")
+    log.info("Loading required images...")
     images = load_images(config, resource)
     if None in images.values():
-        logger.critical("Unable to load required images.")
+        log.critical("Unable to load required images.")
         sys.exit(4)
-    logger.info("Finished loading required images.")
+    log.info("Finished loading required images.")
 
     pygame.display.set_caption(VERSION)
     pygame.display.set_mode(config["window"]["size"])
     gui = pygame_gui.UIManager(config["window"]["size"])
 
-    logger.info("Initializing game world...")
+    log.info("Initializing game world...")
     world = World(config, resource)
     if not world.load():
         sys.exit(5)
 
-    App(config, images, world, gui, resource).main_loop()
-    logger.info("Shutting down...")
+    App(config, images, world, gui, resource)._main_loop()
+    log.info("Shutting down...")
     pygame.quit()
     sys.exit()
 
