@@ -8,8 +8,12 @@
 		{
 			"rect": [750, 250, 800, 310],
 			"look": {
-				"result": "text",
-				"contents": "There is a sculpture of a humanoid figure."
+				"result": "look",
+				"contents": "There is some kind of humanoid figure here."
+			},
+			"use": {
+				"result": "script",
+				"contents": "test.py:test_func,5,wow test"
 			}
 		},
 		{

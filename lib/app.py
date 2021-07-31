@@ -243,9 +243,13 @@ class App(object):
             self.world.change_room(self.cursor.action[act_type]["contents"])
         elif self.cursor.action[act_type]["result"] == "script":
             self.log.debug("ACTION SCRIPT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
-            script_result_split = self.cursor.action[act_type]["contents"].split(':')
-            script_result_args = script_result_split[1].split(',')
-            self.script.call(script_result_split[0], *script_result_args)
+            try:
+                script_result_split = self.cursor.action[act_type]["contents"].split(':')
+                script_result_args = script_result_split[1].split(',')
+            except IndexError:
+                self.log.error("Malformed script result contents: {0}".format(self.cursor.action[act_type]["contents"]))
+            else:
+                self.script.call(script_result_split[0], *script_result_args)
 
     def __render(self):
         """

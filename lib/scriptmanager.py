@@ -87,6 +87,9 @@ class ScriptManager:
         """
         try:
             return getattr(self[filename], func)(*args)
+        except AttributeError:
+            self.log.error("call: module not loaded for call: {0}: {1}".format(filename, func + "()"))
+            return None
         except:
             self.log.error("call: error from function: {0}: {1}\n{2}".format(filename, func + "()",
                                                                                 traceback.format_exc().rstrip()))
@@ -120,22 +123,23 @@ class ScriptManager:
         Args:
             filename: Filename of the python script to load.
         """
-        if not os.path.exists(filename):
-            self.log.error("__load: no such script: {0}".format(filename))
+        fullpath = "{0}/{1}".format(self.world.dir,filename)
+        if not os.path.exists(fullpath):
+            self.log.error("__load: no such script: {0}".format(fullpath))
             return False
 
         mname = os.path.splitext(os.path.split(filename)[-1])[0]
 
         try:
             # Build the module.
-            spec = importlib.util.spec_from_file_location(mname, filename)
+            spec = importlib.util.spec_from_file_location(mname, fullpath)
             mod = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(mod)
             self.__modules[filename] = mod
             self.__modules[filename].BXE = APIContext(filename, self.app, self.cursor, self.resource, self, self.world)
 
             self.log.info("loaded: {0}".format(filename))
-            return True
+            return self.__modules[filename]
 
         except:
             self.log.error("__load: error from script: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))
