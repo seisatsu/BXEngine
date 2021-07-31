@@ -39,8 +39,9 @@ import pygame
 import pygame_gui
 
 from lib.app import App
-from lib.logger import Logger, timestamp
+from lib.logger import Logger
 from lib.resourcemanager import ResourceManager
+from lib.ui import UI
 from lib.world import World
 
 VERSION = "BXEngine PreAlpha"
@@ -93,14 +94,15 @@ def main():
 
     pygame.display.set_caption(VERSION)
     pygame.display.set_mode(config["window"]["size"])
-    gui = pygame_gui.UIManager(config["window"]["size"])
+    screen = pygame.display.get_surface()
+    ui = UI(config, screen, )
 
     log.info("Initializing game world...")
     world = World(config, resource)
     if not world.load():
         sys.exit(5)
 
-    App(config, images, world, gui, resource)._main_loop()
+    App(screen, config, images, world, ui, resource)._main_loop()
     log.info("Shutting down...")
     pygame.quit()
     sys.exit()

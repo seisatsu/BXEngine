@@ -44,7 +44,7 @@ class ScriptManager:
         driftwood: Base class instance.
     """
 
-    def __init__(self, app, cursor, resource, world):
+    def __init__(self, app, cursor, resource, ui, world):
         """
         ScriptManager class initializer.
         """
@@ -52,6 +52,7 @@ class ScriptManager:
         self.app = app
         self.cursor = cursor
         self.resource = resource
+        self.ui = ui
         self.world = world
 
         # Dictionary of module instances mapped by filename.
@@ -136,7 +137,8 @@ class ScriptManager:
             mod = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(mod)
             self.__modules[filename] = mod
-            self.__modules[filename].BXE = APIContext(filename, self.app, self.cursor, self.resource, self, self.world)
+            self.__modules[filename].BXE = APIContext(filename, self.app, self.cursor, self.resource, self, self.ui,
+                                                      self.world)
 
             self.log.info("loaded: {0}".format(filename))
             return self.__modules[filename]

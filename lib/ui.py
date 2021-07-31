@@ -1,6 +1,6 @@
 #####################
 # BXEngine          #
-# apicontext.py     #
+# ui.py             #
 # Copyright 2021    #
 # Michael D. Reiley #
 #####################
@@ -25,21 +25,36 @@
 # IN THE SOFTWARE.
 # **********
 
-from lib.logger import Logger
+import pygame
+import pygame_gui
 
 
-class APIContext(object):
-    """
-    An instance of this class is given to each event script as an access point to the engine API.
-    """
-    def __init__(self, filename, app, cursor, resource, script, ui, world):
-        self.this = filename
-        self.app = app
-        self.cursor = cursor
-        self.log = Logger(filename)
-        self.resource = resource
-        self.room = world.room
-        self.script = script
-        self.world = world
-        self.ui = ui
-        self.vars = app.vars
+class UI(object):
+    def __init__(self, config, screen):
+        self.config = config
+        self.screen = screen
+        self.pgui = pygame_gui.UIManager(self.config["window"]["size"])
+        self.curr_dialog = None
+
+    def _process_events(self, event):
+        self.pgui.process_events(event)
+
+    def _draw_ui(self):
+        self.pgui.draw_ui(self.screen)
+
+    def _update(self, time_delta):
+        self.pgui.update(time_delta)
+
+    def text_box(self, contents):
+        wsize = self.config["window"]["size"]
+        gui_rect = pygame.Rect(self.config["gui"]["textbox_margin_sides"],
+                               wsize[1] - self.config["gui"]["textbox_margin_bottom"] -
+                               self.config["gui"]["textbox_height"],
+                               wsize[0] - self.config["gui"]["textbox_margin_sides"] * 2,
+                               self.config["gui"]["textbox_height"])
+        self.curr_dialog = pygame_gui.elements.ui_text_box.UITextBox(contents, gui_rect, self.pgui)
+
+    def reset(self):
+        if self.curr_dialog:
+            self.curr_dialog.kill()
+            self.curr_dialog = None

@@ -26,7 +26,6 @@
 # **********
 
 import pygame
-import pygame_gui
 
 from lib.cursor import Cursor
 from lib.logger import Logger
@@ -38,11 +37,11 @@ class App(object):
     A class to manage our event, game loop, and overall program flow.
     """
 
-    def __init__(self, config, images, world, gui, resource):
+    def __init__(self, screen, config, images, world, ui, resource):
         """
         Get a reference to the screen (created in main); define necessary attributes.
         """
-        self.screen = pygame.display.get_surface()
+        self.screen = screen
         self.screen_rect = self.screen.get_rect()
         self.clock = pygame.time.Clock()
         self.fps = 60
@@ -52,12 +51,11 @@ class App(object):
         self.config = config
         self.images = images
         self.world = world
-        self.gui = gui
+        self.ui = ui
         self.resource = resource
-        self.text_dialog = None
         self.vars = {}
         self.log = Logger("App")
-        self.script = ScriptManager(self, self.cursor, self.resource, self.world)
+        self.script = ScriptManager(self, self.cursor, self.resource, self.ui, self.world)
 
     def __event_loop(self):
         """
@@ -95,13 +93,9 @@ class App(object):
                         self.world.navigate("forward")
                     else:
                         self.world.navigate(self.cursor.nav)
-                    if self.text_dialog:
-                        self.text_dialog.kill()
-                        self.text_dialog = None
+                    self.ui.reset()
                 elif self.cursor.pos:
-                    if self.text_dialog:
-                        self.text_dialog.kill()
-                        self.text_dialog = None
+                    self.ui.reset()
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 3:
                 self.cursor.click = False
                 if self.cursor.action and id(self.cursor.action) == self.cursor.last_click:
@@ -114,16 +108,12 @@ class App(object):
                     # We have right clicked on a backward or double arrow; attempt to go backward.
                     self.log.debug("FULL RIGHT CLICK IN NAV REGION: {0}".format(self.cursor.nav))
                     self.world.navigate("backward")
-                    if self.text_dialog:
-                        self.text_dialog.kill()
-                        self.text_dialog = None
+                    self.ui.reset()
                 elif self.cursor.pos:
-                    if self.text_dialog:
-                        self.text_dialog.kill()
-                        self.text_dialog = None
+                    self.ui.reset()
             elif event.type in (pygame.KEYUP, pygame.KEYDOWN):
                 self.keys = pygame.key.get_pressed()
-            self.gui.process_events(event)
+            self.ui._process_events(event)
 
     def __demarc_action_indicator(self):
         """
@@ -228,16 +218,8 @@ class App(object):
 
         if self.cursor.action[act_type]["result"] == "text":
             self.log.debug("ACTION TEXT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
-            if self.text_dialog:
-                self.text_dialog.kill()
-                self.text_dialog = None
-            gui_rect = pygame.Rect(self.config["gui"]["textbox_margin_sides"],
-                                   wsize[1] - self.config["gui"]["textbox_margin_bottom"] -
-                                   self.config["gui"]["textbox_height"],
-                                   wsize[0] - self.config["gui"]["textbox_margin_sides"] * 2,
-                                   self.config["gui"]["textbox_height"])
-            self.text_dialog = pygame_gui.elements.ui_text_box.UITextBox(self.cursor.action[act_type]["contents"],
-                                                                         gui_rect, self.gui)
+            self.ui.reset()
+            self.ui.text_box(self.cursor.action[act_type]["contents"])
         elif self.cursor.action[act_type]["result"] == "exit":
             self.log.debug("ACTION EXIT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
             self.world.change_room(self.cursor.action[act_type]["contents"])
@@ -260,7 +242,7 @@ class App(object):
         self.screen.blit(self.world.room.image, (0, 0))
         if not self.__demarc_action_indicator():
             self.__demarc_nav_indicator()
-        self.gui.draw_ui(self.screen)
+        self.ui._draw_ui()
         pygame.display.update()
 
     def _main_loop(self):
@@ -274,4 +256,4 @@ class App(object):
             self.__render()
             time_delta = self.clock.tick(self.fps) / 1000.0
             self.cursor._update()
-            self.gui.update(time_delta)
+            self.ui._update(time_delta)
