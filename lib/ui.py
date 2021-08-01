@@ -30,8 +30,10 @@ import pygame_gui
 
 
 class UI(object):
-    def __init__(self, config, screen):
+    def __init__(self, config, clock, fps, screen):
         self.config = config
+        self.clock = clock
+        self.fps = fps
         self.screen = screen
         self.pgui = pygame_gui.UIManager(self.config["window"]["size"])
         self.curr_dialog = None
@@ -42,8 +44,13 @@ class UI(object):
     def _draw_ui(self):
         self.pgui.draw_ui(self.screen)
 
-    def _update(self, time_delta: float):
-        self.pgui.update(time_delta)
+    def _update(self):
+        self.pgui.update(self.clock.tick(self.fps) / 1000.0)
+
+    def _refresh(self):
+        self._update()
+        self._draw_ui()
+        pygame.display.update()
 
     def text_box(self, contents: str):
         wsize = self.config["window"]["size"]
@@ -53,6 +60,7 @@ class UI(object):
                                wsize[0] - self.config["gui"]["textbox_margin_sides"] * 2,
                                self.config["gui"]["textbox_height"])
         self.curr_dialog = pygame_gui.elements.ui_text_box.UITextBox(contents, gui_rect, self.pgui)
+        self._refresh()
 
     def reset(self):
         if self.curr_dialog:

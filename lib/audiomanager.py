@@ -51,7 +51,6 @@ class AudioManager:
         self.playing_music = False
         self.playing_sfx = False
 
-        self.__music = None
         self.__sfx = {}  # self.__sfx[id(Channel)] = {channel: pygame.mixer.Channel, filename: str}
         self.__iter_lock = False
 
@@ -222,7 +221,8 @@ class AudioManager:
             True if succeeded, False if failed.
         """
         # Stop and unload any previously loaded music.
-        self.stop_music()
+        if self.playing_music:
+            self.stop_music()
 
         filename = normalize_path(filename)
         if filename.startswith("$COMMON$/"):
@@ -274,7 +274,7 @@ class AudioManager:
         Returns:
             True if succeeded, False if failed.
         """
-        if not self.__music:
+        if not self.playing_music:
             self.log.warn("stop_music: no music currently playing")
             return False
 
@@ -282,7 +282,6 @@ class AudioManager:
             if not fade:  # Stop the music.
                 pygame.mixer.music.stop()
                 pygame.mixer.music.unload()
-                self.__music = None
                 self.playing_music = False
             else:  # Fade out the music.
                 pygame.mixer.music.fadeout(fade)
@@ -292,9 +291,8 @@ class AudioManager:
 
     def _cleanup(self) -> None:
         # Tick callback to clean up files we're done with.
-        if self.__music and not pygame.mixer.music.get_busy():
+        if self.playing_music and not pygame.mixer.music.get_busy():
             pygame.mixer.music.unload()
-            self.__music = None
             self.playing_music = False
         try:
             if not len(self.__sfx):

@@ -31,6 +31,7 @@ from lib.audiomanager import AudioManager
 from lib.cursor import Cursor
 from lib.logger import Logger
 from lib.scriptmanager import ScriptManager
+from lib.ui import UI
 
 
 class App(object):
@@ -38,7 +39,7 @@ class App(object):
     A class to manage our event, game loop, and overall program flow.
     """
 
-    def __init__(self, screen, config, images, world, ui, resource):
+    def __init__(self, screen, config, images, world, resource):
         """
         Get a reference to the screen (created in main); define necessary attributes.
         """
@@ -53,7 +54,7 @@ class App(object):
         self.images = images
         self.audio = AudioManager(self.config)
         self.world = world
-        self.ui = ui
+        self.ui = UI(config, self.clock, self.fps, self.screen)
         self.resource = resource
         self.vars = {}
         self.log = Logger("App")
@@ -256,7 +257,6 @@ class App(object):
         while not self.done:
             self.__event_loop()
             self.__render()
-            time_delta = self.clock.tick(self.fps) / 1000.0
             self.cursor._update()
-            self.ui._update(time_delta)
+            self.ui._update()
             self.audio._cleanup()
