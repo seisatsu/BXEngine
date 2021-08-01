@@ -52,21 +52,20 @@ def load_images(config, resource):
     We load the common images here that are needed by the rest of the engine.
     This includes navigation and action indicators.
     """
-    images = {
-        "chevron_left": resource.load_image("images/chevron_left.png", config["navigation"]["indicator_size"]),
-        "chevron_right": resource.load_image("images/chevron_right.png", config["navigation"]["indicator_size"]),
-        "chevron_up": resource.load_image("images/chevron_up.png", config["navigation"]["indicator_size"]),
-        "chevron_down": resource.load_image("images/chevron_down.png", config["navigation"]["indicator_size"]),
-        "arrow_forward": resource.load_image("images/arrow_forward.png", config["navigation"]["indicator_size"]),
-        "arrow_backward": resource.load_image("images/arrow_backward.png", config["navigation"]["indicator_size"]),
-        "arrow_double": resource.load_image("images/arrow_double.png", config["navigation"]["indicator_size"]),
-        "look": resource.load_image("images/look.png", config["navigation"]["indicator_size"]),
-        "use": resource.load_image("images/use.png", config["navigation"]["indicator_size"]),
-        "lookuse": resource.load_image("images/lookuse.png", config["navigation"]["indicator_size"]),
-        "go": resource.load_image("images/go.png", config["navigation"]["indicator_size"]),
-        "lookgo": resource.load_image("images/lookgo.png", config["navigation"]["indicator_size"])
+    return {
+        "chevron_left": resource.load_image("common/chevron_left.png", config["navigation"]["indicator_size"]),
+        "chevron_right": resource.load_image("common/chevron_right.png", config["navigation"]["indicator_size"]),
+        "chevron_up": resource.load_image("common/chevron_up.png", config["navigation"]["indicator_size"]),
+        "chevron_down": resource.load_image("common/chevron_down.png", config["navigation"]["indicator_size"]),
+        "arrow_forward": resource.load_image("common/arrow_forward.png", config["navigation"]["indicator_size"]),
+        "arrow_backward": resource.load_image("common/arrow_backward.png", config["navigation"]["indicator_size"]),
+        "arrow_double": resource.load_image("common/arrow_double.png", config["navigation"]["indicator_size"]),
+        "look": resource.load_image("common/look.png", config["navigation"]["indicator_size"]),
+        "use": resource.load_image("common/use.png", config["navigation"]["indicator_size"]),
+        "lookuse": resource.load_image("common/lookuse.png", config["navigation"]["indicator_size"]),
+        "go": resource.load_image("common/go.png", config["navigation"]["indicator_size"]),
+        "lookgo": resource.load_image("common/lookgo.png", config["navigation"]["indicator_size"])
     }
-    return images
 
 
 def main():
