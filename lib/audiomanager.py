@@ -30,6 +30,7 @@ from typing import Optional
 import pygame
 
 from lib.logger import Logger
+from lib.util import normalize_path
 
 
 class AudioManager:
@@ -52,6 +53,7 @@ class AudioManager:
 
         self.__music = None
         self.__sfx = {}  # self.__sfx[id(Channel)] = {channel: pygame.mixer.Channel, filename: str}
+        self.__iter_lock = False
 
         pygame.mixer.init()
         self.log.info("Initialized audio mixer.")
@@ -69,7 +71,12 @@ class AudioManager:
         Returns:
             Channel number if succeeded, None if failed.
         """
-        sfx_temp = pygame.mixer.Sound(filename)
+        filename = normalize_path(filename)
+        if filename.startswith("$COMMON$/"):
+            fullpath = "{0}/{1}".format("common", filename.split('/', 1)[1])
+        else:
+            fullpath = "{0}/{1}".format(self.config["world"], filename)
+        sfx_temp = pygame.mixer.Sound(fullpath)
         if volume:
             sfx_temp.set_volume(volume)
         else:
@@ -105,8 +112,10 @@ class AudioManager:
             if channel_id in self.__sfx:
                 return self.__sfx[channel_id]["channel"].get_volume()
         elif channel_id is None and volume is not None:
-            for chtmp in self.__sfx.values():
-                chtmp["channel"].set_volume(volume)
+            self.__iter_lock = True
+            for chtmp in self.__sfx:
+                self.__sfx[chtmp]["channel"].set_volume(volume)
+            self.__iter_lock = False
             return volume
         else:
             self.log.error("volume_sfx: sound and volume cannot both be None.")
@@ -123,6 +132,7 @@ class AudioManager:
             Integer volume if succeeded, None if failed.
         """
         result = None
+        self.__iter_lock = True
         for channel_id in self.__sfx:
             if self.__sfx[channel_id]["filename"] == filename:
                 if volume is not None:
@@ -130,6 +140,7 @@ class AudioManager:
                     result = volume
                 else:
                     return self.__sfx[channel_id]["channel"].get_volume()
+        self.__iter_lock = False
         if result:
             return result
         self.log.warn("volume_sfx_by_filename: no sound with this filename currently playing: {0}".format(filename))
@@ -169,6 +180,7 @@ class AudioManager:
             True if succeeded, false if failed.
         """
         result = False
+        self.__iter_lock = True
         for channel_id in self.__sfx:
             if self.__sfx[channel_id]["filename"] == filename:
                 if fade:
@@ -177,6 +189,7 @@ class AudioManager:
                     self.__sfx[channel_id]["channel"].stop()
                     del self.__sfx[channel_id]
                 result = True
+        self.__iter_lock = False
 
         if not result:
             self.log.warn("stop_sfx_by_filename: cannot stop nonexistent instances of sfx: {0}".format(filename))
@@ -188,8 +201,11 @@ class AudioManager:
         Returns:
             True
         """
-        for sfx in self.__sfx:
+        self.__iter_lock = True
+        sfx_temp = self.__sfx.copy()
+        for sfx in sfx_temp:
             self.stop_sfx(sfx)
+        self.__iter_lock = False
         self.__sfx = {}
         return True
 
@@ -208,7 +224,13 @@ class AudioManager:
         # Stop and unload any previously loaded music.
         self.stop_music()
 
-        pygame.mixer.music.load(filename)
+        filename = normalize_path(filename)
+        if filename.startswith("$COMMON$/"):
+            fullpath = "{0}/{1}".format("common", filename.split('/', 1)[1])
+        else:
+            fullpath = "{0}/{1}".format(self.config["world"], filename)
+
+        pygame.mixer.music.load(fullpath)
 
         if loop is None:
             loop = -1
@@ -268,7 +290,7 @@ class AudioManager:
 
         return True
 
-    def _cleanup(self, seconds_past: float) -> None:
+    def _cleanup(self) -> None:
         # Tick callback to clean up files we're done with.
         if self.__music and not pygame.mixer.music.get_busy():
             pygame.mixer.music.unload()
@@ -280,6 +302,7 @@ class AudioManager:
             else:
                 for sfx in self.__sfx:
                     if not self.__sfx[sfx]["channel"].get_busy():
-                        del self.__sfx[sfx]
+                        if not self.__iter_lock:
+                            del self.__sfx[sfx]
         except RuntimeError:
             pass

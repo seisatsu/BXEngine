@@ -13,6 +13,9 @@ Go Icon
 * https://thenounproject.com/term/footsteps/863315/
 * footsteps by b farias from the Noun Project
 
+Beep Sound Effect
+* https://mixkit.co/free-sound-effects/beep/
+
 Room Images
 * Taken from various places, will be removed before the project goes public.
 

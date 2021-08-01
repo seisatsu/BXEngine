@@ -32,9 +32,10 @@ class APIContext(object):
     """
     An instance of this class is given to each event script as an access point to the engine API.
     """
-    def __init__(self, filename, app, cursor, resource, script, ui, world):
+    def __init__(self, filename, app, audio, cursor, resource, script, ui, world):
         self.this = filename
         self.app = app
+        self.audio = audio
         self.cursor = cursor
         self.log = Logger(filename)
         self.resource = resource

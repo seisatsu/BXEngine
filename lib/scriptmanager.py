@@ -45,12 +45,13 @@ class ScriptManager:
         driftwood: Base class instance.
     """
 
-    def __init__(self, app, cursor, resource, ui, world):
+    def __init__(self, app, audio, cursor, resource, ui, world):
         """
         ScriptManager class initializer.
         """
         self.log = Logger("script")
         self.app = app
+        self.audio = audio
         self.cursor = cursor
         self.resource = resource
         self.ui = ui
@@ -144,8 +145,8 @@ class ScriptManager:
             mod = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(mod)
             self.__modules[filename] = mod
-            self.__modules[filename].BXE = APIContext(filename, self.app, self.cursor, self.resource, self, self.ui,
-                                                      self.world)
+            self.__modules[filename].BXE = APIContext(filename, self.app, self.audio, self.cursor, self.resource, self,
+                                                      self.ui, self.world)
 
             self.log.info("loaded: {0}".format(filename))
             return self.__modules[filename]

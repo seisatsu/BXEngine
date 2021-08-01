@@ -27,6 +27,7 @@
 
 import pygame
 
+from lib.audiomanager import AudioManager
 from lib.cursor import Cursor
 from lib.logger import Logger
 from lib.scriptmanager import ScriptManager
@@ -50,12 +51,13 @@ class App(object):
         self.cursor = Cursor()
         self.config = config
         self.images = images
+        self.audio = AudioManager(self.config)
         self.world = world
         self.ui = ui
         self.resource = resource
         self.vars = {}
         self.log = Logger("App")
-        self.script = ScriptManager(self, self.cursor, self.resource, self.ui, self.world)
+        self.script = ScriptManager(self, self.audio, self.cursor, self.resource, self.ui, self.world)
 
     def __event_loop(self):
         """
@@ -257,3 +259,4 @@ class App(object):
             time_delta = self.clock.tick(self.fps) / 1000.0
             self.cursor._update()
             self.ui._update(time_delta)
+            self.audio._cleanup()

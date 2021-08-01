@@ -20,6 +20,10 @@
 		"level": "debug",
 		"stdout": true,
 		"file": "bxengine.log"
+	},
+	"audio": {
+		"sfx_volume": 0.5,
+		"music_volume": 0.5
 	}
 }
 
