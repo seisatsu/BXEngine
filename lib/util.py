@@ -24,3 +24,11 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 # **********
+
+import platform
+
+
+def normalize_path(path):
+    if platform.system() == "Windows":  # Fix paths on Windows.
+        return path.replace('\\', '/')
+    return path

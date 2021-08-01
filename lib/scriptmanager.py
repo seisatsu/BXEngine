@@ -32,6 +32,7 @@ from typing import Any, Optional
 
 from lib.apicontext import APIContext
 from lib.logger import Logger
+from lib.util import normalize_path
 
 
 class ScriptManager:
@@ -86,6 +87,7 @@ class ScriptManager:
         Returns:
             Function return code if succeeded, None if failed.
         """
+        filename = normalize_path(filename)
         try:
             return getattr(self[filename], func)(*args)
         except AttributeError:
@@ -113,6 +115,7 @@ class ScriptManager:
 
         Returns: Python module instance if succeeded, False if nonexistent, or None if error.
         """
+        filename = normalize_path(filename)
         if filename not in self.__modules:
             return self.__load(filename)
         else:
@@ -124,7 +127,11 @@ class ScriptManager:
         Args:
             filename: Filename of the python script to load.
         """
-        fullpath = "{0}/{1}".format(self.world.dir,filename)
+        filename = normalize_path(filename)
+        if filename.startswith("$COMMON$/"):
+            fullpath = "{0}/{1}".format("common", filename.split('/', 1)[1])
+        else:
+            fullpath = "{0}/{1}".format(self.world.dir, filename)
         if not os.path.exists(fullpath):
             self.log.error("__load: no such script: {0}".format(fullpath))
             return False

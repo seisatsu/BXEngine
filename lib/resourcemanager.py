@@ -34,6 +34,7 @@ from typing import Any, Optional
 import pygame
 
 from lib.logger import init, timestamp, Logger
+from lib.util import normalize_path
 
 
 class ResourceManager(object):
@@ -57,6 +58,7 @@ class ResourceManager(object):
     #    pass
 
     def _load_initial_config(self, filename: str) -> dict:
+        filename = normalize_path(filename)
         if self.config:
             return self.config
         try:
@@ -85,6 +87,7 @@ class ResourceManager(object):
         #    sys.exit(2)
 
     def load_json(self, filename: str) -> Optional[dict]:
+        filename = normalize_path(filename)
         if filename in self.resources:
             return self.resources[filename]
         try:
@@ -109,6 +112,7 @@ class ResourceManager(object):
         #    return None
 
     def load_image(self, filename: str, scale: tuple = None) -> Any:
+        filename = normalize_path(filename)
         if filename in self.resources:
             return self.resources[filename]
         try:
