@@ -42,10 +42,10 @@ class UI(object):
     def _draw_ui(self):
         self.pgui.draw_ui(self.screen)
 
-    def _update(self, time_delta):
+    def _update(self, time_delta: float):
         self.pgui.update(time_delta)
 
-    def text_box(self, contents):
+    def text_box(self, contents: str):
         wsize = self.config["window"]["size"]
         gui_rect = pygame.Rect(self.config["gui"]["textbox_margin_sides"],
                                wsize[1] - self.config["gui"]["textbox_margin_bottom"] -

@@ -29,6 +29,8 @@ import json
 import traceback
 import sys
 
+from typing import Any, Optional
+
 import pygame
 
 from lib.logger import init, timestamp, Logger
@@ -40,12 +42,12 @@ class ResourceManager(object):
         self.config = None
         self.log = None
 
-    def __contains__(self, item):
+    def __contains__(self, item: str) -> bool:
         if item in self.resources:
             return True
         return False
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str) -> Optional[dict]:
         if self.__contains__(item):
             return self.resources[item]
         else:
@@ -54,7 +56,7 @@ class ResourceManager(object):
     #def load_schema(self):
     #    pass
 
-    def _load_initial_config(self, filename):
+    def _load_initial_config(self, filename: str) -> dict:
         if self.config:
             return self.config
         try:
@@ -82,7 +84,7 @@ class ResourceManager(object):
         #    print(traceback.format_exc(1))
         #    sys.exit(2)
 
-    def load_json(self, filename):
+    def load_json(self, filename: str) -> Optional[dict]:
         if filename in self.resources:
             return self.resources[filename]
         try:
@@ -106,7 +108,7 @@ class ResourceManager(object):
         #    print(traceback.format_exc(1))
         #    return None
 
-    def load_image(self, filename, scale=None):
+    def load_image(self, filename: str, scale: tuple = None) -> Any:
         if filename in self.resources:
             return self.resources[filename]
         try:

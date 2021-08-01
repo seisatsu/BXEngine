@@ -115,7 +115,7 @@ class App(object):
                 self.keys = pygame.key.get_pressed()
             self.ui._process_events(event)
 
-    def __demarc_action_indicator(self):
+    def __demarc_action_indicator(self) -> bool:
         """
         This is a method to demarcate an appropriate action indicator.
         For each action enumerated in the room, it figures out whether our cursor is in that action's region,
@@ -210,7 +210,7 @@ class App(object):
         else:
             self.cursor.nav = None
 
-    def __do_action(self, act_type):
+    def __do_action(self, act_type: str):
         """
         Perform a room action, possibly creating a UI element.
         """

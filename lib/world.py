@@ -44,7 +44,7 @@ class World(object):
         self.resource = resource
         self.log = Logger("World")
 
-    def load(self):
+    def load(self) -> bool:
         """
         Load the world descriptor JSON file.
         """
@@ -56,15 +56,16 @@ class World(object):
         pygame.display.set_caption(self.vars["name"])
         return self.change_room(self.vars["first_room"])
 
-    def navigate(self, direction):
+    def navigate(self, direction: str) -> bool:
         """
         Change rooms by exit name in the current room.
         """
         if direction in self.room.vars["exits"]:
             return self.change_room(self.room.vars["exits"][direction])
         self.log.warn("Attempt to navigate through non-existent exit: {0}".format(direction))
+        return False
 
-    def change_room(self, room_file):
+    def change_room(self, room_file: str) -> bool:
         """
         Change rooms by room descriptor filename.
         """
