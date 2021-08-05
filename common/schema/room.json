@@ -1,0 +1,102 @@
+{
+    "type": "object",
+    "properties": {
+        "image": {
+            "type": "string"
+        }
+        "exits": {
+            "type": "string",
+            "enum": [
+                "forward",
+                "backward",
+                "left",
+                "right",
+                "up",
+                "down"
+            ]
+        }
+        "actions": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "rect": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                        "minItems": 4,
+                        "maxItems": 4
+                    },
+                    "look": {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "look",
+                                    "exit",
+                                    "text",
+                                    "script"
+                                ]
+                            },
+                            "contents": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "contents"
+                        ]
+                    },
+                    "use": {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "look",
+                                    "exit",
+                                    "text",
+                                    "script"
+                                ]
+                            },
+                            "contents": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "contents"
+                        ]
+                    },
+                    "go": {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "look",
+                                    "exit",
+                                    "text",
+                                    "script"
+                                ]
+                            },
+                            "contents": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "contents"
+                        ]
+                    }
+                }
+            },
+            "minItems": 1
+        }
+    },
+    "required": [
+        "image"
+    ]
+}
