@@ -117,7 +117,7 @@ class AudioManager:
             self.__iter_lock = False
             return volume
         else:
-            self.log.error("volume_sfx: sound and volume cannot both be None.")
+            self.log.error("volume_sfx(): Sound and volume cannot both be None.")
             return None
 
     def volume_sfx_by_filename(self, filename: str, volume: float = None) -> Optional[float]:
@@ -142,7 +142,7 @@ class AudioManager:
         self.__iter_lock = False
         if result:
             return result
-        self.log.warn("volume_sfx_by_filename: no sound with this filename currently playing: {0}".format(filename))
+        self.log.warn("volume_sfx_by_filename(): No sound with this filename currently playing: {0}".format(filename))
         return None
 
     def stop_sfx(self, channel_id: int, fade: float = 0.0) -> bool:
@@ -165,7 +165,7 @@ class AudioManager:
                     # Cleanup callback will handle deletion.
             return True
         else:
-            self.log.warn("stop_sfx: already stopped or nonexistent channel: {0}".format(channel_id))
+            self.log.warn("stop_sfx(): Already stopped or nonexistent channel: {0}".format(channel_id))
             return False
 
     def stop_sfx_by_filename(self, filename: str, fade: float = 0.0) -> bool:
@@ -191,7 +191,7 @@ class AudioManager:
         self.__iter_lock = False
 
         if not result:
-            self.log.warn("stop_sfx_by_filename: cannot stop nonexistent instances of sfx: {0}".format(filename))
+            self.log.warn("stop_sfx_by_filename(): Cannot stop nonexistent instances of sfx: {0}".format(filename))
         return result
 
     def stop_all_sfx(self) -> bool:
@@ -262,7 +262,7 @@ class AudioManager:
             else:  # Get the volume.
                 return pygame.mixer.music.get_volume()
 
-        self.log.warn("volume_music: cannot adjust volume for nonexistent music")
+        self.log.warn("volume_music(): Cannot adjust volume for nonexistent music.")
         return None
 
     def stop_music(self, fade: int = None) -> bool:
@@ -275,7 +275,7 @@ class AudioManager:
             True if succeeded, False if failed.
         """
         if not self.playing_music:
-            self.log.warn("stop_music: no music currently playing")
+            self.log.warn("stop_music(): No music currently playing.")
             return False
 
         if pygame.mixer.music.get_busy():

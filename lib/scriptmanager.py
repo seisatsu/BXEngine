@@ -68,9 +68,9 @@ class ScriptManager:
         if ret not in [None, False]:
             return ret
         elif ret is False:
-            self.log.error("no such module: {0}".format(item))
+            self.log.error("No such module: {0}".format(item))
         else:
-            self.log.error("error from module: {0}".format(item))
+            self.log.error("Error from module: {0}".format(item))
         return None
 
     def call(self, filename: str, func: str, *args: Any) -> Any:
@@ -92,11 +92,11 @@ class ScriptManager:
         try:
             return getattr(self[filename], func)(*args)
         except AttributeError:
-            self.log.error("call: module not loaded for call: {0}: {1}".format(filename, func + "()"))
+            self.log.error("call(): Module not loaded for call: {0}: {1}".format(filename, func + "()"))
             return None
         except:
-            self.log.error("call: error from function: {0}: {1}\n{2}".format(filename, func + "()",
-                                                                                traceback.format_exc().rstrip()))
+            self.log.error("call(): Error from function: {0}: {1}\n{2}".format(filename, func + "()",
+                                                                               traceback.format_exc().rstrip()))
             return None
 
     # _module() returns an Any rather than Optional[module] because the latter results in a NameError.
@@ -134,7 +134,7 @@ class ScriptManager:
         else:
             fullpath = "{0}/{1}".format(self.world.dir, filename)
         if not os.path.exists(fullpath):
-            self.log.error("__load: no such script: {0}".format(fullpath))
+            self.log.error("No such script: {0}".format(fullpath))
             return False
 
         mname = os.path.splitext(os.path.split(filename)[-1])[0]
@@ -148,9 +148,9 @@ class ScriptManager:
             self.__modules[filename].BXE = APIContext(filename, self.app, self.audio, self.cursor, self.resource, self,
                                                       self.ui, self.world)
 
-            self.log.info("loaded: {0}".format(filename))
+            self.log.info("Loaded script: {0}".format(filename))
             return self.__modules[filename]
 
         except:
-            self.log.error("__load: error from script: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))
+            self.log.error("Error from script: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))
             return None

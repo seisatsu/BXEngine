@@ -50,9 +50,9 @@ class World(object):
         """
         self.vars = self.resource.load_json("{0}/world.json".format(self.dir))
         if not self.vars:
-            self.log.critical("Unable to load game world: {0}".format(self.config["world"]))
+            self.log.critical("load(): Unable to load game world: {0}".format(self.config["world"]))
             return False
-        self.log.info("Finished loading game world: {0} ({1})".format(self.config["world"], self.vars["name"]))
+        self.log.info("load(): Finished loading game world: {0} ({1})".format(self.config["world"], self.vars["name"]))
         pygame.display.set_caption(self.vars["name"])
         return self.change_room(self.vars["first_room"])
 
@@ -62,7 +62,7 @@ class World(object):
         """
         if direction in self.room.vars["exits"]:
             return self.change_room(self.room.vars["exits"][direction])
-        self.log.warn("Attempt to navigate through non-existent exit: {0}".format(direction))
+        self.log.warn("navigate(): Attempt to navigate through non-existent exit: {0}".format(direction))
         return False
 
     def change_room(self, room_file: str) -> bool:
@@ -72,5 +72,6 @@ class World(object):
         self.room = Room(self.config, self, self.resource, room_file)
         self.room._load()
         if not self.room.vars:
+            self.log.error("change_room(): Unable to load room: {0}".format(room_file))
             return False
         return True

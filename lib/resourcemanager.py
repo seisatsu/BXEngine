@@ -96,14 +96,14 @@ class ResourceManager(object):
                 rsrc = json.load(f)
                 # jsonschema.validate(self.config, schema["defaults"])
                 self.resources["filename"] = rsrc
-                self.log.info("Finished loading JSON file: {0}".format(filename))
+                self.log.info("load_json(): Finished loading JSON file: {0}".format(filename))
                 return self.resources["filename"]
         except (OSError, IOError):
-            self.log.error("Could not open JSON file: {0}".format(filename))
+            self.log.error("load_json(): Could not open JSON file: {0}".format(filename))
             print(traceback.format_exc(1))
             return None
         except json.JSONDecodeError:
-            self.log.error("JSON error from bxengine config file: {0}".format(filename))
+            self.log.error("load_json(): JSON error from bxengine config file: {0}".format(filename))
             print(traceback.format_exc(1))
             return None
         #except jsonschema.ValidationError:
@@ -118,13 +118,13 @@ class ResourceManager(object):
         try:
             if scale:
                 rsrc = pygame.transform.scale(pygame.image.load(filename), scale)
-                self.log.info("Loading image file: {0}, at scale: {1}".format(filename, scale))
+                self.log.info("load_image(): Loading image file: {0}, at scale: {1}".format(filename, scale))
             else:
-                self.log.info("Loading image file: {0}".format(filename))
+                self.log.info("load_image(): Loading image file: {0}".format(filename))
                 rsrc = pygame.image.load(filename)
             self.resources[filename] = rsrc
-            self.log.info("Finished loading image file: {0}".format(filename))
+            self.log.info("load_image(): Finished loading image file: {0}".format(filename))
             return self.resources[filename]
         except:
-            self.log.error("Could not load image file: {0}".format(filename))
+            self.log.error("load_image(): Could not load image file: {0}".format(filename))
             return None
