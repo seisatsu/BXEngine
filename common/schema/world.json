@@ -4,7 +4,7 @@
         "name": {
             "type": "string"
         },
-        "first_root": {
+        "first_room": {
             "type": "string"
         }
     }
