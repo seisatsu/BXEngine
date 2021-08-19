@@ -33,13 +33,15 @@ class Room(object):
     A class to represent the current room.
     """
 
-    def __init__(self, config, world, resource, room_file):
+    def __init__(self, config, app, world, resource, room_file):
         self.config = config
+        self.app = app
         self.world = world
         self.resource = resource
         self.file = room_file
         self.vars = None
         self.image = None
+        self.music = None
         self.log = Logger("Room")
 
     def _load(self) -> bool:
@@ -56,5 +58,13 @@ class Room(object):
         if not self.image:
             self.log.error("Unable to load room image: {0}".format(self.vars["image"]))
             return False
+        if "music" in self.vars:
+            self.music = self.vars["music"]
+            if self.music:
+                if self.app.audio.playing_music != self.music:
+                    self.app.audio.play_music(self.music)
+            else:
+                self.app.audio.stop_music()
         self.log.info("Finished loading room: {0}".format(self.file))
+
         return True

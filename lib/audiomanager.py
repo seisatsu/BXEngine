@@ -42,7 +42,7 @@ class AudioManager:
         self.config = config
         self.log = Logger("Audio")
 
-        self.playing_music = False
+        self.playing_music = None
         self.playing_sfx = False
 
         self.__sfx = {}  # self.__sfx[id(Channel)] = {channel: pygame.mixer.Channel, filename: str}
@@ -194,7 +194,7 @@ class AudioManager:
         else:
             pygame.mixer.music.set_volume(self.config["audio"]["music_volume"])
 
-        self.playing_music = True
+        self.playing_music = filename
 
         return True
 
@@ -224,7 +224,7 @@ class AudioManager:
             if not fade:  # Stop the music.
                 pygame.mixer.music.stop()
                 pygame.mixer.music.unload()
-                self.playing_music = False
+                self.playing_music = None
             else:  # Fade out the music.
                 pygame.mixer.music.fadeout(fade)
                 # Cleanup callback will handle deletion.
@@ -237,7 +237,7 @@ class AudioManager:
         """
         if self.playing_music and not pygame.mixer.music.get_busy():
             pygame.mixer.music.unload()
-            self.playing_music = False
+            self.playing_music = None
         try:
             if not len(self.__sfx):
                 self.playing_sfx = False

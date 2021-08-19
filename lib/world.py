@@ -36,8 +36,9 @@ class World(object):
     A class to represent the game world.
     """
 
-    def __init__(self, config, resource):
+    def __init__(self, config, app, resource):
         self.config = config
+        self.app = app
         self.dir = self.config["world"]
         self.vars = None
         self.room = None
@@ -69,7 +70,7 @@ class World(object):
         """
         Change rooms by room descriptor filename.
         """
-        self.room = Room(self.config, self, self.resource, room_file)
+        self.room = Room(self.config, self.app, self, self.resource, room_file)
         self.room._load()
         if not self.room.vars:
             self.log.error("change_room(): Unable to load room: {0}".format(room_file))

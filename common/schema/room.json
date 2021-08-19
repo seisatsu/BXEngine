@@ -4,6 +4,9 @@
     "image": {
       "type": "string"
     },
+    "music": {
+      "type": ["string", "null"]
+    },
     "exits": {
       "type": "object",
       "items": {

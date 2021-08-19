@@ -25,6 +25,8 @@
 # IN THE SOFTWARE.
 # **********
 
+import sys
+
 import pygame
 
 from lib.audiomanager import AudioManager
@@ -32,6 +34,7 @@ from lib.cursor import Cursor
 from lib.logger import Logger
 from lib.scriptmanager import ScriptManager
 from lib.ui import UI
+from lib.world import World
 
 
 class App(object):
@@ -39,7 +42,7 @@ class App(object):
     A class to manage our event, game loop, and overall program flow.
     """
 
-    def __init__(self, screen, config, images, world, resource):
+    def __init__(self, screen, config, images, resource):
         """
         Get a reference to the screen (created in main); define necessary attributes.
         """
@@ -53,11 +56,16 @@ class App(object):
         self.config = config
         self.images = images
         self.audio = AudioManager(self.config)
-        self.world = world
         self.ui = UI(config, self.clock, self.fps, self.screen)
         self.resource = resource
         self.vars = {}
         self.log = Logger("App")
+
+        self.log.info("Initializing game world...")
+        self.world = World(config, self, resource)
+        if not self.world.load():
+            sys.exit(5)
+
         self.script = ScriptManager(self, self.audio, self.cursor, self.resource, self.ui, self.world)
 
     def __event_loop(self):

@@ -93,12 +93,7 @@ def main():
     pygame.display.set_mode(config["window"]["size"])
     screen = pygame.display.get_surface()
 
-    log.info("Initializing game world...")
-    world = World(config, resource)
-    if not world.load():
-        sys.exit(5)
-
-    App(screen, config, images, world, resource)._main_loop()
+    App(screen, config, images, resource)._main_loop()
     log.info("Shutting down...")
     pygame.quit()
     sys.exit()

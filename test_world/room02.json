@@ -1,5 +1,6 @@
 {
 	"image": "room02.jpg",
+	"music": null,
 	"exits": {
 		"down": "room01.json",
 		"backward": "room03.json"
