@@ -41,6 +41,7 @@ class App(object):
     """
     This class manages our event processing, game loop, and overall program flow.
     It is, for all intents and purposes, the base class. It contains a path to all other class instances.
+    This class has no methods that are useful or available to event scripts.
 
     :ivar screen: The PyGame screen surface.
     :ivar clock: The PyGame Clock instance used for timing.

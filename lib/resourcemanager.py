@@ -116,7 +116,6 @@ class ResourceManager(object):
 
     def load_json(self, filename: str, validate: str = None) -> Optional[dict]:
         filename = normalize_path(filename)
-        print(filename)
         if filename in self.resources:
             return self.resources[filename]
         try:

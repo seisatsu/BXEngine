@@ -33,7 +33,11 @@ from lib.logger import Logger
 class APIContext(object):
     """The API Context
 
-    An instance of this class is given to each event script as an access point to the engine API.
+    A new instance of this class is given to each event script as an access point to the engine API.
+    It is accessible via the "BXE" attribute given to every event script's main scope.
+    For example, to access the AudioManager from an event script, its instance would be "BXE.audio".
+    You can also access BXE like a dict, as a shorthand for "BXE.vars" which holds persistent variables.
+    For example, "BXE['myvar']" is the same as "BXE.vars['myvar']".
 
     :ivar this: The filename of the currently executing event script.
     :ivar app: The main App instance.
