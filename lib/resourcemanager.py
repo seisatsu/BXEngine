@@ -80,12 +80,12 @@ class ResourceManager(object):
         try:
             with open(filename) as f:
                 rsrc = json.load(f)
-                #schema = self.load_schema("config")
-                #if not schema:
-                #    print("{0} [config#critical] Could not validate bxengine config file: {1}".format(timestamp(),
-                #                                                                                      filename))
-                #    sys.exit(2)
-                #jsonschema.validate(self.config, schema)
+                schema = self.load_schema("config")
+                if not schema:
+                    print("{0} [config#critical] Could not validate bxengine config file: {1}".format(timestamp(),
+                                                                                                      filename))
+                    sys.exit(2)
+                jsonschema.validate(self.config, schema)
                 self.resources["filename"] = rsrc
                 self.config = rsrc
                 init(self.config)
@@ -99,11 +99,11 @@ class ResourceManager(object):
             print("{0} [config#critical] JSON error from bxengine config file: {1}".format(timestamp(), filename))
             print(traceback.format_exc(1))
             sys.exit(2)
-        #except jsonschema.ValidationError:
-        #    print("{0} [config#critical] JSON schema validation error from bxengine config file: {1}".format(
-        #        timestamp(), filename))
-        #    print(traceback.format_exc(1))
-        #    sys.exit(2)
+        except jsonschema.ValidationError:
+            print("{0} [config#critical] JSON schema validation error from bxengine config file: {1}".format(
+                  timestamp(), filename))
+            print(traceback.format_exc(1))
+            sys.exit(2)
 
     def load_json(self, filename: str, validate: str = None) -> Optional[dict]:
         filename = normalize_path(filename)
