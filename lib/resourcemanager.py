@@ -36,7 +36,6 @@ import pygame
 
 from lib.logger import init, timestamp, Logger
 from lib.util import normalize_path
-from lib.__schema__ import _SCHEMA
 
 
 class ResourceManager(object):
