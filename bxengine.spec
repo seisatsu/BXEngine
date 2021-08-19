@@ -2,11 +2,9 @@
 
 
 import os
+
 import pygame_gui
-
-
 pygame_gui_path = os.path.dirname(pygame_gui.__file__).replace('\\', '/')
-print(pygame_gui_path)
 
 block_cipher = None
 
