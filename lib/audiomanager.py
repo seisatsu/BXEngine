@@ -34,14 +34,8 @@ from lib.util import normalize_path
 
 
 class AudioManager:
-    """The Audio Manager
-
-        This class manages the audio subsystem and allows playing sound effects and music.
-
-        Attributes:
-            driftwood: Base class instance.
-            playing_music: Whether we are currently playing music or not.
-            playing_sfx: Whether we are currently playing sfx or not.
+    """
+    This class manages the audio subsystem and allows playing sound effects and music.
     """
 
     def __init__(self, config):
@@ -59,16 +53,8 @@ class AudioManager:
 
     def play_sfx(self, filename: str, volume: float = None, loop: Optional[int] = 0,
                  fade: float = 0.0) -> int:
-        """Load and play a sound effect from an audio file.
-
-        Args:
-            filename: Filename of the sound effect.
-            volume: Overrides the sfx_volume in the config for this sound effect. 0-128
-            loop: Number of times to loop the audio. 0 for none, None for infinite.
-            fade: If set, number of seconds to fade in sfx.
-
-        Returns:
-            Channel number if succeeded, None if failed.
+        """
+        Load and play a sound effect from an audio file.
         """
         filename = normalize_path(filename)
         if filename.startswith("$COMMON$/"):
@@ -92,14 +78,8 @@ class AudioManager:
         return pygame.mixer.music
 
     def volume_sfx(self, channel_id: int = None, volume: float = None) -> Optional[float]:
-        """Get or adjust the volume of a sound effect channel.
-
-        Args:
-            channel_id: Audio channel of the sound effect whose volume to adjust or query. None adjusts all channels.
-            volume: Optional, sets a new volume. Integer between 0 and 128, or no volume to just query.
-
-        Returns:
-            Integer volume if succeeded (average volume of sfx if no channel is passed), None if failed.
+        """
+        Get or adjust the volume of a sound effect channel.
         """
         # Search for the sound effect.
         if channel_id is not None and volume is not None:
@@ -121,14 +101,8 @@ class AudioManager:
             return None
 
     def volume_sfx_by_filename(self, filename: str, volume: float = None) -> Optional[float]:
-        """Get or adjust the volume of all currently playing instances of the named sound effect.
-
-        Args:
-            filename: Filename of the sound effect whose volume to adjust or query.
-            volume: Optional, sets a new volume. Integer between 0 and 128, or no volume to just query.
-
-        Returns:
-            Integer volume if succeeded, None if failed.
+        """
+        Get or adjust the volume of all currently playing instances of the named sound effect.
         """
         result = None
         self.__iter_lock = True
@@ -146,14 +120,8 @@ class AudioManager:
         return None
 
     def stop_sfx(self, channel_id: int, fade: float = 0.0) -> bool:
-        """Stop a sound effect. Requires the sound effect's channel number from play_sfx()'s return code.
-
-        Args:
-            channel_id: Audio channel of the sound effect to stop.
-            fade: If set, number of seconds to fade out sfx.
-
-        Returns:
-            True if succeeded, false if failed.
+        """
+        Stop a sound effect. Requires the sound effect's channel number from play_sfx()'s return code.
         """
         if channel_id in self.__sfx:
             if self.__sfx[channel_id]["channel"].get_busy():
@@ -169,14 +137,8 @@ class AudioManager:
             return False
 
     def stop_sfx_by_filename(self, filename: str, fade: float = 0.0) -> bool:
-        """Stop all currently playing instances of the named sound effect.
-
-        Args:
-            filename: Filename of the sound effect instances to stop.
-            fade: If set, number of seconds to fade out sfx.
-
-        Returns:
-            True if succeeded, false if failed.
+        """
+        Stop all currently playing instances of the named sound effect.
         """
         result = False
         self.__iter_lock = True
@@ -195,10 +157,8 @@ class AudioManager:
         return result
 
     def stop_all_sfx(self) -> bool:
-        """Stop all currently playing sound effects.
-
-        Returns:
-            True
+        """
+        Stop all currently playing sound effects.
         """
         self.__iter_lock = True
         sfx_temp = self.__sfx.copy()
@@ -209,16 +169,8 @@ class AudioManager:
         return True
 
     def play_music(self, filename: str, volume: float = None, loop: int = 0, start: float = 0.0, fade: int = 0) -> bool:
-        """Load and play music from an audio file. Also stops and unloads any previously loaded music.
-
-        Args:
-            filename: Filename of the music.
-            volume: Overrides the music_volume in the config for this music. 0-128
-            loop: Number of times to loop the audio. 0 for none, None for infinite.
-            fade: If set, number of seconds to fade in music.
-
-        Returns:
-            True if succeeded, False if failed.
+        """
+        Load and play music from an audio file. Also stops and unloads any previously loaded music.
         """
         # Stop and unload any previously loaded music.
         if self.playing_music:
@@ -247,13 +199,8 @@ class AudioManager:
         return True
 
     def volume_music(self, volume: float = None) -> Optional[float]:
-        """Get or adjust the volume of the currently playing music.
-
-        Args:
-            volume: Optional, sets a new volume. Integer between 0 and 128, or no volume to just query.
-
-        Returns:
-            Integer volume if succeeded, None if failed.
+        """
+        Get or adjust the volume of the currently playing music.
         """
         if self.playing_music:
             if volume is not None:
@@ -266,13 +213,8 @@ class AudioManager:
         return None
 
     def stop_music(self, fade: int = None) -> bool:
-        """Stop and unload any currently loaded music.
-
-        Args:
-            fade: If set, number of seconds to fade out the music.
-
-        Returns:
-            True if succeeded, False if failed.
+        """
+        Stop and unload any currently loaded music.
         """
         if not self.playing_music:
             self.log.warn("stop_music(): No music currently playing.")
@@ -290,7 +232,9 @@ class AudioManager:
         return True
 
     def _cleanup(self) -> None:
-        # Tick callback to clean up files we're done with.
+        """
+        Tick callback to clean up files we're done with.
+        """
         if self.playing_music and not pygame.mixer.music.get_busy():
             pygame.mixer.music.unload()
             self.playing_music = False

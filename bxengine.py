@@ -36,12 +36,10 @@ import os
 import sys
 
 import pygame
-import pygame_gui
 
 from lib.app import App
 from lib.logger import Logger
 from lib.resourcemanager import ResourceManager
-from lib.ui import UI
 from lib.world import World
 
 VERSION = "BXEngine PreAlpha"
