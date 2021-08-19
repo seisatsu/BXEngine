@@ -60,15 +60,24 @@ class ResourceManager(object):
         if schema in self._loaded_schemas:
             return self._loaded_schemas[schema]
         try:
-            self.log.info("Loading JSON Schema file: {0}".format(schema+".json"))
+            if self.log:
+                self.log.info("Loading JSON Schema file: {0}".format(schema+".json"))
             with open("common/schema/"+schema+".json") as f:
                 self._loaded_schemas[schema] = json.load(f)
         except (OSError, IOError):
-            print("{0} [config#error] Could not open schema file: {1}".format(timestamp(), schema+".json"))
+            if self.log:
+                self.log.error("Could not open schema file: {1}".format(timestamp(), schema+".json"))
+            else:
+                print("{0} [Resource#critical] Could not open config schema file: {1}".format(timestamp(),
+                                                                                              schema+".json"))
             print(traceback.format_exc(1))
             return None
         except json.JSONDecodeError:
-            print("{0} [config#error] JSON error from schema file: {1}".format(timestamp(), schema+".json"))
+            if self.log:
+                self.log.error("JSON error from schema file: {1}".format(timestamp(), schema+".json"))
+            else:
+                print("{0} [Resource#critical] JSON error from config schema file: {1}".format(timestamp(),
+                                                                                               schema+".json"))
             print(traceback.format_exc(1))
             return None
         return self._loaded_schemas[schema]
@@ -85,8 +94,8 @@ class ResourceManager(object):
                     print("{0} [config#critical] Could not validate bxengine config file: {1}".format(timestamp(),
                                                                                                       filename))
                     sys.exit(2)
-                jsonschema.validate(self.config, schema)
-                self.resources["filename"] = rsrc
+                jsonschema.validate(rsrc, schema)
+                self.resources[filename] = rsrc
                 self.config = rsrc
                 init(self.config)
                 self.log = Logger("Resource")

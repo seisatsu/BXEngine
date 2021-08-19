@@ -54,7 +54,7 @@
         "indicator_size",
         "indicator_padding",
         "edge_margin_width",
-        "edge_margin_breadth",
+        "edge_region_breadth",
         "forward_region_width"
       ]
     },
