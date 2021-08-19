@@ -31,10 +31,35 @@ from lib.logger import Logger
 
 
 class APIContext(object):
-    """
+    """The API Context
+
     An instance of this class is given to each event script as an access point to the engine API.
+
+    :ivar this: The filename of the currently executing event script.
+    :ivar app: The main App instance.
+    :ivar audio: The AudioManager instance.
+    :ivar cursor: The Cursor instance.
+    :ivar log: The Logger instance for this script.
+    :ivar resource: The ResourceManager instance.
+    :ivar room: The current Room instance.
+    :ivar script: The ScriptManager instance.
+    :ivar ui: The UI instance.
+    :ivar world: The World instance.
+    :ivar vars: The vars variable from the main App, used to share variables between event scripts.
     """
+
     def __init__(self, filename, app, audio, cursor, resource, script, ui, world):
+        """APIContext Class Initializer
+
+        :param filename: The filename of the currently executing event script.
+        :param app: The main App instance.
+        :param audio: The AudioManager instance.
+        :param cursor: The Cursor instance.
+        :param resource: The ResourceManager instance.
+        :param script: The ScriptManager instance.
+        :param ui: The UI instance.
+        :param world: The World instance.
+        """
         self.this = filename
         self.app = app
         self.audio = audio
@@ -43,8 +68,8 @@ class APIContext(object):
         self.resource = resource
         self.room = world.room
         self.script = script
-        self.world = world
         self.ui = ui
+        self.world = world
         self.vars = app.vars
 
     def __contains__(self, item: str) -> bool:

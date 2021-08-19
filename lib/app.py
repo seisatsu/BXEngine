@@ -225,8 +225,6 @@ class App(object):
         """
         Perform a room action, possibly creating a UI element.
         """
-        wsize = self.config["window"]["size"]
-
         if self.cursor.action[act_type]["result"] == "text":
             self.log.debug("ACTION TEXT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
             self.ui.reset()

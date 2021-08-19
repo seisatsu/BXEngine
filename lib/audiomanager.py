@@ -55,6 +55,7 @@ class AudioManager:
                  fade: float = 0.0) -> int:
         """
         Load and play a sound effect from an audio file.
+        TODO: Looping, fading.
         """
         filename = normalize_path(filename)
         if filename.startswith("$COMMON$/"):

@@ -40,7 +40,6 @@ import pygame
 from lib.app import App
 from lib.logger import Logger
 from lib.resourcemanager import ResourceManager
-from lib.world import World
 
 VERSION = "BXEngine PreAlpha"
 
@@ -70,18 +69,23 @@ def main():
     """
     Prepare our environment, create a display, and start the program.
     """
+    # Set the window to be centered and initialize PyGame.
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()
 
+    # Welcome message.
     print("Welcome to {0}.".format(VERSION))
     print("Starting up...")
 
+    # We need to initialize ResourceManager first so we can load the config file.
     resource = ResourceManager()
 
+    # Load the config file and initialize the logger.
     print("Loading configuration...")
     config = resource._load_initial_config("config.json")
     log = Logger("BXEngine")
 
+    # Load the required images from the common folder.
     log.info("Loading required images...")
     images = load_images(config, resource)
     if None in images.values():
@@ -89,11 +93,15 @@ def main():
         sys.exit(4)
     log.info("Finished loading required images.")
 
+    # Set the default window caption, set window size, and get the window surface.
     pygame.display.set_caption(VERSION)
     pygame.display.set_mode(config["window"]["size"])
     screen = pygame.display.get_surface()
 
+    # Entry point to the main program.
     App(screen, config, images, resource)._main_loop()
+
+    # Shut down.
     log.info("Shutting down...")
     pygame.quit()
     sys.exit()
