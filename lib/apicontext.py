@@ -25,6 +25,8 @@
 # IN THE SOFTWARE.
 # **********
 
+from typing import Any
+
 from lib.logger import Logger
 
 
@@ -44,3 +46,11 @@ class APIContext(object):
         self.world = world
         self.ui = ui
         self.vars = app.vars
+
+    def __contains__(self, item: str) -> bool:
+        return item in self.vars
+
+    def __getitem__(self, item: str) -> Any:
+        if not self.__contains__(item):
+            return None
+        return self.vars[item]

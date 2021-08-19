@@ -7,7 +7,7 @@
         "first_room": {
             "type": "string"
         }
-    }
+    },
     "required": [
         "name",
         "first_room"

@@ -47,7 +47,7 @@ class Room(object):
         Load the room descriptor JSON file. Also load the room image.
         """
         self.log.info("Loading room: {0}".format(self.file))
-        self.vars = self.resource.load_json("{0}/{1}".format(self.world.dir, self.file))
+        self.vars = self.resource.load_json("{0}/{1}".format(self.world.dir, self.file), "room")
         if not self.vars:
             self.log.error("Unable to load room descriptor: {0}".format(self.file))
             return False

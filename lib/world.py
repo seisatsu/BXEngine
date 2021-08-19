@@ -48,7 +48,7 @@ class World(object):
         """
         Load the world descriptor JSON file.
         """
-        self.vars = self.resource.load_json("{0}/world.json".format(self.dir))
+        self.vars = self.resource.load_json("{0}/world.json".format(self.dir), "world")
         if not self.vars:
             self.log.critical("load(): Unable to load game world: {0}".format(self.config["world"]))
             return False

@@ -26,6 +26,7 @@
 # **********
 
 import json
+import jsonschema
 import traceback
 import sys
 
@@ -35,6 +36,7 @@ import pygame
 
 from lib.logger import init, timestamp, Logger
 from lib.util import normalize_path
+from lib.__schema__ import _SCHEMA
 
 
 class ResourceManager(object):
@@ -42,6 +44,7 @@ class ResourceManager(object):
         self.resources = {}
         self.config = None
         self.log = None
+        self._loaded_schemas = {}
 
     def __contains__(self, item: str) -> bool:
         if item in self.resources:
@@ -54,8 +57,22 @@ class ResourceManager(object):
         else:
             return None
 
-    #def load_schema(self):
-    #    pass
+    def load_schema(self, schema: str):
+        if schema in self._loaded_schemas:
+            return self._loaded_schemas[schema]
+        try:
+            self.log.info("Loading JSON Schema file: {0}".format(schema+".json"))
+            with open("common/schema/"+schema+".json") as f:
+                self._loaded_schemas[schema] = json.load(f)
+        except (OSError, IOError):
+            print("{0} [config#error] Could not open schema file: {1}".format(timestamp(), schema+".json"))
+            print(traceback.format_exc(1))
+            return None
+        except json.JSONDecodeError:
+            print("{0} [config#error] JSON error from schema file: {1}".format(timestamp(), schema+".json"))
+            print(traceback.format_exc(1))
+            return None
+        return self._loaded_schemas[schema]
 
     def _load_initial_config(self, filename: str) -> dict:
         filename = normalize_path(filename)
@@ -64,20 +81,23 @@ class ResourceManager(object):
         try:
             with open(filename) as f:
                 rsrc = json.load(f)
-                # jsonschema.validate(self.config, schema["defaults"])
+                #schema = self.load_schema("config")
+                #if not schema:
+                #    print("{0} [config#critical] Could not validate bxengine config file: {1}".format(timestamp(),
+                #                                                                                      filename))
+                #    sys.exit(2)
+                #jsonschema.validate(self.config, schema)
                 self.resources["filename"] = rsrc
                 self.config = rsrc
                 init(self.config)
                 self.log = Logger("Resource")
                 return self.config
         except (OSError, IOError):
-            print("{0} [config#critical] Could not open bxengine config file: {1}".format(
-                timestamp(), filename))
+            print("{0} [config#critical] Could not open bxengine config file: {1}".format(timestamp(), filename))
             print(traceback.format_exc(1))
             sys.exit(2)
         except json.JSONDecodeError:
-            print("{0} [config#critical] JSON error from bxengine config file: {1}".format(
-                timestamp(), filename))
+            print("{0} [config#critical] JSON error from bxengine config file: {1}".format(timestamp(), filename))
             print(traceback.format_exc(1))
             sys.exit(2)
         #except jsonschema.ValidationError:
@@ -86,15 +106,20 @@ class ResourceManager(object):
         #    print(traceback.format_exc(1))
         #    sys.exit(2)
 
-    def load_json(self, filename: str) -> Optional[dict]:
+    def load_json(self, filename: str, validate: str = None) -> Optional[dict]:
         filename = normalize_path(filename)
+        print(filename)
         if filename in self.resources:
             return self.resources[filename]
         try:
             self.log.info("Loading JSON file: {0}".format(filename))
             with open(filename) as f:
                 rsrc = json.load(f)
-                # jsonschema.validate(self.config, schema["defaults"])
+                if validate:
+                    schema = self.load_schema(validate)
+                    if not schema:
+                        return None
+                    jsonschema.validate(rsrc, schema)
                 self.resources["filename"] = rsrc
                 self.log.info("load_json(): Finished loading JSON file: {0}".format(filename))
                 return self.resources["filename"]
@@ -106,10 +131,10 @@ class ResourceManager(object):
             self.log.error("load_json(): JSON error from bxengine config file: {0}".format(filename))
             print(traceback.format_exc(1))
             return None
-        #except jsonschema.ValidationError:
-        #    self.log.error("JSON schema validation error from defaults config file: {0}".format(filename))
-        #    print(traceback.format_exc(1))
-        #    return None
+        except jsonschema.ValidationError:
+            self.log.error("JSON schema validation error from file: {0}".format(filename))
+            print(traceback.format_exc(1))
+            return None
 
     def load_image(self, filename: str, scale: tuple = None) -> Any:
         filename = normalize_path(filename)

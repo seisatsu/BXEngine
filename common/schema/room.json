@@ -3,18 +3,21 @@
     "properties": {
         "image": {
             "type": "string"
-        }
+        },
         "exits": {
-            "type": "string",
-            "enum": [
-                "forward",
-                "backward",
-                "left",
-                "right",
-                "up",
-                "down"
-            ]
-        }
+            "type": "object",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "forward",
+                    "backward",
+                    "left",
+                    "right",
+                    "up",
+                    "down"
+                ]
+            }
+        },
         "actions": {
             "type": "array",
             "items": {
@@ -24,7 +27,7 @@
                         "type": "array",
                         "items": {
                             "type": "integer"
-                        }
+                        },
                         "minItems": 4,
                         "maxItems": 4
                     },
