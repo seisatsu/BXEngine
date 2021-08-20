@@ -243,6 +243,7 @@ class App(object):
         # Here we turn some small mathematical concepts into much smaller variables.
         # This makes the next block of code at least a little bit more readable.
         # Honestly I don't remember how all of this works right now, because I wrote it in deep flow.
+        # Another harsh lesson in the virtue of writing comments as you go.
         wsize = self.config["window"]["size"]
         ss_min_x = wsize[0] * self.config["navigation"]["edge_margin_width"] // 1
         ss_max_x = wsize[0] - ss_min_x

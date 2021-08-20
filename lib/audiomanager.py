@@ -105,8 +105,11 @@ class AudioManager:
         return pygame.mixer.music
 
     def volume_sfx(self, channel_id: int = None, volume: float = None) -> Optional[float]:
-        """
-        Get or adjust the volume of a sound effect channel.
+        """Get or adjust the volume of a sound effect channel.
+
+        :param channel_id: The abstracted channel ID given by play_sfx().
+        :param volume: Use the current volume if None, otherwise set the new volume. Takes a float between 0.0 and 1.0.
+        :return: Returns the current volume, after any adjustments.
         """
         # Search for the sound effect.
         if channel_id is not None and volume is not None:
@@ -127,22 +130,31 @@ class AudioManager:
             self.log.error("volume_sfx(): Sound and volume cannot both be None.")
             return None
 
-    def volume_sfx_by_filename(self, filename: str, volume: float = None) -> Optional[float]:
+    def volume_sfx_by_filename(self, filename: str, volume: float = None) -> Optional[list]:
+        """Get or adjust the volume of all currently playing instances of the named sound effect.
+
+        :param filename: The filename of the sound effects to adjust.
+        :param volume: Use the current volume if None, otherwise set the new volume. Takes a float between 0.0 and 1.0.
+        :return: Returns a list containing the current volume, after any adjustments. If there were no adjustments but
+                 multiple volumes for channels playing this file, return a list of volumes found. If the filename was
+                 not found, return None.
         """
-        Get or adjust the volume of all currently playing instances of the named sound effect.
-        """
-        result = None
+        current_volume = []
+        found = False
         self.__iter_lock = True
         for channel_id in self.__sfx:
             if self.__sfx[channel_id]["filename"] == filename:
+                found = True
                 if volume is not None:
                     self.__sfx[channel_id]["channel"].set_volume(volume)
-                    result = volume
                 else:
-                    return self.__sfx[channel_id]["channel"].get_volume()
+                    if current_volume is [] or self.__sfx[channel_id]["channel"].get_volume() not in current_volume:
+                        current_volume.append(self.__sfx[channel_id]["channel"].get_volume())
         self.__iter_lock = False
-        if result:
-            return result
+        if current_volume is []:
+            current_volume = [volume]
+        if found:
+            return current_volume
         self.log.warn("volume_sfx_by_filename(): No sound with this filename currently playing: {0}".format(filename))
         return None
 
