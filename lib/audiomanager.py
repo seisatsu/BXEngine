@@ -36,9 +36,21 @@ from lib.util import normalize_path
 class AudioManager:
     """
     This class manages the audio subsystem and allows playing sound effects and music.
+
+    :ivar config: This contains the engine's configuration variables.
+    :ivar log: The Logger instance for this class.
+    :ivar playing_music: If music is currently playing, this contains the filename; otherwise it is None.
+    :ivar playing_sfx: True if any sound effects are currently playing, otherwise False.
+    :ivar __sfx: This private variable is a dict of Channel IDs mapped to a PyGame Mixer Channel and the Filename.
+    :ivar __iter_lock: This private variable is true when __sfx is being iterated within a method of this class,
+                       to prevent the _cleanup method from deleting __sfx members during iteration.
     """
 
     def __init__(self, config):
+        """The AudioManager Class
+
+        :param config: The engine's configuration variables.
+        """
         self.config = config
         self.log = Logger("Audio")
 
@@ -48,14 +60,19 @@ class AudioManager:
         self.__sfx = {}  # self.__sfx[id(Channel)] = {channel: pygame.mixer.Channel, filename: str}
         self.__iter_lock = False
 
+        # Initialize the PyGame Mixer, which we are an abstraction of.
         pygame.mixer.init()
         self.log.info("Initialized audio mixer.")
 
     def play_sfx(self, filename: str, volume: float = None, loop: Optional[int] = 0,
                  fade: float = 0.0) -> int:
-        """
-        Load and play a sound effect from an audio file.
-        TODO: Looping, fading.
+        """Load and play a sound effect from an audio file.
+
+        :param filename: The filename of the audio file to play.
+        :param volume: Use the current volume if None, otherwise set the new volume. Takes a float between 0.0 and 1.0.
+        :param loop: If 0, only play once. If -1, loop forever. If > 0, replay this many times. (1 plays twice, etc.)
+        :param fade: Time to fade in the sound effect.
+        :return: A unique identifier for this sound effect's channel. This is used as an argument to other methods.
         """
         filename = normalize_path(filename)
         if filename.startswith("$COMMON$/"):
@@ -67,15 +84,24 @@ class AudioManager:
             sfx_temp.set_volume(volume)
         else:
             sfx_temp.set_volume(self.config["audio"]["sfx_volume"])
-        channel = sfx_temp.play()
+        channel = sfx_temp.play(loop, 0, int(fade*1000))
         self.__sfx[id(channel)] = {"channel": channel, "filename": filename}
         self.playing_sfx = True
         return id(channel)
 
     def get_pygame_channel(self, channel_id: int) -> pygame.mixer.Channel:
+        """Get the raw PyGame Mixer Sound channel for a sound effect.
+
+        :param channel_id: The abstracted channel ID given by play_sfx().
+        :return: The raw PyGame Mixer channel for this sound effect.
+        """
         return self.__sfx[channel_id]["channel"]
 
     def get_pygame_music(self) -> pygame.mixer.music:
+        """Get the raw PyGame Mixer Music object for the current music.
+
+        :return: The raw PyGame Mixer Music object for the current music.
+        """
         return pygame.mixer.music
 
     def volume_sfx(self, channel_id: int = None, volume: float = None) -> Optional[float]:
@@ -168,6 +194,13 @@ class AudioManager:
         self.__iter_lock = False
         self.__sfx = {}
         return True
+
+    def fadeout_all_sfx(self, fade: float) -> bool:
+        """
+
+        :param fade:
+        :return:
+        """
 
     def play_music(self, filename: str, volume: float = None, loop: int = 0, start: float = 0.0, fade: int = 0) -> bool:
         """
