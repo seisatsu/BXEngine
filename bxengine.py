@@ -41,28 +41,50 @@ from lib.app import App
 from lib.logger import Logger
 from lib.resourcemanager import ResourceManager
 
+# This version string is printed when starting the engine.
 VERSION = "BXEngine PreAlpha"
 
 
-def load_images(config, resource):
+def load_images(config, resource, log):
     """
     We load the common images here that are needed by the rest of the engine.
     This includes navigation and action indicators.
     """
-    return {
-        "chevron_left": resource.load_image("common/chevron_left.png", config["navigation"]["indicator_size"]),
-        "chevron_right": resource.load_image("common/chevron_right.png", config["navigation"]["indicator_size"]),
-        "chevron_up": resource.load_image("common/chevron_up.png", config["navigation"]["indicator_size"]),
-        "chevron_down": resource.load_image("common/chevron_down.png", config["navigation"]["indicator_size"]),
-        "arrow_forward": resource.load_image("common/arrow_forward.png", config["navigation"]["indicator_size"]),
-        "arrow_backward": resource.load_image("common/arrow_backward.png", config["navigation"]["indicator_size"]),
-        "arrow_double": resource.load_image("common/arrow_double.png", config["navigation"]["indicator_size"]),
-        "look": resource.load_image("common/look.png", config["navigation"]["indicator_size"]),
-        "use": resource.load_image("common/use.png", config["navigation"]["indicator_size"]),
-        "lookuse": resource.load_image("common/lookuse.png", config["navigation"]["indicator_size"]),
-        "go": resource.load_image("common/go.png", config["navigation"]["indicator_size"]),
-        "lookgo": resource.load_image("common/lookgo.png", config["navigation"]["indicator_size"])
-    }
+    # List of common images absolutely required before the engine will start.
+    required_images = [
+        "chevron_left",
+        "chevron_right",
+        "chevron_up",
+        "chevron_down",
+        "arrow_forward",
+        "arrow_backward",
+        "arrow_double",
+        "look",
+        "use",
+        "lookuse",
+        "go",
+        "lookgo"
+    ]
+
+    # Load all images in the common/ folder into the loaded_images dict.
+    loaded_images = {}  # Dict mapping image names to PyGame Surfaces for loaded images.
+    common_directory_contents = os.listdir("common/")
+    for common_file in common_directory_contents:
+        split_ext = os.path.splitext(common_file)
+        if split_ext[1] == ".png":
+            loaded_images[split_ext[0]] = resource.load_image("common/{0}".format(common_file),
+                                                              config["navigation"]["indicator_size"])
+
+    # Make sure all of the required common images are present and loaded.
+    # If not, give a warning and put a None in the loaded_images dict so we exit afterwards.
+    # Any image that is present but fails to load is already given a None value by the resource manager.
+    for image_name in required_images:
+        if image_name not in loaded_images:
+            log.error("Could not load required common image file: common/{0}.png".format(image_name))
+            loaded_images[image_name] = None
+
+    # Return the dict of loaded images.
+    return loaded_images
 
 
 def main():
@@ -85,13 +107,13 @@ def main():
     config = resource._load_initial_config("config.json")
     log = Logger("BXEngine")
 
-    # Load the required images from the common folder.
-    log.info("Loading required images...")
-    images = load_images(config, resource)
+    # Load all images from the common folder.
+    log.info("Loading common images...")
+    images = load_images(config, resource, log)
     if None in images.values():
-        log.critical("Unable to load required images.")
+        log.critical("Unable to load required common images.")
         sys.exit(4)
-    log.info("Finished loading required images.")
+    log.info("Finished loading common images.")
 
     # Set the default window caption, set window size, and get the window surface.
     pygame.display.set_caption(VERSION)
