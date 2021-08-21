@@ -5,3 +5,6 @@ def test_func(a, b):
     print(BXE.database.get("test"))
     BXE.database.remove("test")
     BXE.database.put("test2", "teststring")
+    print(BXE.path)
+    print(BXE.dir)
+    print(BXE.resource.load_raw("README.md"))

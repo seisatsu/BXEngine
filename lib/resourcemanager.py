@@ -150,11 +150,9 @@ class ResourceManager(object):
                 self.resources[filename] = rsrc
                 self.config = rsrc
 
-                # Initialize the Logger system with the configuration variables.
+                # Success.
                 init(self.config)
                 self.log = Logger("Resource")
-
-                # Success.
                 return self.config
 
         # Failed to open the config file.
@@ -203,11 +201,9 @@ class ResourceManager(object):
                         return None
                     jsonschema.validate(rsrc, schema)
 
-                # Finish loading the JSON file.
+                # Success.
                 self.resources["filename"] = rsrc
                 self.log.info("load_json(): Finished loading JSON file: {0}".format(filename))
-
-                # Success.
                 return self.resources["filename"]
 
         # Failed to open the JSON file.
@@ -254,14 +250,46 @@ class ResourceManager(object):
                 self.log.info("load_image(): Loading image file: {0}".format(filename))
                 rsrc = pygame.image.load(filename)
 
-            # Finish loading the image.
+            # Success.
             self.resources[filename] = rsrc
             self.log.info("load_image(): Finished loading image file: {0}".format(filename))
-
-            # Success.
             return self.resources[filename]
 
         # We were unable to load the image.
         except:
             self.log.error("load_image(): Could not load image file: {0}".format(filename))
+            return None
+
+    def load_raw(self, filename: str, binary: bool = False) -> Optional[dict]:
+        """Load any kind of file.
+
+        :param filename: The filename of the file to load.
+        :param binary: Whether to load the file in binary mode.
+        :return: Raw file data if succeeded, None if failed.
+        """
+        # Normalize the path to a Unix-style path for internal consistency.
+        filename = normalize_path(filename)
+
+        # If the file is already loaded, just return it.
+        if filename in self.resources:
+            return self.resources[filename]
+
+        # Attempt to load the file in binary or text mode.
+        if binary:
+            mode = 'rb'
+        else:
+            mode = 'rt'
+        try:
+            with open(filename, mode) as f:
+                rsrc = f.read()
+
+                # Success.
+                self.resources["filename"] = rsrc
+                self.log.info("load_raw(): Finished loading raw file: {0}".format(filename))
+                return self.resources["filename"]
+
+        # Failed to open the file.
+        except (OSError, IOError):
+            self.log.error("load_raw(): Could not open file: {0}".format(filename))
+            print(traceback.format_exc(1))
             return None

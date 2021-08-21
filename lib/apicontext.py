@@ -25,6 +25,7 @@
 # IN THE SOFTWARE.
 # **********
 
+import os
 from typing import Any
 
 from lib.logger import Logger
@@ -38,19 +39,21 @@ class APIContext(object):
     For example, to access the AudioManager from an event script, its instance would be "BXE.audio".
     You can also access BXE like a dict, as a shorthand for "BXE.vars" which holds persistent variables.
     For example, "BXE['myvar']" is the same as "BXE.vars['myvar']".
+    Note that class methods an event script should never call begin with an underscore.
 
-    :ivar this: The filename of the currently executing event script.
+    :ivar filename: The filename of the currently executing event script.
     :ivar app: The main App instance.
     :ivar audio: The AudioManager instance.
     :ivar cursor: The Cursor instance.
     :ivar database: The DatabaseManager instance.
     :ivar log: The Logger instance for this script.
     :ivar resource: The ResourceManager instance.
-    :ivar room: The current Room instance.
     :ivar script: The ScriptManager instance.
     :ivar ui: The UI instance.
     :ivar world: The World instance.
     :ivar vars: The vars variable from the main App, used to share variables between event scripts.
+    :ivar path: The relative path to this script, from the engine's base directory.
+    :ivar dir: The directory this script is in.
     """
 
     def __init__(self, filename, app):
@@ -59,18 +62,19 @@ class APIContext(object):
         :param filename: The filename of the currently executing event script.
         :param app: The main App instance.
         """
-        self.this = filename
+        self.filename = filename
         self.app = app
         self.audio = self.app.audio
         self.cursor = self.app.cursor
         self.database = self.app.database
         self.log = Logger(filename)
         self.resource = self.app.resource
-        self.room = self.app.world.room
         self.script = self.app.script
         self.ui = self.app.ui
         self.world = self.app.world
         self.vars = self.app.vars
+        self.path = os.path.join(self.world.dir, self.filename)
+        self.dir = os.path.dirname(self.path)
 
     def __contains__(self, item: str) -> bool:
         return item in self.vars
