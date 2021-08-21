@@ -5,7 +5,7 @@
       "type": "string"
     },
     "music": {
-      "type": ["string", "null"]
+      "type": ["string", "null", "number"]
     },
     "exits": {
       "type": "object",
