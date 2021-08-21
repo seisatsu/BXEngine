@@ -41,9 +41,8 @@
               "result": {
                 "type": "string",
                 "enum": [
-                  "look",
-                  "exit",
                   "text",
+                  "exit",
                   "script"
                 ]
               },
@@ -62,9 +61,8 @@
               "result": {
                 "type": "string",
                 "enum": [
-                  "look",
-                  "exit",
                   "text",
+                  "exit",
                   "script"
                 ]
               },
@@ -83,9 +81,8 @@
               "result": {
                 "type": "string",
                 "enum": [
-                  "look",
-                  "exit",
                   "text",
+                  "exit",
                   "script"
                 ]
               },

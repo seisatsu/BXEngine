@@ -9,7 +9,7 @@
 		{
 			"rect": [750, 250, 800, 310],
 			"look": {
-				"result": "look",
+				"result": "text",
 				"contents": "There is some kind of humanoid figure here."
 			},
 			"use": {
