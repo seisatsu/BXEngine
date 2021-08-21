@@ -29,8 +29,7 @@ from lib.logger import Logger
 
 
 class Room(object):
-    """
-    A class to represent the current room.
+    """A class to represent the current room.
     """
 
     def __init__(self, config, app, world, resource, room_file):

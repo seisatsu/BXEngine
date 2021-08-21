@@ -35,7 +35,47 @@ Started from example code written by Sean J. McKiernan 'Mekire'
 import os
 import sys
 
-import pygame
+
+# ======================== #
+# ===== IMPORT TESTS ===== #
+# ======================== #
+
+# Try to import PyGame.
+try:
+    import pygame
+except ImportError:
+    print("Not starting: pygame module not found.")
+    print("Please make sure that the \"pygame\" Python3 module is installed.")
+    print("On most systems, run \"pip3 install pygame\". If pip3 is missing, try pip instead.")
+
+# Try to import PyGame GUI.
+try:
+    import pygame_gui
+except ImportError:
+    print("Not starting: pygame_gui module not found.")
+    print("Please make sure that the \"pygame_gui\" Python3 module is installed.")
+    print("On most systems, run \"pip3 install pygame_gui\". If pip3 is missing, try pip instead.")
+
+# Try to import jsonschema.
+try:
+    import jsonschema
+except ImportError:
+    print("Not starting: jsonschema module not found.")
+    print("Please make sure that the \"jsonschema\" Python3 module is installed.")
+    print("On most systems, run \"pip3 install jsonschema\". If pip3 is missing, try pip instead.")
+
+# Try to import ubjson.
+try:
+    import ubjson
+except ImportError:
+    print("Not starting: ubjson module not found.")
+    print("Please make sure that the \"ubjson\" Python3 module is installed.")
+    print("On most systems, run \"pip3 install ubjson\". If pip3 is missing, try pip instead.")
+
+
+# ================================= #
+# ===== ENGINE INITIALIZATION ===== #
+# ================================= #
 
 from lib.app import App
 from lib.databasemanager import DatabaseManager
@@ -46,10 +86,15 @@ from lib.resourcemanager import ResourceManager
 VERSION = "BXEngine PreAlpha"
 
 
-def load_images(config, resource, log):
-    """
-    We load the common images here that are needed by the rest of the engine.
+def load_images(config: dict, resource: ResourceManager, log: Logger) -> dict:
+    """We load the common images here that are needed by the rest of the engine.
+
     This includes navigation and action indicators.
+
+    :param config: This contains the engine's configuration variables.
+    :param resource: The ResourceManager instance.
+    :param log: The Logger instance for engine initialization procedures.
+    :return: Dictionary of PyGame Surfaces corresponding to loaded common images.
     """
     # List of common images absolutely required before the engine will start.
     required_images = [
@@ -88,9 +133,8 @@ def load_images(config, resource, log):
     return loaded_images
 
 
-def main():
-    """
-    Prepare our environment, create a display, and start the program.
+def main() -> None:
+    """Prepare our environment, create a display, and start the program.
     """
     # Set the window to be centered and initialize PyGame.
     os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -98,6 +142,8 @@ def main():
 
     # Welcome message.
     print("Welcome to {0}.".format(VERSION))
+
+    # Here we go.
     print("Starting up...")
 
     # We need to initialize ResourceManager first so we can load the config file.
@@ -134,5 +180,6 @@ def main():
     sys.exit()
 
 
+# Only start the engine if we are running as a program.
 if __name__ == "__main__":
     main()

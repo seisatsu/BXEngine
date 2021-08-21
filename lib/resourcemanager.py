@@ -31,7 +31,7 @@ import os
 import traceback
 import sys
 
-from typing import Any, Optional
+from typing import Optional
 
 import pygame
 
