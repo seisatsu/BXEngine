@@ -27,6 +27,7 @@
 
 import json
 import jsonschema
+import os
 import traceback
 import sys
 
@@ -39,6 +40,15 @@ from lib.util import normalize_path
 
 
 class ResourceManager(object):
+    """The Resource Manager
+
+    Handles loading resources from disk, and validation of JSON files.
+
+    :ivar resources: A dict of all currently loaded resources.
+    :ivar config: This contains the engine's configuration variables.
+    :ivar log: The Logger instance for this class.
+    :ivar _loaded_schemas: A dict of all currently loaded JSON schemas.
+    """
     def __init__(self):
         self.resources = {}
         self.config = None
@@ -59,10 +69,17 @@ class ResourceManager(object):
     def load_schema(self, schema: str):
         if schema in self._loaded_schemas:
             return self._loaded_schemas[schema]
+        if self.log:
+            self.log.info("Loading JSON Schema file: {0}".format(schema + ".json"))
+        if self.config and os.path.exists(self.config["world"] + "/schema/" + schema + ".json"):
+            schema_fullpath = self.config["world"] + "/schema/" + schema + ".json"
+        elif os.path.exists("common/schema/"+schema+".json"):
+            schema_fullpath = "common/schema/"+schema+".json"
+        else:
+            self.log.error("Could not locate schema file: {1}".format(timestamp(), schema + ".json"))
+            return None
         try:
-            if self.log:
-                self.log.info("Loading JSON Schema file: {0}".format(schema+".json"))
-            with open("common/schema/"+schema+".json") as f:
+            with open(schema_fullpath) as f:
                 self._loaded_schemas[schema] = json.load(f)
         except (OSError, IOError):
             if self.log:
