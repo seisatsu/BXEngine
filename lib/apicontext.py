@@ -31,7 +31,7 @@ from lib.logger import Logger
 
 
 class APIContext(object):
-    """The API Context
+    """The Event Scripting API Context
 
     A new instance of this class is given to each event script as an access point to the engine API.
     It is accessible via the "BXE" attribute given to every event script's main scope.

@@ -29,8 +29,13 @@ import pygame
 
 
 class Cursor(object):
-    """
-    A class to represent our cursor.
+    """A class to represent our mouse cursor.
+
+    :ivar click: Whether a click is in progress. (Whether a recognized mouse button is depressed.)
+    :ivar last_click: A unique ID for the last navigation region or action zone the mouse was depressed in.
+    :ivar pos: The current position of the mouse cursor.
+    :ivar nav: The navigation region the mouse cursor is currently in, if any.
+    :ivar action: The JSON contents of the action zone the mouse cursor is currently in, if any.
     """
 
     def __init__(self):
@@ -41,7 +46,6 @@ class Cursor(object):
         self.action = None
 
     def _update(self):
-        """
-        Update the cursor position.
+        """Update the cursor position.
         """
         self.pos = pygame.mouse.get_pos()
