@@ -119,7 +119,7 @@ def load_images(config: dict, resource: ResourceManager, log: Logger) -> dict:
         split_ext = os.path.splitext(common_file)
         if split_ext[1] == ".png":
             loaded_images[split_ext[0]] = resource.load_image("common/{0}".format(common_file),
-                                                              config["navigation"]["indicator_size"])
+                                                              config["navigation"]["indicator_size"], True)
 
     # Make sure all of the required common images are present and loaded.
     # If not, give a warning and put a None in the loaded_images dict so we exit afterwards.

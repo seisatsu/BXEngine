@@ -27,6 +27,7 @@
 
 import importlib.util
 import os
+import sys
 import traceback
 from typing import Any, Optional
 
@@ -94,6 +95,9 @@ class ScriptManager:
         except AttributeError:
             self.log.error("call(): Module not loaded for call: {0}: {1}".format(filename, func + "()"))
             return None
+        except SystemExit:
+            self.log.critical("sys.exit() called: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))
+            sys.exit(11)
         except:
             self.log.error("call(): Error from function: {0}: {1}\n{2}".format(filename, func + "()",
                                                                                traceback.format_exc().rstrip()))
@@ -149,6 +153,10 @@ class ScriptManager:
 
             self.log.info("Loaded script: {0}".format(filename))
             return self.__modules[filename]
+
+        except SystemExit:
+            self.log.critical("sys.exit() called: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))
+            sys.exit(11)
 
         except:
             self.log.error("Error from script: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))

@@ -174,15 +174,20 @@ class ResourceManager(object):
             print(traceback.format_exc(1))
             sys.exit(3)
 
-    def load_json(self, filename: str, validate: str = None) -> Optional[dict]:
+    def load_json(self, filename: str, validate: str = None, rootdir: bool = False) -> Optional[dict]:
         """Load a JSON file.
 
         :param filename: The filename of the JSON file to load.
         :param validate: If set, the schema type to validate with. (Filename minus the ".json".)
+        :param rootdir: Whether to search from the engine root directory instead of the world directory.
         :return: JSON object if succeeded, None if failed.
         """
         # Normalize the path to a Unix-style path for internal consistency.
         filename = normalize_path(filename)
+
+        # If we're not searching from the root directory, prepend the world directory.
+        if not rootdir:
+            filename = os.path.join(self.config["world"], filename)
 
         # If the file is already loaded, just return it.
         if filename in self.resources:
@@ -224,15 +229,20 @@ class ResourceManager(object):
             print(traceback.format_exc(1))
             return None
 
-    def load_image(self, filename: str, scale: tuple = None) -> Optional[pygame.Surface]:
+    def load_image(self, filename: str, scale: tuple = None, rootdir: bool = False) -> Optional[pygame.Surface]:
         """Load an image file.
 
         :param filename: The filename of the image to load.
         :param scale: A two-member tuple of the width and height to scale the image to.
+        :param rootdir: Whether to search from the engine root directory instead of the world directory.
         :return: PyGame surface if succeeded, None if failed.
         """
         # Normalize the path to a Unix-style path for internal consistency.
         filename = normalize_path(filename)
+
+        # If we're not searching from the root directory, prepend the world directory.
+        if not rootdir:
+            filename = os.path.join(self.config["world"], filename)
 
         # If the file is already loaded, just return it.
         if filename in self.resources:
@@ -260,15 +270,20 @@ class ResourceManager(object):
             self.log.error("load_image(): Could not load image file: {0}".format(filename))
             return None
 
-    def load_raw(self, filename: str, binary: bool = False) -> Optional[dict]:
+    def load_raw(self, filename: str, binary: bool = False, rootdir: bool = False) -> Optional[dict]:
         """Load any kind of file.
 
         :param filename: The filename of the file to load.
         :param binary: Whether to load the file in binary mode.
+        :param rootdir: Whether to search from the engine root directory instead of the world directory.
         :return: Raw file data if succeeded, None if failed.
         """
         # Normalize the path to a Unix-style path for internal consistency.
         filename = normalize_path(filename)
+
+        # If we're not searching from the root directory, prepend the world directory.
+        if not rootdir:
+            filename = os.path.join(self.config["world"], filename)
 
         # If the file is already loaded, just return it.
         if filename in self.resources:

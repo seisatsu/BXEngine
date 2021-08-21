@@ -334,7 +334,7 @@ class App(object):
             else:
                 self.script.call(script_result_split[0], *script_result_args)
 
-    def __render(self) -> None:
+    def _render(self) -> None:
         """Render a frame.
         """
         # Fill the screen with black, and then draw our room image.
@@ -367,7 +367,7 @@ class App(object):
         # * Run the AudioManager cleanup callback.
         while not self.done:
             self.__event_loop()
-            self.__render()
+            self._render()
             self.cursor._update()
             self.ui._update()
             self.audio._update()

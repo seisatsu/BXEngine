@@ -25,9 +25,17 @@
 # IN THE SOFTWARE.
 # **********
 
+import sys
+
+from lib.logger import Logger
+
 
 def normalize_path(path):
     """
     Normalize paths between Windows and other systems.
     """
-    return path.replace('\\', '/')
+    new_path = path.replace('\\', '/')
+    if "../" in new_path:
+        Logger("Util").critical("normalize_path(): Detected illegal upward traversal attempt: {0}".format(new_path))
+        sys.exit(10)
+    return new_path

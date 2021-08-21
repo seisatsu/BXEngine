@@ -27,6 +27,8 @@
 
 from typing import Optional
 
+import pygame
+
 from lib.logger import Logger
 
 
@@ -68,11 +70,26 @@ class Room(object):
         # self.overlays[Overlay_ID] = {"filename": filename, "image": pygame.Surface, "position": [x, y]}
         self.overlays = {}
 
-    def insert_overlay(self, filename: str, position: tuple[int, int], scale: tuple[int, int] = None) -> Optional[int]:
+    def insert_overlay(self, imagefile: [str, pygame.Surface], position: tuple[int, int],
+                       scale: tuple[int, int] = None) -> Optional[int]:
         """Insert an overlay image into the room.
         """
-        # Attempt to load the overlay image.
-        overlay_image = self.resource.load_image("{0}/{1}".format(self.world.dir, filename), scale)
+        # Attempt to load the overlay image from a filename.
+        if type(imagefile) is str:
+            overlay_image = self.resource.load_image("{0}/{1}".format(self.world.dir, imagefile), scale)
+            filename = imagefile
+
+        # We were passed a surface pre-loaded from ResourceManager.
+        elif type(imagefile) is pygame.Surface:
+            overlay_image = imagefile
+            if scale:
+                overlay_image = pygame.transform.scale(overlay_image, scale)
+            filename = None
+
+        # We don't know what this is.
+        else:
+            self.log.error("insert_overlay(): Invalid image given.")
+            return False
 
         # We were unable to load the background image.
         if not overlay_image:
@@ -81,6 +98,7 @@ class Room(object):
 
         # Success.
         self.overlays[id(overlay_image)] = {"filename": filename, "image": overlay_image, "position": position}
+        self.app._render()
         self.log.info("insert_overlay(): Added overlay image: {0} at position: {1}".format(overlay_image, position))
         return id(overlay_image)
 
@@ -93,6 +111,7 @@ class Room(object):
 
         # Success.
         del self.overlays[overlay_id]
+        self.app._render()
         self.log.info("remove_overlay(): Removed overlay image with ID: {0}".format(overlay_id))
         return True
 
@@ -106,8 +125,9 @@ class Room(object):
 
         # Success.
         self.overlays[overlay_id]["position"] = position
+        self.app._render()
         self.log.info("reposition_overlay(): Repositioned overlay image with ID: {0} to position: {1}".format(
-            overlay_id, self.overlays[overlay_id]["position"]))
+            overlay_id, position))
         return True
 
     def rescale_overlay(self, overlay_id: int, scale: tuple[int, int]) -> bool:
@@ -118,7 +138,12 @@ class Room(object):
             self.log.error("rescale_overlay(): Overlay ID does not exist to rescale: ".format(overlay_id))
             return False
 
-        #TODO: Finish.
+        # Success.
+        self.overlays[overlay_id]["image"] = pygame.transform.scale(self.overlays[overlay_id]["image"], scale)
+        self.app._render()
+        self.log.info("reposition_overlay(): Rescaled overlay image with ID: {0} to size: {1}".format(
+            overlay_id, scale))
+        return True
 
     def _load(self) -> bool:
         """Load the room descriptor JSON file. Also load the room image.
@@ -127,7 +152,7 @@ class Room(object):
         """
         # Attempt to load the room file.
         self.log.info("Loading room: {0}".format(self.file))
-        self.vars = self.resource.load_json("{0}/{1}".format(self.world.dir, self.file), "room")
+        self.vars = self.resource.load_json(self.file, "room")
 
         # We were unable to load the room file.
         if not self.vars:
@@ -135,8 +160,7 @@ class Room(object):
             return False
 
         # Attempt to load the room's background image.
-        self.image = self.resource.load_image("{0}/{1}".format(self.world.dir, self.vars["image"]),
-                                              self.config["window"]["size"])
+        self.image = self.resource.load_image(self.vars["image"], self.config["window"]["size"])
 
         # We were unable to load the background image.
         if not self.image:
