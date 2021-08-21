@@ -341,6 +341,10 @@ class App(object):
         self.screen.fill(pygame.Color("black"))
         self.screen.blit(self.world.room.image, (0, 0))
 
+        # Draw image overlays onto the room.
+        for overlay in self.world.room.overlays:
+            self.screen.blit(self.world.room.overlays[overlay]["image"], self.world.room.overlays[overlay]["position"])
+
         # If an action zone and a navigation zone overlap, the action zone always takes priority.
         # If no action zone was demarcated, only then will we demarcate a navigation zone.
         if not self.__demarc_action_indicator():
