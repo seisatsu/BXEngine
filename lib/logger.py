@@ -60,7 +60,7 @@ def init(config: dict):
 
     # Make sure the chosen log level is valid. Otherwise force the highest log level.
     if config["log"]["level"] not in ["critical", "error", "warn", "info", "debug"]:
-        print(timestamp(), "[logger#error] Invalid log level in config, defaulting to \"debug\".")
+        print(timestamp(), "[Logger#error] init(): Invalid log level in config, defaulting to \"debug\".")
         config["log"]["level"] = "debug"
     _LOGLEVEL = config["log"]["level"]
 
@@ -69,7 +69,7 @@ def init(config: dict):
     if "stdout" in config["log"]:
         if not config["log"]["stdout"] and not config["log"]["file"]:
             # No logging target is set, so force stdout.
-            print(timestamp(), "[logger#error] No logging target in config, defaulting to stdout.")
+            print(timestamp(), "[Logger#error] init(): No logging target in config, defaulting to stdout.")
             config["log"]["stdout"] = True
             _STDOUT = True
         elif config["log"]["stdout"]:
@@ -83,7 +83,7 @@ def init(config: dict):
             _LOGFILE = open(config["log"]["file"], 'a')
         except:
             if _LOGLEVEL in ["debug", "info", "warn", "error"]:
-                print(timestamp(), "[logger#error] Could not open log file: {0}".format(
+                print(timestamp(), "[logger#error] init(): Could not open log file: {0}".format(
                     config["log"]["file"]))
                 print(traceback.format_exc(1))
             if "stdout" in config["log"]:
@@ -93,9 +93,9 @@ def init(config: dict):
     # Note that we have finished initializing the logger.
     if _LOGLEVEL in ["debug", "info"]:
         if _STDOUT:
-            print(timestamp(), "[logger#info] Finished initializing logger.")
+            print(timestamp(), "[logger#info] init(): Finished initializing logger.")
         if _LOGFILE:
-            _LOGFILE.write(timestamp() + " [logger#info] Finished initializing logger.\n")
+            _LOGFILE.write(timestamp() + " [logger#info] init(): Finished initializing logger.\n")
 
 
 def timestamp() -> str:

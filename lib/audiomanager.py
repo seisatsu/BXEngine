@@ -62,7 +62,7 @@ class AudioManager:
 
         # Initialize the PyGame Mixer, which we are an abstraction of.
         pygame.mixer.init()
-        self.log.info("Initialized audio mixer.")
+        self.log.info("__init__(): Initialized audio mixer.")
 
     def play_sfx(self, filename: str, volume: float = None, loop: Optional[int] = 0,
                  fade: float = 0.0) -> int:
@@ -87,6 +87,8 @@ class AudioManager:
         channel = sfx_temp.play(loop, 0, int(fade*1000))
         self.__sfx[id(channel)] = {"channel": channel, "filename": filename}
         self.playing_sfx = True
+        self.log.debug("play_sfx: Started playing sfx with Channel ID: {0} from filename: {1}".format(
+            id(channel), filename))
         return id(channel)
 
     def get_pygame_channel(self, channel_id: int) -> pygame.mixer.Channel:
@@ -116,15 +118,20 @@ class AudioManager:
             if channel_id in self.__sfx:
                 # Set the volume.
                 self.__sfx[channel_id]["channel"].set_volume(volume)
+                self.log.debug("volume_sfx: Set volume of {0} for sfx by Channel ID: {1}".format(volume, channel_id))
                 return volume
         elif channel_id is not None and volume is None:
             if channel_id in self.__sfx:
+                volume = self.__sfx[channel_id]["channel"].get_volume()
+                self.log.debug("volume_sfx: Retrieved volume of {0} for sfx by Channel ID: {1}".format(
+                    volume, channel_id))
                 return self.__sfx[channel_id]["channel"].get_volume()
         elif channel_id is None and volume is not None:
             self.__iter_lock = True
             for chtmp in self.__sfx:
                 self.__sfx[chtmp]["channel"].set_volume(volume)
             self.__iter_lock = False
+            self.log.debug("volume_sfx: Set volume of {0} for all sfx.".format(volume))
             return volume
         else:
             self.log.error("volume_sfx(): Sound and volume cannot both be None.")
@@ -154,6 +161,12 @@ class AudioManager:
         if current_volume is []:
             current_volume = [volume]
         if found:
+            if volume is not None:
+                self.log.debug("volume_sfx_by_filename: Set volume of {0} for sfx of filename: {1}".format(
+                    volume, filename))
+            else:
+                self.log.debug("volume_sfx_by_filename: Retrieved volume of {0} for sfx of filename: {1}".format(
+                    volume, filename))
             return current_volume
         self.log.warn("volume_sfx_by_filename(): No sound with this filename currently playing: {0}".format(filename))
         return None
@@ -170,6 +183,7 @@ class AudioManager:
                 else:  # Fade out channel.
                     self.__sfx[channel_id]["channel"].fadeout(fade)
                     # Cleanup callback will handle deletion.
+            self.log.debug("stop_sfx(): Stopped sfx by channel ID: {0}".format(channel_id))
             return True
         else:
             self.log.warn("stop_sfx(): Already stopped or nonexistent channel: {0}".format(channel_id))
@@ -179,7 +193,7 @@ class AudioManager:
         """
         Stop all currently playing instances of the named sound effect.
         """
-        result = False
+        result = 0
         self.__iter_lock = True
         for channel_id in self.__sfx:
             if self.__sfx[channel_id]["filename"] == filename:
@@ -188,12 +202,13 @@ class AudioManager:
                 else:
                     self.__sfx[channel_id]["channel"].stop()
                     del self.__sfx[channel_id]
-                result = True
+                result += 1
         self.__iter_lock = False
 
         if not result:
             self.log.warn("stop_sfx_by_filename(): Cannot stop nonexistent instances of sfx: {0}".format(filename))
-        return result
+        self.log.debug("stop_sfx_by_filename(): Stopped {0} sfx for filename: {1}".format(result, filename))
+        return result > 0
 
     def stop_all_sfx(self) -> bool:
         """
@@ -205,6 +220,7 @@ class AudioManager:
             self.stop_sfx(sfx)
         self.__iter_lock = False
         self.__sfx = {}
+        self.log.debug("stop_all_sfx(): Stopped {0} sfx.".format(len(sfx_temp)))
         return True
 
     def fadeout_all_sfx(self, fade: float) -> bool:
@@ -242,6 +258,7 @@ class AudioManager:
 
         self.playing_music = filename
 
+        self.log.info("play_music(): Started playing music file: {0}".format(filename))
         return True
 
     def volume_music(self, volume: float = None) -> Optional[float]:
@@ -250,10 +267,13 @@ class AudioManager:
         """
         if self.playing_music:
             if volume is not None:
+                self.log.debug("volume_music(): Set volume to: {0}".format(volume))
                 pygame.mixer.music.set_volume(volume)
                 return volume
             else:  # Get the volume.
-                return pygame.mixer.music.get_volume()
+                volume = pygame.mixer.music.get_volume()
+                self.log.debug("volume_music(): Retrieved current volume: {0}".format(volume))
+                return volume
 
         self.log.warn("volume_music(): Cannot adjust volume for nonexistent music.")
         return None

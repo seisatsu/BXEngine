@@ -127,7 +127,7 @@ class DatabaseManager:
         """
         # Get the key.
         if key in self.__database:
-            self.log.info("get(): Get object: \"{0}\"".format(key))
+            self.log.debug("get(): Get object: \"{0}\"".format(key))
             return self.__database[key]
 
         else:
@@ -154,7 +154,7 @@ class DatabaseManager:
 
         self.__database[key] = obj
         self.__changed = True
-        self.log.info("put(): Put object: \"{0}\"".format(key))
+        self.log.debug("put(): Put object: \"{0}\"".format(key))
         return True
 
     def remove(self, key: str) -> Optional[bool]:
@@ -170,7 +170,7 @@ class DatabaseManager:
         # Remove the key.
         if key in self.__database:
             del self.__database[key]
-            self.log.info("remove(): Remove object: \"{0}\"".format(key))
+            self.log.debug("remove(): Remove object: \"{0}\"".format(key))
             self.__changed = True
             return True
         else:
@@ -185,7 +185,7 @@ class DatabaseManager:
         """
         self.__changed = True
         self._update()
-        self.log.info("flush(): Flushed database to disk: {0}".format(self.filename))
+        self.log.debug("flush(): Flushed database to disk: {0}".format(self.filename))
         return True
 
     def __test_db_dir(self) -> bool:

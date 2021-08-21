@@ -121,9 +121,9 @@ class App(object):
 
                 # For debugging purposes, log whether this is a left or a right click.
                 if event.button == 1:
-                    self.log.debug("LEFT MOUSE BUTTON DOWN")
+                    self.log.debug("__event_loop(): LEFT MOUSE BUTTON DOWN")
                 elif event.button == 3:
-                    self.log.debug("RIGHT MOUSE BUTTON DOWN")
+                    self.log.debug("__event_loop(): RIGHT MOUSE BUTTON DOWN")
 
             # A left click has concluded.
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
@@ -133,7 +133,7 @@ class App(object):
                 # The click was a complete click -- it started and ended within the same zone.
                 # The zone was an action zone.
                 if self.cursor.action and id(self.cursor.action) == self.cursor.last_click:
-                    self.log.debug("FULL LEFT CLICK IN ACTION ZONE")
+                    self.log.debug("__event_loop(): FULL LEFT CLICK IN ACTION ZONE")
 
                     # Perform the action associated with this zone.
                     if "look" in self.cursor.action:
@@ -146,7 +146,7 @@ class App(object):
                 # The click was a complete click -- it started and ended within the same zone.
                 # The zone was a navigation zone.
                 elif self.cursor.nav and self.cursor.nav == self.cursor.last_click:
-                    self.log.debug("FULL LEFT CLICK IN NAV REGION: {0}".format(self.cursor.nav))
+                    self.log.debug("__event_loop(): FULL LEFT CLICK IN NAV REGION: {0}".format(self.cursor.nav))
 
                     # Perform the navigation associated with the zone.
                     if self.cursor.nav == "double":
@@ -169,7 +169,7 @@ class App(object):
                 # The click was a complete click -- it started and ended within the same zone.
                 # The zone was an action zone.
                 if self.cursor.action and id(self.cursor.action) == self.cursor.last_click:
-                    self.log.debug("FULL RIGHT CLICK IN ACTION ZONE")
+                    self.log.debug("__event_loop(): FULL RIGHT CLICK IN ACTION ZONE")
 
                     # Perform the action associated with this zone.
                     if "use" in self.cursor.action:
@@ -181,7 +181,7 @@ class App(object):
                 # The zone was a navigation zone.
                 elif self.cursor.nav in ["backward", "double"] and self.cursor.nav == self.cursor.last_click:
                     # We have right clicked on a backward or double arrow; attempt to go backward.
-                    self.log.debug("FULL RIGHT CLICK IN NAV REGION: {0}".format(self.cursor.nav))
+                    self.log.debug("__event_loop(): FULL RIGHT CLICK IN NAV REGION: {0}".format(self.cursor.nav))
                     self.world.navigate("backward")
 
                     # At the conclusion of changing rooms, the UI must be reset.
@@ -309,23 +309,27 @@ class App(object):
         """
         # A text action was invoked. Create a textbox containing the contents.
         if self.cursor.action[act_type]["result"] == "text":
-            self.log.debug("ACTION TEXT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
+            self.log.debug("__do_action(): ACTION TEXT RESULT CONTENTS: {0}".format(
+                self.cursor.action[act_type]["contents"]))
             self.ui.reset()
             self.ui.text_box(self.cursor.action[act_type]["contents"])
 
         # An exit action was invoked. Change rooms.
         elif self.cursor.action[act_type]["result"] == "exit":
-            self.log.debug("ACTION EXIT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
+            self.log.debug("__do_action(): ACTION EXIT RESULT CONTENTS: {0}".format(
+                self.cursor.action[act_type]["contents"]))
             self.world.change_room(self.cursor.action[act_type]["contents"])
 
         # A script action was invoked. Execute an event script.
         elif self.cursor.action[act_type]["result"] == "script":
-            self.log.debug("ACTION SCRIPT RESULT CONTENTS: {0}".format(self.cursor.action[act_type]["contents"]))
+            self.log.debug("__do_action(): ACTION SCRIPT RESULT CONTENTS: {0}".format(
+                self.cursor.action[act_type]["contents"]))
             try:
                 script_result_split = self.cursor.action[act_type]["contents"].split(':')
                 script_result_args = script_result_split[1].split(',')
             except IndexError:
-                self.log.error("Malformed script result contents: {0}".format(self.cursor.action[act_type]["contents"]))
+                self.log.error("__do_action(): Malformed script result contents: {0}".format(
+                    self.cursor.action[act_type]["contents"]))
             else:
                 self.script.call(script_result_split[0], *script_result_args)
 
