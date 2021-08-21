@@ -110,7 +110,7 @@ class AudioManager:
 
         :param channel_id: The abstracted channel ID given by play_sfx().
         :param volume: Get the current volume if None, otherwise set the new volume. Takes a float between 0.0 and 1.0.
-        :return: Returns the current volume, after any adjustments.
+        :return: Returns the current volume after any adjustments if succeeded, None if failed.
         """
         # Search for the sound effect.
         if channel_id is not None and volume is not None:
@@ -284,7 +284,7 @@ class AudioManager:
         """Get or adjust the volume of the currently playing music.
 
         :param volume: Get the current volume if None, otherwise set the new volume. Takes a float between 0.0 and 1.0.
-        :returns: Returns the current volume, after any adjustments.
+        :returns: Returns the current volume after any adjustments if succeeded, None if failed.
         """
         if self.playing_music:
             if volume is not None:
@@ -323,8 +323,10 @@ class AudioManager:
         self.log.debug("stop_music(): Stopped playing music from file: {0}".format(temp_music))
         return True
 
-    def _update(self) -> None:
+    def _update(self) -> bool:
         """Tick callback to clean up files we're done with.
+
+        :return: True.
         """
         if self.playing_music and not pygame.mixer.music.get_busy():
             pygame.mixer.music.unload()
@@ -340,3 +342,6 @@ class AudioManager:
         except RuntimeError:
             # The side of the self.__sfx dictionary changed while iterating. This is not actually a problem.
             pass
+
+        return True
+

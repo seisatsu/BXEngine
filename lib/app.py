@@ -93,9 +93,9 @@ class App(object):
 
         self.script = ScriptManager(self, self.audio, self.cursor, self.resource, self.ui, self.world)
 
-    def __event_loop(self):
-        """
-        This is the event loop for the whole program.
+    def __event_loop(self) -> None:
+        """This is the event loop for the whole program.
+
         We handle clicks and navigation and cleaning up UI elements here.
         """
         # Iterate through current events, and process them.
@@ -199,10 +199,12 @@ class App(object):
             self.ui._process_events(event)
 
     def __demarc_action_indicator(self) -> bool:
-        """
-        This is a method to demarcate an appropriate action indicator.
+        """This is a method to demarcate an appropriate action indicator.
+
         For each action enumerated in the room, it figures out whether our cursor is in that action's region,
         And then updates the cursor object with the current action region if any, and draws the indicator.
+
+        :return: True if succeeded, False if no action.
         """
         x, y = self.cursor.pos
 
@@ -237,9 +239,9 @@ class App(object):
         self.cursor.action = None
         return False
 
-    def __demarc_nav_indicator(self):
-        """
-        This is a method to demarcate an appropriate navigation indicator.
+    def __demarc_nav_indicator(self) -> None:
+        """This is a method to demarcate an appropriate navigation indicator.
+
         It does some irritating math to figure out if our cursor is in a region where a click would trigger navigation,
         And then updates the cursor object with the current navigation region if any, and draws the indicator.
         """
@@ -303,9 +305,8 @@ class App(object):
         else:
             self.cursor.nav = None
 
-    def __do_action(self, act_type: str):
-        """
-        Perform a room action, possibly creating a UI element.
+    def __do_action(self, act_type: str) -> None:
+        """Perform a room action, possibly creating a UI element.
         """
         # A text action was invoked. Create a textbox containing the contents.
         if self.cursor.action[act_type]["result"] == "text":
@@ -333,9 +334,8 @@ class App(object):
             else:
                 self.script.call(script_result_split[0], *script_result_args)
 
-    def __render(self):
-        """
-        Render a frame.
+    def __render(self) -> None:
+        """Render a frame.
         """
         # Fill the screen with black, and then draw our room image.
         self.screen.fill(pygame.Color("black"))
@@ -350,9 +350,8 @@ class App(object):
         self.ui._draw_ui()
         pygame.display.update()
 
-    def _main_loop(self):
-        """
-        This is the main loop for the entire program.
+    def _main_loop(self) -> None:
+        """This is the main loop for the entire program.
         """
         self.log.info("Entering main loop.")
 
@@ -369,3 +368,4 @@ class App(object):
             self.ui._update()
             self.audio._update()
             self.database._update()
+

@@ -45,7 +45,7 @@ class Cursor(object):
         self.nav = None
         self.action = None
 
-    def _update(self):
+    def _update(self) -> None:
         """Update the cursor position.
         """
         self.pos = pygame.mouse.get_pos()

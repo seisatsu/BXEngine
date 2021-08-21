@@ -43,7 +43,7 @@ _STDOUT = None
 _WAITONCRITICAL = None
 
 
-def init(config: dict):
+def init(config: dict) -> None:
     """Initialize the Logger system.
 
     This must be run before creating any Logger instances.
@@ -114,16 +114,18 @@ class Logger:
 
     Logs to STDOUT, and optionally to a file, and filters unwanted messages based on a log level setting.
     Each Logger instance can have its own namespace for which it tags messages.
+
+    :ivar _namespace: The name of the subsystem this Logger instance is logging for.
     """
 
-    def __init__(self, namespace):
+    def __init__(self, namespace) -> None:
         """Logger Initializer.
 
         :param namespace: The name of the subsystem this Logger instance is logging for.
         """
         self._namespace = namespace
 
-    def debug(self, msg: str, **kwargs: Any):
+    def debug(self, msg: str, **kwargs: Any) -> None:
         """Write a debug level message to the console and/or the log file.
         """
         if _LOGLEVEL in ["debug"]:
@@ -132,7 +134,7 @@ class Logger:
             if _LOGFILE:
                 _LOGFILE.write("{0} [{1}#debug] {2}\n".format(timestamp(), self._namespace, msg.format(**kwargs)))
 
-    def info(self, msg: str, **kwargs: Any):
+    def info(self, msg: str, **kwargs: Any) -> None:
         """Write an info level message to the console and/or the log file.
         """
         if _LOGLEVEL in ["debug", "info"]:
@@ -141,7 +143,7 @@ class Logger:
             if _LOGFILE:
                 _LOGFILE.write("{0} [{1}#info] {2}\n".format(timestamp(), self._namespace, msg.format(**kwargs)))
 
-    def warn(self, msg: str, **kwargs: Any):
+    def warn(self, msg: str, **kwargs: Any) -> None:
         """Write a warn level message to the console and/or the log file.
         """
         if _LOGLEVEL in ["debug", "info", "warn"]:
@@ -150,7 +152,7 @@ class Logger:
             if _LOGFILE:
                 _LOGFILE.write("{0} [{1}#warn] {2}\n".format(timestamp(), self._namespace, msg.format(**kwargs)))
 
-    def error(self, msg: str, **kwargs: Any):
+    def error(self, msg: str, **kwargs: Any) -> None:
         """Write an error level message to the console and/or the log file.
         """
         if _LOGLEVEL in ["debug", "info", "warn", "error"]:
@@ -159,7 +161,7 @@ class Logger:
             if _LOGFILE:
                 _LOGFILE.write("{0} [{1}#error] {2}\n".format(timestamp(), self._namespace, msg.format(**kwargs)))
 
-    def critical(self, msg: str, **kwargs: Any):
+    def critical(self, msg: str, **kwargs: Any) -> None:
         """Write a critical level message to the console and/or the log file.
 
         All log levels include critical, so these messages cannot be disabled.
@@ -172,7 +174,7 @@ class Logger:
         if _WAITONCRITICAL:
             input("Press Enter Key to Continue...")
 
-    def write(self, msg: str):
+    def write(self, msg: str) -> None:
         """Write an untagged message to the console and/or the log file, regardless of log level.
         """
         print(msg)

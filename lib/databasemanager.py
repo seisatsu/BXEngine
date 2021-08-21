@@ -40,13 +40,17 @@ class DatabaseManager:
     Stores and retrieves named objects through a Universal Binary JSON file.
     Any object type supported by JSON may be stored.
 
-    Attributes:
-        filename: Filename of the database.
+    :ivar config: This contains the engine's configuration variables.
+    :ivar log: The Logger instance for this class.
+    :ivar filename: The filename of the initial database to open.
+    :ivar __change: Whether are changes to the database that haven't been written to disk yet.
+    :ivar __database: The JSON contents of the currently open database.
     """
 
     def __init__(self, config):
-        """
-        DatabaseManager Class Initializer
+        """DatabaseManager Class Initializer
+
+        :ivar config: This contains the engine's configuration variables.
         """
         self.config = config
         self.log = Logger("DatabaseManager")
@@ -83,16 +87,13 @@ class DatabaseManager:
     def __delitem__(self, item: str) -> None:
         self.remove(item)
 
-    def open(self, filename: str) -> Optional[bool]:
+    def open(self, filename: str) -> bool:
         """Opens a new database and closes the current one.
 
         If opening the new database fails, the old one stays loaded.
 
-        Args:
-            filename: The filename of the database to load, relative to the database root.
-
-        Returns:
-            True if succeeded, False if failed.
+        :param filename: The filename of the database to load, relative to the database root.
+        :return: True if succeeded, False if failed.
         """
         self.flush()  # Write the current database to disk first.
 
@@ -116,34 +117,27 @@ class DatabaseManager:
         return True  # Success
 
     def get(self, key: str) -> Any:
-        """Get an object by key (name).
+        """Retrieve an object from the database by its key .
 
-        Retrieve an object from the database by its key.
-
-        Args:
-            key: The key whose object to retrieve.
-
-        Returns: Python object if succeeded, None if failed.
+        :param key: The key whose object to retrieve.
+        :return: Python object if succeeded, None if failed.
         """
         # Get the key.
         if key in self.__database:
             self.log.debug("get(): Get object: \"{0}\"".format(key))
             return self.__database[key]
 
+        # Failed to get the key.
         else:
             self.log.error("get(): No such key: \"{0}\"".format(key))
             return None
 
-    def put(self, key: str, obj: Any) -> Optional[bool]:
-        """Put an object by key (name).
+    def put(self, key: str, obj: Any) -> bool:
+        """Create or update a key with a new object.
 
-        Create or update a key with a new object.
-
-        Args:
-            key: The key to create or update.
-            obj: The object to store.
-
-        Returns: True if succeeded, False if failed.
+        :var key: The key to create or update.
+        :var obj: The object to store.
+        :return: True if succeeded, False if failed.
         """
         # Is it serializable?
         try:
@@ -157,15 +151,11 @@ class DatabaseManager:
         self.log.debug("put(): Put object: \"{0}\"".format(key))
         return True
 
-    def remove(self, key: str) -> Optional[bool]:
-        """Remove a key.
+    def remove(self, key: str) -> bool:
+        """Removes a key and its object from the database.
 
-        Removes a key and its object from the database.
-
-        Args:
-            key: The key to remove.
-
-        Returns: True if succeeded, False if failed.
+        :param key: The key to remove.
+        :return: True if succeeded, False if failed.
         """
         # Remove the key.
         if key in self.__database:
@@ -177,19 +167,17 @@ class DatabaseManager:
             self.log.error("remove(): No such key: \"{0}\"".format(key))
             return False
 
-    def flush(self) -> bool:
+    def flush(self) -> None:
         """Force the database to write to disk now.
-
-        Returns:
-            True
         """
         self.__changed = True
         self._update()
         self.log.debug("flush(): Flushed database to disk: {0}".format(self.filename))
-        return True
 
     def __test_db_dir(self) -> bool:
         """Test if we can create or open the database directory.
+
+        :return: True if succeeded, False if failed.
         """
         db_dir_path = os.path.dirname(self.config["database"])
         if db_dir_path == '':
@@ -214,6 +202,8 @@ class DatabaseManager:
 
     def __test_db_open(self) -> bool:
         """Test if we can create or open the database file.
+
+        :return: True if succeeded, False if failed.
         """
         try:
             with open(self.filename, "ab+") as test:
@@ -223,6 +213,8 @@ class DatabaseManager:
 
     def __load(self) -> Optional[dict]:
         """Load the database file from disk.
+
+        :return: Object if succeeded, False if failed.
         """
         if not self.__test_db_open():
             return None
@@ -250,3 +242,4 @@ class DatabaseManager:
                 self.log.critical("_cleanup(): Suddenly cannot write database to disk: {0}".format(self.filename))
                 sys.exit(1)
             self.__changed = False
+
