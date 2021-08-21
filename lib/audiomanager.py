@@ -277,7 +277,7 @@ class AudioManager:
 
         return True
 
-    def _cleanup(self) -> None:
+    def _update(self) -> None:
         """
         Tick callback to clean up files we're done with.
         """

@@ -43,6 +43,7 @@ class APIContext(object):
     :ivar app: The main App instance.
     :ivar audio: The AudioManager instance.
     :ivar cursor: The Cursor instance.
+    :ivar database: The DatabaseManager instance.
     :ivar log: The Logger instance for this script.
     :ivar resource: The ResourceManager instance.
     :ivar room: The current Room instance.
@@ -52,29 +53,24 @@ class APIContext(object):
     :ivar vars: The vars variable from the main App, used to share variables between event scripts.
     """
 
-    def __init__(self, filename, app, audio, cursor, resource, script, ui, world):
+    def __init__(self, filename, app):
         """APIContext Class Initializer
 
         :param filename: The filename of the currently executing event script.
         :param app: The main App instance.
-        :param audio: The AudioManager instance.
-        :param cursor: The Cursor instance.
-        :param resource: The ResourceManager instance.
-        :param script: The ScriptManager instance.
-        :param ui: The UI instance.
-        :param world: The World instance.
         """
         self.this = filename
         self.app = app
-        self.audio = audio
-        self.cursor = cursor
+        self.audio = self.app.audio
+        self.cursor = self.app.cursor
+        self.database = self.app.database
         self.log = Logger(filename)
-        self.resource = resource
-        self.room = world.room
-        self.script = script
-        self.ui = ui
-        self.world = world
-        self.vars = app.vars
+        self.resource = self.app.resource
+        self.room = self.app.world.room
+        self.script = self.app.script
+        self.ui = self.app.ui
+        self.world = self.app.world
+        self.vars = self.app.vars
 
     def __contains__(self, item: str) -> bool:
         return item in self.vars

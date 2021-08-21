@@ -145,8 +145,7 @@ class ScriptManager:
             mod = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(mod)
             self.__modules[filename] = mod
-            self.__modules[filename].BXE = APIContext(filename, self.app, self.audio, self.cursor, self.resource, self,
-                                                      self.ui, self.world)
+            self.__modules[filename].BXE = APIContext(filename, self.app)
 
             self.log.info("Loaded script: {0}".format(filename))
             return self.__modules[filename]

@@ -54,19 +54,21 @@ class App(object):
     :ivar audio: The AudioManager instance.
     :ivar ui: The UI instance.
     :ivar resource: The ResourceManager instance.
+    :ivar database: The DatabaseManager instance.
     :ivar vars: A storage space for variables to be shared between event scripts.
     :ivar log: The Logger instance for this class.
     :ivar world: The World instance for the currently loaded world.
     :ivar script: The ScriptManager instance.
     """
 
-    def __init__(self, screen, config, images, resource):
+    def __init__(self, screen, config, images, resource, database):
         """App Class Initializer
 
         :param screen: The PyGame screen surface.
         :param config: This contains the engine's configuration variables.
         :param images: This is a dict containing all of the common required images.
         :param resource: The ResourceManager instance.
+        :param database: The DatabaseManager instance.
         """
         self.screen = screen
         self.clock = pygame.time.Clock()
@@ -79,6 +81,7 @@ class App(object):
         self.audio = AudioManager(self.config)
         self.ui = UI(config, self.clock, self.fps, self.screen)
         self.resource = resource
+        self.database = database
         self.vars = {}
         self.log = Logger("App")
 
@@ -360,4 +363,5 @@ class App(object):
             self.__render()
             self.cursor._update()
             self.ui._update()
-            self.audio._cleanup()
+            self.audio._update()
+            self.database._update()

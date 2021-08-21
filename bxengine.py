@@ -38,6 +38,7 @@ import sys
 import pygame
 
 from lib.app import App
+from lib.databasemanager import DatabaseManager
 from lib.logger import Logger
 from lib.resourcemanager import ResourceManager
 
@@ -107,6 +108,10 @@ def main():
     config = resource._load_initial_config("config.json")
     log = Logger("BXEngine")
 
+    # Open the primary database.
+    log.info("Opening primary database...")
+    database = DatabaseManager(config)
+
     # Load all images from the common folder.
     log.info("Loading common images...")
     images = load_images(config, resource, log)
@@ -121,7 +126,7 @@ def main():
     screen = pygame.display.get_surface()
 
     # Entry point to the main program.
-    App(screen, config, images, resource)._main_loop()
+    App(screen, config, images, resource, database)._main_loop()
 
     # Shut down.
     log.info("Shutting down...")
