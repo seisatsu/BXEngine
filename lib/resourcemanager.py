@@ -66,114 +66,202 @@ class ResourceManager(object):
         else:
             return None
 
-    def load_schema(self, schema: str):
+    def load_schema(self, schema: str) -> Optional[dict]:
+        """Load a schema file for use in validating other JSON files.
+
+        These are used when a schema is named in load_json().
+
+        :param schema: The name of the schema type whose file to load. The filename will be "<schema>.json".
+        :return: JSON object of the schema file if succeeded, otherwise the engine will exit.
+        """
+        # Return the schema if it is already loaded.
         if schema in self._loaded_schemas:
             return self._loaded_schemas[schema]
+
+        # Begin loading a schema file.
         if self.log:
             self.log.info("Loading JSON Schema file: {0}".format(schema + ".json"))
+
+        # Check the world directory for the schema first, followed by the common directory.
         if self.config and os.path.exists(self.config["world"] + "/schema/" + schema + ".json"):
             schema_fullpath = self.config["world"] + "/schema/" + schema + ".json"
         elif os.path.exists("common/schema/"+schema+".json"):
             schema_fullpath = "common/schema/"+schema+".json"
         else:
-            self.log.error("Could not locate schema file: {1}".format(timestamp(), schema + ".json"))
+            if self.log:
+                self.log.error("Could not locate schema file: {1}".format(timestamp(), schema + ".json"))
             return None
+
+        # Attempt to load the schema.
         try:
             with open(schema_fullpath) as f:
                 self._loaded_schemas[schema] = json.load(f)
+
+        # Failed to load the schema.
         except (OSError, IOError):
             if self.log:
                 self.log.error("Could not open schema file: {1}".format(timestamp(), schema+".json"))
             else:
-                print("{0} [Resource#critical] Could not open config schema file: {1}".format(timestamp(),
+                print("{0} [Resource#error] Could not open config schema file: {1}".format(timestamp(),
                                                                                               schema+".json"))
             print(traceback.format_exc(1))
             return None
+
+        # Failed to decode the schema due to JSON error.
         except json.JSONDecodeError:
             if self.log:
                 self.log.error("JSON error from schema file: {1}".format(timestamp(), schema+".json"))
             else:
-                print("{0} [Resource#critical] JSON error from config schema file: {1}".format(timestamp(),
+                print("{0} [Resource#error] JSON error from config schema file: {1}".format(timestamp(),
                                                                                                schema+".json"))
             print(traceback.format_exc(1))
             return None
+
+        # Return the loaded schema.
         return self._loaded_schemas[schema]
 
     def _load_initial_config(self, filename: str) -> dict:
+        """Load the engine configuration file.
+
+        :param filename: The filename of the configuration file to load.
+        :return: Dictionary of configuration values if succeeded, otherwise the engine exits.
+        """
+        # Normalize the path to a Unix-style path for internal consistency.
         filename = normalize_path(filename)
+
+        # If the config is already loaded, just return it. This shouldn't happen though.
         if self.config:
             return self.config
+
+        # Attempt to load the JSON config file.
         try:
             with open(filename) as f:
                 rsrc = json.load(f)
+
+                # Load the schema needed to validate the config file, and perform validation.
                 schema = self.load_schema("config")
                 if not schema:
                     print("{0} [config#critical] Could not validate bxengine config file: {1}".format(timestamp(),
                                                                                                       filename))
                     sys.exit(2)
                 jsonschema.validate(rsrc, schema)
+
+                # Finish loading the config.
                 self.resources[filename] = rsrc
                 self.config = rsrc
+
+                # Initialize the Logger system with the configuration variables.
                 init(self.config)
                 self.log = Logger("Resource")
+
+                # Success.
                 return self.config
+
+        # Failed to open the config file.
         except (OSError, IOError):
             print("{0} [config#critical] Could not open bxengine config file: {1}".format(timestamp(), filename))
             print(traceback.format_exc(1))
-            sys.exit(2)
+            sys.exit(1)
+
+        # Failed to decode the config file due to JSON error.
         except json.JSONDecodeError:
             print("{0} [config#critical] JSON error from bxengine config file: {1}".format(timestamp(), filename))
             print(traceback.format_exc(1))
             sys.exit(2)
+
+        # The config file failed validation.
         except jsonschema.ValidationError:
             print("{0} [config#critical] JSON schema validation error from bxengine config file: {1}".format(
                   timestamp(), filename))
             print(traceback.format_exc(1))
-            sys.exit(2)
+            sys.exit(3)
 
     def load_json(self, filename: str, validate: str = None) -> Optional[dict]:
+        """Load a JSON file.
+
+        :param filename: The filename of the JSON file to load.
+        :param validate: If set, the schema type to validate with. (Filename minus the ".json".)
+        :return: JSON object if succeeded, None if failed.
+        """
+        # Normalize the path to a Unix-style path for internal consistency.
         filename = normalize_path(filename)
+
+        # If the file is already loaded, just return it.
         if filename in self.resources:
             return self.resources[filename]
+
+        # Attempt to load and optionally validate the JSON file.
         try:
             self.log.info("Loading JSON file: {0}".format(filename))
             with open(filename) as f:
                 rsrc = json.load(f)
+
+                # Load the appropriate schema and attempt validation.
                 if validate:
                     schema = self.load_schema(validate)
                     if not schema:
                         return None
                     jsonschema.validate(rsrc, schema)
+
+                # Finish loading the JSON file.
                 self.resources["filename"] = rsrc
                 self.log.info("load_json(): Finished loading JSON file: {0}".format(filename))
+
+                # Success.
                 return self.resources["filename"]
+
+        # Failed to open the JSON file.
         except (OSError, IOError):
             self.log.error("load_json(): Could not open JSON file: {0}".format(filename))
             print(traceback.format_exc(1))
             return None
+
+        # Failed to decode the JSON file due to JSON error.
         except json.JSONDecodeError:
             self.log.error("load_json(): JSON error from bxengine config file: {0}".format(filename))
             print(traceback.format_exc(1))
             return None
+
+        # The JSON file failed validation.
         except jsonschema.ValidationError:
             self.log.error("JSON schema validation error from file: {0}".format(filename))
             print(traceback.format_exc(1))
             return None
 
-    def load_image(self, filename: str, scale: tuple = None) -> Any:
+    def load_image(self, filename: str, scale: tuple = None) -> Optional[pygame.Surface]:
+        """Load an image file.
+
+        :param filename: The filename of the image to load.
+        :param scale: A two-member tuple of the width and height to scale the image to.
+        :return: PyGame surface if succeeded, None if failed.
+        """
+        # Normalize the path to a Unix-style path for internal consistency.
         filename = normalize_path(filename)
+
+        # If the file is already loaded, just return it.
         if filename in self.resources:
             return self.resources[filename]
+
+        # Attempt to load and optionally scale the image.
         try:
+            # We are going to scale the image.
             if scale:
                 rsrc = pygame.transform.scale(pygame.image.load(filename), scale)
                 self.log.info("load_image(): Loading image file: {0}, at scale: {1}".format(filename, scale))
+
+            # We are not going to scale the image.
             else:
                 self.log.info("load_image(): Loading image file: {0}".format(filename))
                 rsrc = pygame.image.load(filename)
+
+            # Finish loading the image.
             self.resources[filename] = rsrc
             self.log.info("load_image(): Finished loading image file: {0}".format(filename))
+
+            # Success.
             return self.resources[filename]
+
+        # We were unable to load the image.
         except:
             self.log.error("load_image(): Could not load image file: {0}".format(filename))
             return None

@@ -117,7 +117,7 @@ def main():
     images = load_images(config, resource, log)
     if None in images.values():
         log.critical("Unable to load required common images.")
-        sys.exit(4)
+        sys.exit(7)
     log.info("Finished loading common images.")
 
     # Set the default window caption, set window size, and get the window surface.

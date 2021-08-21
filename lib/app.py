@@ -89,7 +89,7 @@ class App(object):
         self.log.info("Initializing game world...")
         self.world = World(config, self, resource)
         if not self.world.load():
-            sys.exit(5)
+            sys.exit(8)
 
         self.script = ScriptManager(self, self.audio, self.cursor, self.resource, self.ui, self.world)
 

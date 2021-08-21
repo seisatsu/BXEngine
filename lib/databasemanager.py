@@ -62,14 +62,14 @@ class DatabaseManager:
 
         # Make sure the database directory is accessible.
         if not self.__test_db_dir():
-            sys.exit(1)  # Fail.
+            sys.exit(4)  # Fail.
 
         self.__database = self.__load()
 
         # Make sure the database is accessible.
         if self.__database is None:
             self.log.critical("__init__(): Cannot open initial database: {0}".format(self.filename))
-            sys.exit(1)  # Fail.
+            sys.exit(5)  # Fail.
 
         self.log.info("__init__(): Opened initial database: {0}".format(self.filename))
 
@@ -240,6 +240,6 @@ class DatabaseManager:
                     dbfile.write(ubjson.dumpb(self.__database))
             except:
                 self.log.critical("_cleanup(): Suddenly cannot write database to disk: {0}".format(self.filename))
-                sys.exit(1)
+                sys.exit(6)
             self.__changed = False
 

@@ -54,7 +54,7 @@ def init(config: dict) -> None:
     # Note that we are initializing the logger.
     print("Initializing logger...")
 
-    # On singleuser, we might wait on critical errors.
+    # On windows, we might not want to immediately close the console on a critical error.
     if "wait_on_critical" in config["log"]:
         _WAITONCRITICAL = config["log"]["wait_on_critical"]
 
@@ -64,8 +64,7 @@ def init(config: dict) -> None:
         config["log"]["level"] = "debug"
     _LOGLEVEL = config["log"]["level"]
 
-    # For the server, give an error if no logging option is selected, and default to stdout.
-    # On singleuser, stdout is always enabled.
+    # Give an error if no logging option is selected, and default to stdout.
     if "stdout" in config["log"]:
         if not config["log"]["stdout"] and not config["log"]["file"]:
             # No logging target is set, so force stdout.
