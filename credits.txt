@@ -23,5 +23,5 @@ Test Music: A Traveller's Tale
 * URI: <http://www.newgrounds.com/audio/listen/455328>
 
 Room Images
-* Taken from various places, will be removed before the project goes public.
+* Taken from various places for testing purposes only, will be removed before any game is released.
 
