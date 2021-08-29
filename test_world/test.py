@@ -11,6 +11,6 @@ def test_func(a, b):
     print(BXE.dir)
     print(BXE.resource.load_raw("README.md", rootdir=True))
     rsrc = BXE.resource.load_image("common/arrow_backward.png", rootdir=True)
-    overlay = BXE.world.room.insert_overlay(rsrc, (50, 50), (400, 400))
+    overlay = BXE.overlay.insert_overlay(rsrc, (50, 50), (400, 400))
     time.sleep(2)
-    BXE.world.room.rescale_overlay(overlay, (300, 300))
+    BXE.overlay.rescale_overlay(overlay, (300, 300))

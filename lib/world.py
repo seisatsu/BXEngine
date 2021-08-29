@@ -75,4 +75,6 @@ class World(object):
         if not self.room.vars:
             self.log.error("change_room(): Unable to load room: {0}".format(room_file))
             return False
+        if hasattr(self.app, "overlay"):
+            self.app.overlay._cleanup()
         return True

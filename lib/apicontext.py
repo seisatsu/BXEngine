@@ -47,6 +47,7 @@ class APIContext(object):
     :ivar cursor: The Cursor instance.
     :ivar database: The DatabaseManager instance.
     :ivar log: The Logger instance for this script.
+    :ivar overlay: The OverlayManager instance.
     :ivar resource: The ResourceManager instance.
     :ivar script: The ScriptManager instance.
     :ivar ui: The UI instance.
@@ -68,6 +69,7 @@ class APIContext(object):
         self.cursor = self.app.cursor
         self.database = self.app.database
         self.log = Logger(filename)
+        self.overlay = self.app.overlay
         self.resource = self.app.resource
         self.script = self.app.script
         self.ui = self.app.ui

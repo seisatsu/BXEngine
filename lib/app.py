@@ -32,6 +32,7 @@ import pygame
 from lib.audiomanager import AudioManager
 from lib.cursor import Cursor
 from lib.logger import Logger
+from lib.overlaymanager import OverlayManager
 from lib.scriptmanager import ScriptManager
 from lib.ui import UI
 from lib.world import World
@@ -58,6 +59,7 @@ class App(object):
     :ivar vars: A storage space for variables to be shared between event scripts.
     :ivar log: The Logger instance for this class.
     :ivar world: The World instance for the currently loaded world.
+    :ivar overlay: The OverlayManager instance.
     :ivar script: The ScriptManager instance.
     """
 
@@ -91,6 +93,7 @@ class App(object):
         if not self.world.load():
             sys.exit(8)
 
+        self.overlay = OverlayManager(self.config, self, self.resource, self.world)
         self.script = ScriptManager(self, self.audio, self.cursor, self.resource, self.ui, self.world)
 
     def __event_loop(self) -> None:
@@ -342,8 +345,8 @@ class App(object):
         self.screen.blit(self.world.room.image, (0, 0))
 
         # Draw image overlays onto the room.
-        for overlay in self.world.room.overlays:
-            self.screen.blit(self.world.room.overlays[overlay]["image"], self.world.room.overlays[overlay]["position"])
+        for overlay in self.overlay.overlays:
+            self.screen.blit(self.overlay.overlays[overlay]["image"], self.overlay.overlays[overlay]["position"])
 
         # If an action zone and a navigation zone overlap, the action zone always takes priority.
         # If no action zone was demarcated, only then will we demarcate a navigation zone.
