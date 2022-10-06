@@ -1,9 +1,9 @@
-#####################
-# BXEngine          #
-# util.py           #
-# Copyright 2021    #
-# Michael D. Reiley #
-#####################
+##################
+# BXEngine       #
+# util.py        #
+# Copyright 2021 #
+# Sei Satzparad  #
+##################
 
 # **********
 # Permission is hereby granted, free of charge, to any person obtaining a copy

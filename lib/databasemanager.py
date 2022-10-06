@@ -2,7 +2,7 @@
 # BXEngine           #
 # databasemanager.py #
 # Copyright 2021     #
-# Michael D. Reiley  #
+# Sei Satzparad      #
 ######################
 
 # **********
