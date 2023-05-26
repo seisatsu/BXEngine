@@ -122,7 +122,7 @@ class OverlayManager(object):
         # Success.
         self.overlays[overlay_id]["image"] = pygame.transform.scale(self.overlays[overlay_id]["image"], scale)
         self.app._render()
-        self.log.info("reposition_overlay(): Rescaled overlay image with ID: {0} to size: {1}".format(
+        self.log.info("rescale_overlay(): Rescaled overlay image with ID: {0} to size: {1}".format(
             overlay_id, scale))
         return True
 
