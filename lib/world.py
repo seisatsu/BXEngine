@@ -25,6 +25,8 @@
 # IN THE SOFTWARE.
 # **********
 
+from random import randint
+
 import pygame
 
 from lib.logger import Logger
@@ -44,17 +46,29 @@ class World(object):
         self.room = None
         self.resource = resource
         self.log = Logger("World")
+        self.funvalue = None
 
     def load(self) -> bool:
         """
         Load the world descriptor JSON file.
         """
         self.vars = self.resource.load_json("world.json", "world")
+
+        # Check if we successfully loaded the file.
         if not self.vars:
             self.log.critical("load(): Unable to load game world: {0}".format(self.config["world"]))
             return False
         self.log.info("load(): Finished loading game world: {0} ({1})".format(self.config["world"], self.vars["name"]))
+
+        # Set our window title to the world name.
         pygame.display.set_caption(self.vars["name"])
+
+        # Configure the funvalue.
+        if "funvalue" not in self.app.database:
+            self.app.database["funvalue"] = randint(self.vars["funvalue_range"][0], self.vars["funvalue_range"][1])
+        self.funvalue = self.app.database["funvalue"]
+
+        # Done.
         return self.change_room(self.vars["first_room"])
 
     def navigate(self, direction: str) -> bool:

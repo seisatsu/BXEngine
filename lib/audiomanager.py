@@ -25,12 +25,14 @@
 # IN THE SOFTWARE.
 # **********
 
-from typing import Optional
+from typing import Optional, NewType
 
 import pygame
 
 from lib.logger import Logger
 from lib.util import normalize_path
+
+AudioChannelID = NewType("AudioChannelID", int)
 
 
 class AudioManager:
@@ -64,7 +66,7 @@ class AudioManager:
         self.log.info("__init__(): Initialized audio mixer.")
 
     def play_sfx(self, filename: str, volume: float = None, loop: Optional[int] = 0,
-                 fade: float = 0.0) -> int:
+                 fade: float = 0.0) -> AudioChannelID:
         """Load and play a sound effect from an audio file.
 
         :param filename: The filename of the audio file to play.
@@ -88,9 +90,9 @@ class AudioManager:
         self.playing_sfx = True
         self.log.debug("play_sfx: Started playing sfx with Channel ID: {0} from file: {1}".format(
             id(channel), filename))
-        return id(channel)
+        return AudioChannelID(id(channel))
 
-    def get_pygame_channel(self, channel_id: int) -> pygame.mixer.Channel:
+    def get_pygame_channel(self, channel_id: AudioChannelID) -> pygame.mixer.Channel:
         """Get the raw PyGame Mixer Sound channel for a sound effect.
 
         :param channel_id: The abstracted channel ID given by play_sfx().
@@ -105,7 +107,7 @@ class AudioManager:
         """
         return pygame.mixer.music
 
-    def volume_sfx(self, channel_id: int = None, volume: float = None) -> Optional[float]:
+    def volume_sfx(self, channel_id: AudioChannelID = None, volume: float = None) -> Optional[float]:
         """Get or adjust the volume of a sound effect channel.
 
         :param channel_id: The abstracted channel ID given by play_sfx().
@@ -170,7 +172,7 @@ class AudioManager:
         self.log.warn("volume_sfx_by_filename(): No sound with this filename currently playing: {0}".format(filename))
         return None
 
-    def stop_sfx(self, channel_id: int, fade: float = 0.0) -> bool:
+    def stop_sfx(self, channel_id: AudioChannelID, fade: float = 0.0) -> bool:
         """Stop a sound effect.
 
         :param channel_id: The abstracted channel ID given by play_sfx().

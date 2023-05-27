@@ -1,4 +1,5 @@
 {
 	"name": "BXEngine: Backrooms Explorer PreAlpha",
-	"first_room": "room01.json"
+	"first_room": "room01.json",
+	"funvalue_range": [1, 100]
 }
