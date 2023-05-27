@@ -6,10 +6,19 @@
     },
     "first_room": {
       "type": "string"
+    },
+    "funvalue_range": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      },
+      "minItems": 2,
+      "maxItems": 2
     }
   },
   "required": [
     "name",
-    "first_room"
+    "first_room",
+    "funvalue_range"
   ]
 }
