@@ -12,16 +12,49 @@
         },
         "exits": {
           "type": "object",
-          "items": {
-            "type": "string",
-            "enum": [
-              "forward",
-              "backward",
-              "left",
-              "right",
-              "up",
-              "down"
-            ]
+          "properties": {
+            "forward": {
+              "type": ["string", "object"],
+              "properties": {
+                "conditional": {"$ref": "#/$defs/conditional"},
+                "destination": {"$ref": "#/$defs/destination"}
+              }
+            },
+            "backward": {
+              "type": ["string", "object"],
+              "properties": {
+                "conditional": {"$ref": "#/$defs/conditional"},
+                "destination": {"$ref": "#/$defs/destination"}
+              }
+            },
+            "left": {
+              "type": ["string", "object"],
+              "properties": {
+                "conditional": {"$ref": "#/$defs/conditional"},
+                "destination": {"$ref": "#/$defs/destination"}
+              }
+            },
+            "right": {
+              "type": ["string", "object"],
+              "properties": {
+                "conditional": {"$ref": "#/$defs/conditional"},
+                "destination": {"$ref": "#/$defs/destination"}
+              }
+            },
+            "up": {
+              "type": ["string", "object"],
+              "properties": {
+                "conditional": {"$ref": "#/$defs/conditional"},
+                "destination": {"$ref": "#/$defs/destination"}
+              }
+            },
+            "down": {
+              "type": ["string", "object"],
+              "properties": {
+                "conditional": {"$ref": "#/$defs/conditional"},
+                "destination": {"$ref": "#/$defs/destination"}
+              }
+            }
           }
         },
         "actions": {
@@ -90,7 +123,11 @@
                     ]
                   },
                   "contents": {
-                    "type": "string"
+                    "type": ["string", "object"],
+                    "properties": {
+                      "conditional": {"$ref": "#/$defs/conditional"},
+                      "destination": {"$ref": "#/$defs/destination"}
+                    }
                   }
                 },
                 "required": [
@@ -105,6 +142,56 @@
       },
       "required": [
         "image"
+      ]
+    }
+  },
+  "$defs": {
+    "conditional": {
+      "type": "object",
+      "properties": {
+        "chance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "funvalue_constraints": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2
+          }
+        }
+      }
+    },
+    "destination": {
+      "type": ["string", "object"],
+      "properties": {
+        "default": {
+          "type": "string"
+        },
+        "chance": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "funvalue_constraints": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 3
+          }
+        }
+      },
+      "required": [
+        "default"
       ]
     }
   }

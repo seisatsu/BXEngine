@@ -63,7 +63,8 @@ class World(object):
         # Set our window title to the world name.
         pygame.display.set_caption(self.vars["name"])
 
-        # Configure the funvalue.
+        # Configure the funvalue. If none exists yet, it is chosen randomly just once, based on the range configured
+        # in the world.json file. If a funvalue has already been chosen, load that out of the database.
         if "funvalue" not in self.app.database:
             self.app.database["funvalue"] = randint(self.vars["funvalue_range"][0], self.vars["funvalue_range"][1])
         self.funvalue = self.app.database["funvalue"]

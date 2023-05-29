@@ -1,0 +1,64 @@
+{
+    "default": {
+	    "image": "complexblue.jpg",
+	    "music": 2.0,
+	    "exits": {
+		    "forward": "room01.json",
+		    "backward": {
+		        "destination": "room03.json:default"
+		    },
+		    "left": {
+				"conditional": {
+					"chance": 0.5,
+					"funvalue-constraints": [
+						["=", 30]
+					]
+				},
+				"destination": {
+					"default": "room04.json",
+					"chance": [0.5, "complex_room.json:view2"],
+					"funvalue-constraints": [
+						["=", 30, "room02.json"]
+					]
+				}
+		    }
+	    },
+	    "actions": [
+		    {
+			    "rect": [660, 100, 700, 310],
+			    "look": {
+				    "result": "text",
+				    "contents": "You see a window leading outside."
+			    },
+			    "go": {
+				    "result": "exit",
+				    "contents": {
+						"destination": "room04.json"
+					}
+			    }
+		    }
+	    ]
+	},
+	"view2": {
+	    "image": "complexred.jpg",
+	    "music": 2.0,
+	    "exits": {
+		    "down": "room01.json",
+		    "backward": "complex_room.json"
+	    },
+	    "actions": [
+		    {
+			    "rect": [660, 100, 700, 310],
+			    "look": {
+				    "result": "text",
+				    "contents": "You see a window leading outside."
+			    },
+			    "go": {
+				    "result": "exit",
+				    "contents": "room04.json"
+			    }
+		    }
+	    ]
+	}
+}
+
