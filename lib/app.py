@@ -323,6 +323,7 @@ class App(object):
             self.log.debug("__do_action(): ACTION EXIT RESULT CONTENTS: {0}".format(
                 self.cursor.action[act_type]["contents"]))
             self.world.change_room(self.cursor.action[act_type]["contents"])
+            self.ui.reset()
 
         # A script action was invoked. Execute an event script.
         elif self.cursor.action[act_type]["result"] == "script":
