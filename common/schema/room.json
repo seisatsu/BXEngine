@@ -10,6 +10,9 @@
         "music": {
           "type": ["string", "null", "number"]
         },
+        "cardinal": {
+          "type": "string"
+        },
         "exits": {
           "type": "object",
           "properties": {
