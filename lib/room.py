@@ -36,13 +36,14 @@ class Room(object):
     :ivar world: The World instance.
     :ivar resource: The ResourceManager instance.
     :ivar file: The filename of the room.
+    :ivar view: The name of the active view.
     :ivar vars: The JSON object representing the room file.
     :ivar image: The background image for this room.
     :ivar music: The music file loaded for this room, if any.
     :ivar log: The Logger instance for this class.
     """
 
-    def __init__(self, config, app, world, resource, room_file):
+    def __init__(self, config, app, world, resource, room_file, view_name):
         """The Room initializer.
 
         :param config: This contains the engine's configuration variables.
@@ -50,12 +51,14 @@ class Room(object):
         :param world: The World instance.
         :param resource: The ResourceManager instance.
         :param room_file: The filename of the room.
+        :param view_name: The name of the active view.
         """
         self.config = config
         self.app = app
         self.world = world
         self.resource = resource
         self.file = room_file
+        self.view = view_name
         self.vars = None
         self.image = None
         self.music = None
@@ -67,13 +70,21 @@ class Room(object):
         :return: True if succeeded, False if failed.
         """
         # Attempt to load the room file.
-        self.log.info("Loading room: {0}".format(self.file))
-        self.vars = self.resource.load_json(self.file, "room")
+        self.log.info("Loading room and view: {0}:{1}".format(self.file, self.view))
+        whole_room = self.resource.load_json(self.file, "room")
 
         # We were unable to load the room file.
-        if not self.vars:
+        if not whole_room:
             self.log.error("Unable to load room descriptor: {0}".format(self.file))
             return False
+
+        # Make sure the view we are loading exists.
+        if self.view not in whole_room:
+            self.log.error("No such view in room: {0}: {1}".format(self.file, self.view))
+            return False
+
+        # Load the requested view.
+        self.vars = whole_room[self.view]
 
         # Attempt to load the room's background image.
         self.image = self.resource.load_image(self.vars["image"], self.config["window"]["size"])

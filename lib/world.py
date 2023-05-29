@@ -84,11 +84,25 @@ class World(object):
         """
         Change rooms by room descriptor filename.
         """
-        self.room = Room(self.config, self.app, self, self.resource, room_file)
+        # If there is a colon in the room name, a particular view is being chosen.
+        # Otherwise, load the "default" view.
+        if ":" in room_file:
+            room_file, view_name = room_file.split(":")
+        else:
+            view_name = "default"
+
+        # Create a Room class instance for this room and view. Load the data.
+        self.room = Room(self.config, self.app, self, self.resource, room_file, view_name)
         self.room._load()
+
+        # Make sure we loaded correctly.
         if not self.room.vars:
-            self.log.error("change_room(): Unable to load room: {0}".format(room_file))
+            self.log.error("change_room(): Unable to load room and view: {0}:{1}".format(room_file, view_name))
             return False
+
+        # Perform overlay cleanup if necessary.
         if hasattr(self.app, "overlay"):
             self.app.overlay._cleanup()
+
+        # Done.
         return True
