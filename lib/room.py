@@ -29,7 +29,7 @@ from lib.logger import Logger
 
 
 class Room(object):
-    """A class to represent the current room.
+    """A class to represent the current room and view.
 
     :ivar config: This contains the engine's configuration variables.
     :ivar app: The main App instance.
@@ -40,6 +40,8 @@ class Room(object):
     :ivar vars: The JSON object representing the room file.
     :ivar image: The background image for this room.
     :ivar music: The music file loaded for this room, if any.
+    :ivar exits: Dictionary of exit names to calculated destinations (for present exits only.)
+    :ivar exits: Dictionary of "go" action rects to calculated destinations (for present exits only.)
     :ivar log: The Logger instance for this class.
     """
 
@@ -62,6 +64,8 @@ class Room(object):
         self.vars = None
         self.image = None
         self.music = None
+        self.exits = None
+        self.action_exits = None
         self.log = Logger("Room")
 
     def _load(self) -> bool:
@@ -110,3 +114,12 @@ class Room(object):
         # Success.
         self.log.info("Finished loading room: {0}".format(self.file))
         return True
+
+    def _calculate_exits(self) -> bool:
+        """Calculate the presence and destination of each potential exit in this room/view.
+        
+        Taking into account chance and funvalue_constraints conditionals for presence and destination of each named
+        exit and each go action exit, calculate the actual destinations (and presence or lack thereof) for each exit.
+        This information is placed into the self.exits and self.action_exits dictionaries.
+        """
+        pass
