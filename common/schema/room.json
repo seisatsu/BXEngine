@@ -19,42 +19,42 @@
             "forward": {
               "type": ["string", "object"],
               "properties": {
-                "conditional": {"$ref": "#/$defs/conditional"},
+                "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
               }
             },
             "backward": {
               "type": ["string", "object"],
               "properties": {
-                "conditional": {"$ref": "#/$defs/conditional"},
+                "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
               }
             },
             "left": {
               "type": ["string", "object"],
               "properties": {
-                "conditional": {"$ref": "#/$defs/conditional"},
+                "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
               }
             },
             "right": {
               "type": ["string", "object"],
               "properties": {
-                "conditional": {"$ref": "#/$defs/conditional"},
+                "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
               }
             },
             "up": {
               "type": ["string", "object"],
               "properties": {
-                "conditional": {"$ref": "#/$defs/conditional"},
+                "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
               }
             },
             "down": {
               "type": ["string", "object"],
               "properties": {
-                "conditional": {"$ref": "#/$defs/conditional"},
+                "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
               }
             }
@@ -128,7 +128,7 @@
                   "contents": {
                     "type": ["string", "object"],
                     "properties": {
-                      "conditional": {"$ref": "#/$defs/conditional"},
+                      "presence": {"$ref": "#/$defs/presence"},
                       "destination": {"$ref": "#/$defs/destination"}
                     }
                   }
@@ -149,7 +149,7 @@
     }
   },
   "$defs": {
-    "conditional": {
+    "presence": {
       "type": "object",
       "properties": {
         "chance": {

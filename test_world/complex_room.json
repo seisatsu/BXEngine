@@ -8,16 +8,16 @@
 		        "destination": "room03.json:default"
 		    },
 		    "left": {
-				"conditional": {
+				"presence": {
 					"chance": 0.5,
-					"funvalue-constraints": [
+					"funvalue_constraints": [
 						["=", 30]
 					]
 				},
 				"destination": {
 					"default": "room04.json",
 					"chance": [0.5, "complex_room.json:view2"],
-					"funvalue-constraints": [
+					"funvalue_constraints": [
 						["=", 30, "room02.json"]
 					]
 				}
