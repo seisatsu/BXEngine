@@ -1,9 +1,9 @@
-##################
-# BXEngine       #
-# app.py         #
-# Copyright 2021 #
-# Sei Satzparad  #
-##################
+#######################
+# BXEngine            #
+# app.py              #
+# Copyright 2021-2023 #
+# Sei Satzparad       #
+#######################
 
 # **********
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -157,7 +157,7 @@ class App(object):
                     else:
                         self.world.navigate(self.cursor.nav)
 
-                    # At the conclusion of changing rooms, the UI must be reset.
+                    # At the conclusion of changing roomviews, the UI must be reset.
                     self.ui.reset()
 
                 # We clicked somewhere other than a zone. Just reset the UI.
@@ -187,7 +187,7 @@ class App(object):
                     self.log.debug("__event_loop(): FULL RIGHT CLICK IN NAV REGION: {0}".format(self.cursor.nav))
                     self.world.navigate("backward")
 
-                    # At the conclusion of changing rooms, the UI must be reset.
+                    # At the conclusion of changing roomviewss, the UI must be reset.
                     self.ui.reset()
 
                 # We clicked somewhere other than a zone. Just reset the UI.
@@ -204,21 +204,21 @@ class App(object):
     def __demarc_action_indicator(self) -> bool:
         """This is a method to demarcate an appropriate action indicator.
 
-        For each action enumerated in the room, it figures out whether our cursor is in that action's region,
+        For each action enumerated in the roomview, it figures out whether our cursor is in that action's region,
         And then updates the cursor object with the current action region if any, and draws the indicator.
 
         :return: True if succeeded, False if no action.
         """
         x, y = self.cursor.pos
 
-        # If the room file lists any actions, iterate through them.
+        # If the roomview file lists any actions, iterate through them.
         # For each, first figure out which icon to use for it,
         # And then figure out whether the mouse cursor is inside its zone.
         # If so, draw the action indicator onto the zone,
         # And then tell the Cursor which action zone it is inside.
         # If the Cursor is not inside any zone, tell it so.
-        if "actions" in self.world.room.vars:
-            for action in self.world.room.vars["actions"]:
+        if "actions" in self.world.roomview.vars:
+            for action in self.world.roomview.vars["actions"]:
                 rect = action["rect"]
                 if "look" in action and "use" in action:
                     act_icon = "lookuse"
@@ -270,37 +270,37 @@ class App(object):
 
         # Calculate whether the mouse cursor is currently inside an existing navigation region.
         # If so, update the cursor with its current navigation region, and blit the nav indicator to the screen.
-        if x < ss_region_left and ss_min_y < y < ss_max_y and "left" in self.world.room.vars["exits"]:
+        if x < ss_region_left and ss_min_y < y < ss_max_y and "left" in self.world.roomview.vars["exits"]:
             blit_loc = (pad, wsize[1] // 2 - self.images["chevron_left"].get_height() // 2)
             self.screen.blit(self.images["chevron_left"], blit_loc)
             self.cursor.nav = "left"
-        elif x > ss_region_right and ss_min_y < y < ss_max_y and "right" in self.world.room.vars["exits"]:
+        elif x > ss_region_right and ss_min_y < y < ss_max_y and "right" in self.world.roomview.vars["exits"]:
             blit_loc = (wsize[0] - self.images["chevron_right"].get_width() - pad,
                         wsize[1] // 2 - self.images["chevron_right"].get_height() // 2)
             self.screen.blit(self.images["chevron_right"], blit_loc)
             self.cursor.nav = "right"
-        elif y < ss_region_up and ss_min_x < x < ss_max_x and "up" in self.world.room.vars["exits"]:
+        elif y < ss_region_up and ss_min_x < x < ss_max_x and "up" in self.world.roomview.vars["exits"]:
             blit_loc = (wsize[0] // 2 - self.images["chevron_up"].get_width() // 2, pad)
             self.screen.blit(self.images["chevron_up"], blit_loc)
             self.cursor.nav = "up"
-        elif y > ss_region_down and ss_min_x < x < ss_max_x and "down" in self.world.room.vars["exits"]:
+        elif y > ss_region_down and ss_min_x < x < ss_max_x and "down" in self.world.roomview.vars["exits"]:
             blit_loc = (wsize[0] // 2 - self.images["chevron_down"].get_width() // 2,
                         wsize[1] - self.images["chevron_down"].get_height() - pad)
             self.screen.blit(self.images["chevron_down"], blit_loc)
             self.cursor.nav = "down"
-        elif nf_min_x < x < nf_max_x and nf_min_y < y < nf_max_y and ("forward" in self.world.room.vars["exits"] or
-                                                                      "backward" in self.world.room.vars["exits"]):
-            if "forward" in self.world.room.vars["exits"] and "backward" in self.world.room.vars["exits"]:
+        elif nf_min_x < x < nf_max_x and nf_min_y < y < nf_max_y and ("forward" in self.world.roomview.vars["exits"] or
+                                                                      "backward" in self.world.roomview.vars["exits"]):
+            if "forward" in self.world.roomview.vars["exits"] and "backward" in self.world.roomview.vars["exits"]:
                 blit_loc = (wsize[0] // 2 - self.images["arrow_double"].get_width() // 2,
                             wsize[1] // 2 - self.images["arrow_double"].get_height() // 2)
                 self.screen.blit(self.images["arrow_double"], blit_loc)
                 self.cursor.nav = "double"
-            elif "forward" in self.world.room.vars["exits"]:
+            elif "forward" in self.world.roomview.vars["exits"]:
                 blit_loc = (wsize[0] // 2 - self.images["arrow_forward"].get_width() // 2,
                             wsize[1] // 2 - self.images["arrow_forward"].get_height() // 2)
                 self.screen.blit(self.images["arrow_forward"], blit_loc)
                 self.cursor.nav = "forward"
-            elif "backward" in self.world.room.vars["exits"]:
+            elif "backward" in self.world.roomview.vars["exits"]:
                 blit_loc = (wsize[0] // 2 - self.images["arrow_backward"].get_width() // 2,
                             wsize[1] // 2 - self.images["arrow_backward"].get_height() // 2)
                 self.screen.blit(self.images["arrow_backward"], blit_loc)
@@ -309,7 +309,7 @@ class App(object):
             self.cursor.nav = None
 
     def __do_action(self, act_type: str) -> None:
-        """Perform a room action, possibly creating a UI element.
+        """Perform a roomview action, possibly creating a UI element.
         """
         # A text action was invoked. Create a textbox containing the contents.
         if self.cursor.action[act_type]["result"] == "text":
@@ -318,11 +318,11 @@ class App(object):
             self.ui.reset()
             self.ui.text_box(self.cursor.action[act_type]["contents"])
 
-        # An exit action was invoked. Change rooms.
+        # An exit action was invoked. Change roomviews.
         elif self.cursor.action[act_type]["result"] == "exit":
             self.log.debug("__do_action(): ACTION EXIT RESULT CONTENTS: {0}".format(
                 self.cursor.action[act_type]["contents"]))
-            self.world.change_room(self.cursor.action[act_type]["contents"])
+            self.world.change_roomview(self.cursor.action[act_type]["contents"])
             self.ui.reset()
 
         # A script action was invoked. Execute an event script.
@@ -341,11 +341,11 @@ class App(object):
     def _render(self) -> None:
         """Render a frame.
         """
-        # Fill the screen with black, and then draw our room image.
+        # Fill the screen with black, and then draw our roomview image.
         self.screen.fill(pygame.Color("black"))
-        self.screen.blit(self.world.room.image, (0, 0))
+        self.screen.blit(self.world.roomview.image, (0, 0))
 
-        # Draw image overlays onto the room.
+        # Draw image overlays onto the roomview.
         for overlay in self.overlay.overlays:
             self.screen.blit(self.overlay.overlays[overlay]["image"], self.overlay.overlays[overlay]["position"])
 

@@ -1,9 +1,9 @@
-#####################
-# BXEngine          #
-# overlaymanager.py #
-# Copyright 2021    #
-# Sei Satzparad     #
-#####################
+#######################
+# BXEngine            #
+# overlaymanager.py   #
+# Copyright 2021-2023 #
+# Sei Satzparad       #
+#######################
 
 # **********
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,7 +40,7 @@ class OverlayManager(object):
         self.world = world
         self.log = Logger("Overlay")
 
-        """A dict of Overlay IDs mapped to overlays currently in the room.
+        """A dict of Overlay IDs mapped to overlays currently in the roomview.
         self.overlays[Overlay_ID] = {
             "filename": filename,
             "image": pygame.Surface,
@@ -52,7 +52,7 @@ class OverlayManager(object):
 
     def insert_overlay(self, imagefile: [str, pygame.Surface], position: tuple[int, int],
                        scale: tuple[int, int] = None, persistent: bool = False) -> Optional[int]:
-        """Insert an overlay image into the room.
+        """Insert an overlay image into the roomview.
         """
         # Attempt to load the overlay image from a filename.
         if type(imagefile) is str:
@@ -84,7 +84,7 @@ class OverlayManager(object):
         return id(overlay_image)
 
     def remove_overlay(self, overlay_id: int) -> bool:
-        """Remove an overlay image from the room."""
+        """Remove an overlay image from the roomview."""
         # The overlay does not exist.
         if overlay_id not in self.overlays:
             self.log.error("remove_overlay(): Overlay ID does not exist to remove: ".format(overlay_id))

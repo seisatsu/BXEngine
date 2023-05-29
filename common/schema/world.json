@@ -4,7 +4,7 @@
     "name": {
       "type": "string"
     },
-    "first_room": {
+    "first_roomview": {
       "type": "string"
     },
     "funvalue_range": {
@@ -18,7 +18,7 @@
   },
   "required": [
     "name",
-    "first_room",
+    "first_roomview",
     "funvalue_range"
   ]
 }

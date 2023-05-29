@@ -1,9 +1,9 @@
-##################
-# BXEngine       #
-# room.py        #
-# Copyright 2021 #
-# Sei Satzparad  #
-##################
+#######################
+# BXEngine            #
+# roomview.py         #
+# Copyright 2021-2023 #
+# Sei Satzparad       #
+#######################
 
 # **********
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,7 +28,7 @@
 from lib.logger import Logger
 
 
-class Room(object):
+class Roomview(object):
     """A class to represent the current room and view.
 
     :ivar config: This contains the engine's configuration variables.
@@ -38,15 +38,15 @@ class Room(object):
     :ivar file: The filename of the room.
     :ivar view: The name of the active view.
     :ivar vars: The JSON object representing the room file.
-    :ivar image: The background image for this room.
-    :ivar music: The music file loaded for this room, if any.
+    :ivar image: The background image for this view.
+    :ivar music: The music file loaded for this view, if any.
     :ivar exits: Dictionary of exit names to calculated destinations (for present exits only.)
     :ivar exits: Dictionary of "go" action rects to calculated destinations (for present exits only.)
     :ivar log: The Logger instance for this class.
     """
 
     def __init__(self, config, app, world, resource, room_file, view_name):
-        """The Room initializer.
+        """The Roomview initializer.
 
         :param config: This contains the engine's configuration variables.
         :param app: The main App instance.
@@ -66,7 +66,7 @@ class Room(object):
         self.music = None
         self.exits = None
         self.action_exits = None
-        self.log = Logger("Room")
+        self.log = Logger("Roomview")
 
     def _load(self) -> bool:
         """Load the room descriptor JSON file. Also load the room image.
@@ -90,7 +90,7 @@ class Room(object):
         # Load the requested view.
         self.vars = whole_room[self.view]
 
-        # Attempt to load the room's background image.
+        # Attempt to load the view's background image.
         self.image = self.resource.load_image(self.vars["image"], self.config["window"]["size"])
 
         # We were unable to load the background image.
@@ -98,7 +98,7 @@ class Room(object):
             self.log.error("Unable to load room image: {0}".format(self.vars["image"]))
             return False
 
-        # Music is defined for this room.
+        # Music is defined for this view.
         if "music" in self.vars:
             self.music = self.vars["music"]
 
@@ -116,7 +116,7 @@ class Room(object):
         return True
 
     def _calculate_exits(self) -> bool:
-        """Calculate the presence and destination of each potential exit in this room/view.
+        """Calculate the presence and destination of each potential exit in this roomview.
         
         Taking into account chance and funvalue_constraints conditionals for presence and destination of each named
         exit and each go action exit, calculate the actual destinations (and presence or lack thereof) for each exit.
