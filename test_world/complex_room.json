@@ -10,14 +10,14 @@
 		    "left": {
 				"presence": {
 					"chance": 0.5,
-					"funvalue_constraints": [
+					"funvalue": [
 						["=", 30]
 					]
 				},
 				"destination": {
 					"default": "room04.json",
 					"chance": [0.5, "complex_room.json:view2"],
-					"funvalue_constraints": [
+					"funvalue": [
 						["=", 30, "room02.json"]
 					]
 				}

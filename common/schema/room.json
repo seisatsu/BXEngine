@@ -157,7 +157,7 @@
           "minimum": 0,
           "maximum": 1
         },
-        "funvalue_constraints": {
+        "funvalue": {
           "type": "array",
           "anyOf": [
             {
@@ -212,7 +212,7 @@
             }
           ]
         },
-        "funvalue_constraints": {
+        "funvalue": {
           "type": "array",
           "anyOf": [
             {
