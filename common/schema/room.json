@@ -8,7 +8,11 @@
           "type": "string"
         },
         "music": {
-          "type": ["string", "null", "number"]
+          "type": [
+            "string",
+            "null",
+            "number"
+          ]
         },
         "cardinal": {
           "type": "string"
@@ -17,52 +21,82 @@
           "type": "object",
           "properties": {
             "forward": {
-              "type": ["string", "object"],
+              "type": [
+                "string",
+                "object"
+              ],
               "properties": {
                 "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
               },
-              "required": ["destination"]
+              "required": [
+                "destination"
+              ]
             },
             "backward": {
-              "type": ["string", "object"],
+              "type": [
+                "string",
+                "object"
+              ],
               "properties": {
                 "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
               },
-              "required": ["destination"]
+              "required": [
+                "destination"
+              ]
             },
             "left": {
-              "type": ["string", "object"],
+              "type": [
+                "string",
+                "object"
+              ],
               "properties": {
                 "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
               },
-              "required": ["destination"]
+              "required": [
+                "destination"
+              ]
             },
             "right": {
-              "type": ["string", "object"],
+              "type": [
+                "string",
+                "object"
+              ],
               "properties": {
                 "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
               },
-              "required": ["destination"]
+              "required": [
+                "destination"
+              ]
             },
             "up": {
-              "type": ["string", "object"],
+              "type": [
+                "string",
+                "object"
+              ],
               "properties": {
                 "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
               },
-              "required": ["destination"]
+              "required": [
+                "destination"
+              ]
             },
             "down": {
-              "type": ["string", "object"],
+              "type": [
+                "string",
+                "object"
+              ],
               "properties": {
                 "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
               },
-              "required": ["destination"]
+              "required": [
+                "destination"
+              ]
             }
           }
         },
@@ -132,12 +166,17 @@
                     ]
                   },
                   "contents": {
-                    "type": ["string", "object"],
+                    "type": [
+                      "string",
+                      "object"
+                    ],
                     "properties": {
                       "presence": {"$ref": "#/$defs/presence"},
                       "destination": {"$ref": "#/$defs/destination"}
                     },
-                    "required": ["destination"]
+                    "required": [
+                      "destination"
+                    ]
                   }
                 },
                 "required": [
@@ -201,7 +240,10 @@
       }
     },
     "destination": {
-      "type": ["string", "object"],
+      "type": [
+        "string",
+        "object"
+      ],
       "properties": {
         "default": {
           "type": "string"
