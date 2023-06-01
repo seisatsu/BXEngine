@@ -1,5 +1,6 @@
 {
     "default": {
+		"title": "room 01 default",
 	    "image": "room01.jpg",
 	    "music": "A_Travellers_Tale.oga",
 	    "exits": {

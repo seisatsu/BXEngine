@@ -4,6 +4,9 @@
     "^.*$": {
       "type": "object",
       "properties": {
+        "title": {
+          "type": "string"
+        },
         "image": {
           "type": "string"
         },

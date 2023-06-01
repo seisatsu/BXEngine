@@ -61,7 +61,7 @@ class World(object):
         self.log.info("load(): Finished loading game world: {0} ({1})".format(self.config["world"], self.vars["name"]))
 
         # Set our window title to the world name.
-        pygame.display.set_caption(self.vars["name"])
+        self.set_caption()
 
         # Configure the funvalue. If none exists yet, it is chosen randomly just once, based on the range configured
         # in the world.json file. If a funvalue has already been chosen, load that out of the database.
@@ -107,3 +107,16 @@ class World(object):
 
         # Done.
         return True
+
+    def set_caption(self, caption: [str, None] = None) -> bool:
+        """Set the window title/caption.
+
+        This is displayed in the window title area, after the world name.
+        If "caption" is empty, just set the title to the world name by itself.
+        """
+        if caption:
+            pygame.display.set_caption("{0} - {1}".format(self.vars["name"], caption))
+        else:
+            pygame.display.set_caption(self.vars["name"])
+        return True
+

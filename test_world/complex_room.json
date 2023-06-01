@@ -1,5 +1,6 @@
 {
     "default": {
+		"title": "complex room default",
 	    "image": "complexblue.jpg",
 	    "music": 2.0,
 	    "exits": {
@@ -40,6 +41,7 @@
 	    ]
 	},
 	"view2": {
+		"title": "complex room view 2",
 	    "image": "complexred.jpg",
 	    "music": 2.0,
 	    "exits": {

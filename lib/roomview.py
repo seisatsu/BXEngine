@@ -63,6 +63,7 @@ class Roomview(object):
         self.resource = resource
         self.file = room_file
         self.view = view_name
+        self.title = None
         self.vars = None
         self.image = None
         self.music = None
@@ -91,6 +92,11 @@ class Roomview(object):
 
         # Load the requested view.
         self.vars = whole_room[self.view]
+
+        # Set the window caption to the roomview title, if one exists.
+        if "title" in self.vars:
+            self.title = self.vars["title"]
+            self.world.set_caption(self.title)
 
         # Attempt to load the view's background image.
         self.image = self.resource.load_image(self.vars["image"], self.config["window"]["size"])
@@ -143,7 +149,7 @@ class Roomview(object):
 
         return True
 
-    def __calculate_exit(self, thisexit) -> [str, None]:
+    def __calculate_exit(self, thisexit: dict) -> [str, None]:
         """Calculate the presence and destination of a potential exit in this roomview.
         
         Taking into account chance and funvalue_constraints conditionals for presence and destination the exit,

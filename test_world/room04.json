@@ -1,5 +1,6 @@
 {
     "default": {
+		"title": "room 04 default",
 	    "image": "room04.jpg",
 	    "exits": {
 		    "backward": "room02.json"

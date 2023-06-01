@@ -1,5 +1,6 @@
 {
     "default": {
+		"title": "room 02 default",
 	    "image": "room02.jpg",
 	    "music": 2.0,
 	    "exits": {
