@@ -25,6 +25,10 @@
 	"audio": {
 		"sfx_volume": 0.5,
 		"music_volume": 0.5
+	},
+	"debug": {
+		"enabled": true,
+		"key": "K_BACKQUOTE"
 	}
 }
 

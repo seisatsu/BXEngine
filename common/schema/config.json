@@ -126,6 +126,20 @@
         "sfx_volume",
         "music_volume"
       ]
+    },
+    "debug": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "key": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "enabled",
+        "key"
+      ]
     }
   },
   "required": [
@@ -134,6 +148,7 @@
     "navigation",
     "gui",
     "log",
-    "audio"
+    "audio",
+    "debug"
   ]
 }

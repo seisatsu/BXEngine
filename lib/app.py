@@ -25,6 +25,7 @@
 # IN THE SOFTWARE.
 # **********
 
+import pdb
 import sys
 
 import pygame
@@ -197,6 +198,12 @@ class App(object):
             # Record keypresses. We don't do anything with them yet.
             elif event.type in (pygame.KEYUP, pygame.KEYDOWN):
                 self.keys = pygame.key.get_pressed()
+
+                # Trigger debug mode if the debug key is pressed.
+                if event.type == pygame.KEYDOWN:
+                    if self.config["debug"]["enabled"] and event.key == getattr(pygame, self.config["debug"]["key"]):
+                        self.log.debug("__event_loop(): ENTERING DEBUG MODE FROM KEYPRESS")
+                        pdb.set_trace()
 
             # Process any UI events that have been queued.
             self.ui._process_events(event)
@@ -382,4 +389,3 @@ class App(object):
             self.ui._update()
             self.audio._update()
             self.database._update()
-
