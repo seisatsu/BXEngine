@@ -322,8 +322,14 @@ class App(object):
         elif self.cursor.action[act_type]["result"] == "exit":
             self.log.debug("__do_action(): ACTION EXIT RESULT CONTENTS: {0}".format(
                 self.cursor.action[act_type]["contents"]))
-            self.world.change_roomview(self.cursor.action[act_type]["contents"])
-            self.ui.reset()
+            if tuple(self.cursor.action["rect"]) in self.world.roomview.action_exits and \
+                    act_type in self.world.roomview.action_exits[tuple(self.cursor.action["rect"])]:
+                self.world.change_roomview(
+                    self.world.roomview.action_exits[tuple(self.cursor.action["rect"])][act_type])
+                self.ui.reset()
+            else:
+                self.log.error("__do_action(): Missing exit which should exist: {0}: {1}: {2}".format(
+                    self.world.roomview.file, self.cursor.action["rect"], act_type))
 
         # A script action was invoked. Execute an event script.
         elif self.cursor.action[act_type]["result"] == "script":

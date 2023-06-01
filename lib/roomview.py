@@ -25,6 +25,8 @@
 # IN THE SOFTWARE.
 # **********
 
+import random
+
 from lib.logger import Logger
 
 
@@ -64,8 +66,8 @@ class Roomview(object):
         self.vars = None
         self.image = None
         self.music = None
-        self.exits = None
-        self.action_exits = None
+        self.exits = {}
+        self.action_exits = {}
         self.log = Logger("Roomview")
 
     def _load(self) -> bool:
@@ -111,15 +113,123 @@ class Roomview(object):
             elif type(self.music) in [None, int, float]:
                 self.app.audio.stop_music(self.music)
 
+        # Calculate the exits for this roomview.
+        self.__calculate_all_exits()
+
         # Success.
         self.log.info("Finished loading room: {0}".format(self.file))
         return True
 
-    def _calculate_exits(self) -> bool:
-        """Calculate the presence and destination of each potential exit in this roomview.
-        
-        Taking into account chance and funvalue_constraints conditionals for presence and destination of each named
-        exit and each go action exit, calculate the actual destinations (and presence or lack thereof) for each exit.
-        This information is placed into the self.exits and self.action_exits dictionaries.
+    def __calculate_all_exits(self) -> bool:
+        """Calculate the presence and destination of every potential named exit and go action exit in this roomview.
+
+        Processing is handed off to _calculate_exit() for each exit. The information is stored in the self.exits
+        variable for named exits, and the self.action_exits variable for go action exits.
         """
-        pass
+        for e in self.vars["exits"]:
+            thisexit = self.vars["exits"][e]
+            dest = self.__calculate_exit(thisexit)
+            if dest:
+                self.exits[e] = dest
+        for a in self.vars["actions"]:
+            for act_type in ["go", "look", "use"]:
+                if act_type in a and a[act_type]["result"] == "exit":
+                    thisexit = a["go"]["contents"]
+                    dest = self.__calculate_exit(thisexit)
+                    if dest:
+                        if tuple(a["rect"]) not in self.action_exits:
+                            self.action_exits[tuple(a["rect"])] = {}
+                        self.action_exits[tuple(a["rect"])][act_type] = dest
+
+        return True
+
+    def __calculate_exit(self, thisexit) -> [str, None]:
+        """Calculate the presence and destination of a potential exit in this roomview.
+        
+        Taking into account chance and funvalue_constraints conditionals for presence and destination the exit,
+        calculate the actual destination (and presence or lack thereof). A string destination is returned if the exit
+        is present, otherwise None is returned.
+        """
+        # If the exit name maps to a string, this is a simple, static exit.
+        if type(thisexit) is str:
+            return thisexit
+        # If the exit name maps to a dictionary, this is a dynamic exit that needs to be calculated.
+        elif type(thisexit) is dict:
+            # If the "presence" section exists, there are variables affecting whether this exit will appear.
+            if "presence" in thisexit:
+                # First check for a chance-based probability, and keep or skip the exit accordingly.
+                if "chance" in thisexit["presence"]:
+                    chance_roll = random.randint(1, 1000)
+                    if chance_roll < 1000 * thisexit["presence"]["chance"]:
+                        pass  # Keep this exit.
+                    else:
+                        return None  # Skip this exit.
+                # Next check for funvalue constraints, and keep or skip the exit accordingly.
+                if "funvalue" in thisexit["presence"]:
+                    constraint = thisexit["presence"]["funvalue"]
+                    # Check a range constraint.
+                    if constraint[0] == "range":
+                        if constraint[1] > self.world.funvalue or constraint[2] < self.world.funvalue:
+                            return None  # Skip this exit.
+                    # Check an equality constraint.
+                    elif constraint[0] == "=":
+                        if self.world.funvalue != constraint[1]:
+                            return None  # Skip this exit.
+                    # Check a less than constraint.
+                    elif constraint[0] == "<":
+                        if constraint[1] >= self.world.funvalue:
+                            return None  # Skip this exit.
+                    # Check a greater than constraint.
+                    elif constraint[0] == ">":
+                        if constraint[1] <= self.world.funvalue:
+                            return None  # Skip this exit.
+                    # Check a less than or equal to constraint.
+                    elif constraint[0] == "<=":
+                        if constraint[1] > self.world.funvalue:
+                            return None  # Skip this exit.
+                    # Check a greater than or equal to constraint.
+                    elif constraint[0] == ">=":
+                        if constraint[1] < self.world.funvalue:
+                            return None  # Skip this exit.
+            # Next calculate the destination itself.
+            # If the "destination" section maps to a string, the destination is static.
+            if type(thisexit["destination"]) is str:
+                return thisexit["destination"]
+            # If the "destination" section maps to a dictionary, the destination is dynamic.
+            elif type(thisexit["destination"]) is dict:
+                # Start with the default destination and then see if it needs to be overwritten.
+                dest = thisexit["destination"]["default"]
+                # First check for a chance-based selector.
+                if "chance" in thisexit["destination"]:
+                    chance_roll = random.randint(1, 1000)
+                    if chance_roll < 1000 * thisexit["destination"]["chance"][0]:
+                        dest = thisexit["destination"]["chance"][1]  # Select this alternate destination.
+                # Next check for a funvalue selector.
+                if "funvalue" in thisexit["destination"]:
+                    constraint = thisexit["destination"]["funvalue"]
+                    # Check a range constraint.
+                    if constraint[0] == "range":
+                        if not (constraint[1] > self.world.funvalue or constraint[2] < self.world.funvalue):
+                            dest = thisexit["destination"]["funvalue"][3]  # Select this alternate destination.
+                    # Check an equality constraint.
+                    elif constraint[0] == "=":
+                        if not (self.world.funvalue != constraint[1]):
+                            dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                    # Check a less than constraint.
+                    elif constraint[0] == "<":
+                        if not (constraint[1] >= self.world.funvalue):
+                            dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                    # Check a greater than constraint.
+                    elif constraint[0] == ">":
+                        if not (constraint[1] <= self.world.funvalue):
+                            dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                    # Check a less than or equal to constraint.
+                    elif constraint[0] == "<=":
+                        if not (constraint[1] > self.world.funvalue):
+                            dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                    # Check a greater than or equal to constraint.
+                    elif constraint[0] == ">=":
+                        if not (constraint[1] < self.world.funvalue):
+                            dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                # Set the destination to whatever we landed on.
+                return dest

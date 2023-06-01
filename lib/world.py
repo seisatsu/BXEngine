@@ -76,8 +76,8 @@ class World(object):
         """
         Change roomviews by exit name in the current roomview.
         """
-        if direction in self.roomview.vars["exits"]:
-            return self.change_roomview(self.roomview.vars["exits"][direction])
+        if direction in self.roomview.exits:
+            return self.change_roomview(self.roomview.exits[direction])
         self.log.warn("navigate(): Attempt to navigate through non-existent exit: {0}".format(direction))
         return False
 

@@ -21,42 +21,48 @@
               "properties": {
                 "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
-              }
+              },
+              "required": ["destination"]
             },
             "backward": {
               "type": ["string", "object"],
               "properties": {
                 "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
-              }
+              },
+              "required": ["destination"]
             },
             "left": {
               "type": ["string", "object"],
               "properties": {
                 "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
-              }
+              },
+              "required": ["destination"]
             },
             "right": {
               "type": ["string", "object"],
               "properties": {
                 "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
-              }
+              },
+              "required": ["destination"]
             },
             "up": {
               "type": ["string", "object"],
               "properties": {
                 "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
-              }
+              },
+              "required": ["destination"]
             },
             "down": {
               "type": ["string", "object"],
               "properties": {
                 "presence": {"$ref": "#/$defs/presence"},
                 "destination": {"$ref": "#/$defs/destination"}
-              }
+              },
+              "required": ["destination"]
             }
           }
         },
@@ -130,7 +136,8 @@
                     "properties": {
                       "presence": {"$ref": "#/$defs/presence"},
                       "destination": {"$ref": "#/$defs/destination"}
-                    }
+                    },
+                    "required": ["destination"]
                   }
                 },
                 "required": [
