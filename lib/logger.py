@@ -108,6 +108,12 @@ def timestamp() -> str:
     return "{0}{1}".format(datetime.datetime.now().isoformat(), str(int(utc_offset / 3.6)))
 
 
+def sanitize(msg: str) -> str:
+    """Sanitize messages containing dictionaries, so they don't raise a KeyError.
+    """
+    return msg.replace("{", "{{").replace("}", "}}")
+
+
 class Logger:
     """Logger.
 
@@ -127,6 +133,7 @@ class Logger:
     def debug(self, msg: str, **kwargs: Any) -> None:
         """Write a debug level message to the console and/or the log file.
         """
+        msg = sanitize(msg)
         if _LOGLEVEL in ["debug"]:
             if _STDOUT:
                 print("{0} [{1}#debug] {2}".format(timestamp(), self._namespace, msg.format(**kwargs)))
@@ -136,6 +143,7 @@ class Logger:
     def info(self, msg: str, **kwargs: Any) -> None:
         """Write an info level message to the console and/or the log file.
         """
+        msg = sanitize(msg)
         if _LOGLEVEL in ["debug", "info"]:
             if _STDOUT:
                 print("{0} [{1}#info] {2}".format(timestamp(), self._namespace, msg.format(**kwargs)))
@@ -145,6 +153,7 @@ class Logger:
     def warn(self, msg: str, **kwargs: Any) -> None:
         """Write a warn level message to the console and/or the log file.
         """
+        msg = sanitize(msg)
         if _LOGLEVEL in ["debug", "info", "warn"]:
             if _STDOUT:
                 print("{0} [{1}#warn] {2}".format(timestamp(), self._namespace, msg.format(**kwargs)))
@@ -154,6 +163,7 @@ class Logger:
     def error(self, msg: str, **kwargs: Any) -> None:
         """Write an error level message to the console and/or the log file.
         """
+        msg = sanitize(msg)
         if _LOGLEVEL in ["debug", "info", "warn", "error"]:
             if _STDOUT:
                 print("{0} [{1}#error] {2}".format(timestamp(), self._namespace, msg.format(**kwargs)))
@@ -165,6 +175,7 @@ class Logger:
 
         All log levels include critical, so these messages cannot be disabled.
         """
+        msg = sanitize(msg)
         print("{0} [{1}#critical] {2}".format(timestamp(), self._namespace, msg.format(**kwargs)))
         if _LOGFILE:
             _LOGFILE.write("{0} [{1}#critical] {2}\n".format(timestamp(), self._namespace, msg.format(**kwargs)))

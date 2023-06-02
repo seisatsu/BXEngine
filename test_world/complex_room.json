@@ -11,9 +11,7 @@
 		    "left": {
 				"presence": {
 					"chance": 0.5,
-					"funvalue": [
-						["=", 30]
-					]
+					"funvalue": ["=", 30]
 				},
 				"destination": {
 					"default": "room04.json",
