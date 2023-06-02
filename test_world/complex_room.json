@@ -15,7 +15,9 @@
 				},
 				"destination": {
 					"default": "room04.json",
-					"chance": [0.5, "complex_room.json:view2"],
+					"chance": [
+						[0.5, "complex_room.json:view2"]
+					],
 					"funvalue": [
 						["=", 30, "room02.json"]
 					]

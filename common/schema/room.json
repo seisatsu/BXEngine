@@ -253,16 +253,19 @@
         },
         "chance": {
           "type": "array",
-          "prefixItems": [
-            {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 1
-            },
-            {
-              "type": "string"
-            }
-          ]
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
         },
         "funvalue": {
           "type": "array",

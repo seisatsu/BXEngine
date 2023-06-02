@@ -207,35 +207,36 @@ class Roomview(object):
                 dest = thisexit["destination"]["default"]
                 # First check for a chance-based selector.
                 if "chance" in thisexit["destination"]:
-                    chance_roll = random.randint(1, 1000)
-                    if chance_roll < 1000 * thisexit["destination"]["chance"][0]:
-                        dest = thisexit["destination"]["chance"][1]  # Select this alternate destination.
+                    for constraint in thisexit["destination"]["chance"]:
+                        chance_roll = random.randint(1, 1000)
+                        if chance_roll < 1000 * constraint[0]:
+                            dest = constraint[1]  # Select this alternate destination.
                 # Next check for a funvalue selector.
                 if "funvalue" in thisexit["destination"]:
-                    constraint = thisexit["destination"]["funvalue"]
-                    # Check a range constraint.
-                    if constraint[0] == "range":
-                        if not (constraint[1] > self.world.funvalue or constraint[2] < self.world.funvalue):
-                            dest = thisexit["destination"]["funvalue"][3]  # Select this alternate destination.
-                    # Check an equality constraint.
-                    elif constraint[0] == "=":
-                        if not (self.world.funvalue != constraint[1]):
-                            dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
-                    # Check a less than constraint.
-                    elif constraint[0] == "<":
-                        if not (constraint[1] >= self.world.funvalue):
-                            dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
-                    # Check a greater than constraint.
-                    elif constraint[0] == ">":
-                        if not (constraint[1] <= self.world.funvalue):
-                            dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
-                    # Check a less than or equal to constraint.
-                    elif constraint[0] == "<=":
-                        if not (constraint[1] > self.world.funvalue):
-                            dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
-                    # Check a greater than or equal to constraint.
-                    elif constraint[0] == ">=":
-                        if not (constraint[1] < self.world.funvalue):
-                            dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                    for constraint in thisexit["destination"]["funvalue"]:
+                        # Check a range constraint.
+                        if constraint[0] == "range":
+                            if not (constraint[1] > self.world.funvalue or constraint[2] < self.world.funvalue):
+                                dest = thisexit["destination"]["funvalue"][3]  # Select this alternate destination.
+                        # Check an equality constraint.
+                        elif constraint[0] == "=":
+                            if not (self.world.funvalue != constraint[1]):
+                                dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                        # Check a less than constraint.
+                        elif constraint[0] == "<":
+                            if not (constraint[1] >= self.world.funvalue):
+                                dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                        # Check a greater than constraint.
+                        elif constraint[0] == ">":
+                            if not (constraint[1] <= self.world.funvalue):
+                                dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                        # Check a less than or equal to constraint.
+                        elif constraint[0] == "<=":
+                            if not (constraint[1] > self.world.funvalue):
+                                dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                        # Check a greater than or equal to constraint.
+                        elif constraint[0] == ">=":
+                            if not (constraint[1] < self.world.funvalue):
+                                dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
                 # Set the destination to whatever we landed on.
                 return dest
