@@ -1,9 +1,9 @@
-##################
-# BXEngine       #
-# logger.py      #
-# Copyright 2021 #
-# Sei Satzparad  #
-##################
+#######################
+# BXEngine            #
+# logger.py           #
+# Copyright 2021-2023 #
+# Sei Satzparad       #
+#######################
 
 # **********
 # Permission is hereby granted, free of charge, to any person obtaining a copy
