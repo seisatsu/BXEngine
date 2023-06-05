@@ -35,6 +35,7 @@ from lib.cursor import Cursor
 from lib.logger import Logger
 from lib.overlaymanager import OverlayManager
 from lib.scriptmanager import ScriptManager
+from lib.tickmanager import TickManager
 from lib.ui import UI
 from lib.world import World
 
@@ -57,6 +58,7 @@ class App(object):
     :ivar ui: The UI instance.
     :ivar resource: The ResourceManager instance.
     :ivar database: The DatabaseManager instance.
+    :ivar tick: The TickManager instance.
     :ivar vars: A storage space for variables to be shared between event scripts.
     :ivar log: The Logger instance for this class.
     :ivar world: The World instance for the currently loaded world.
@@ -85,6 +87,7 @@ class App(object):
         self.ui = UI(config, self.clock, self.fps, self.screen)
         self.resource = resource
         self.database = database
+        self.tick = TickManager()
         self.vars = {}
         self.log = Logger("App")
 
@@ -98,7 +101,7 @@ class App(object):
         self.script = ScriptManager(self, self.audio, self.cursor, self.resource, self.ui, self.world)
 
     def __event_loop(self) -> None:
-        """This is the event loop for the whole program.
+        """This is the input event loop for the whole program.
 
         We handle clicks and navigation and cleaning up UI elements here.
         """
@@ -377,12 +380,14 @@ class App(object):
         self.log.info("Entering main loop.")
 
         # Until we are told to stop:
-        # * Check for and process events.
+        # * Check for and process delayed events
+        # * Check for and process input events.
         # * Render a frame.
         # * Update the Cursor.
         # * Update the UI.
         # * Run the AudioManager cleanup callback.
         while not self.done:
+            self.tick._tick()
             self.__event_loop()
             self._render()
             self.cursor._update()

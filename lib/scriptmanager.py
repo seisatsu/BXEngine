@@ -42,13 +42,25 @@ class ScriptManager:
     This class handles loading scripts and calling their functions. It defines its own method for retrieving the
     script file (independent of ResourceManager) and internally caches it forever.
 
-    Attributes:
-        driftwood: Base class instance.
+    :ivar log: The Logger instance for this class.
+    :ivar app: The base application instance.
+    :ivar audio: The AudioManager instance.
+    :ivar cursor: The Cursor instance.
+    :ivar resource: The ResourceManager instance.
+    :ivar ui: The UIManager instance.
+    :ivar world: The World instance.
+    :ivar __modules: The dictionary of active module instances mapped by filename.
     """
 
     def __init__(self, app, audio, cursor, resource, ui, world):
-        """
-        ScriptManager class initializer.
+        """ScriptManager class initializer.
+
+        :param app: The base application instance.
+        :param audio: The AudioManager instance.
+        :param cursor: The Cursor instance.
+        :param resource: The ResourceManager instance.
+        :param ui: The UIManager instance.
+        :param world: The World instance.
         """
         self.log = Logger("script")
         self.app = app

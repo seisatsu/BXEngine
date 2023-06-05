@@ -50,7 +50,7 @@ class DatabaseManager:
     def __init__(self, config):
         """DatabaseManager Class Initializer
 
-        :ivar config: This contains the engine's configuration variables.
+        :param config: This contains the engine's configuration variables.
         """
         self.config = config
         self.log = Logger("DatabaseManager")

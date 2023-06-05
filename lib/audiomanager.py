@@ -36,7 +36,9 @@ AudioChannelID = NewType("AudioChannelID", int)
 
 
 class AudioManager:
-    """This class manages the audio subsystem and allows playing sound effects and music.
+    """The Audio Manager
+
+    This class manages the audio subsystem and allows playing sound effects and music.
 
     :ivar config: This contains the engine's configuration variables.
     :ivar log: The Logger instance for this class.

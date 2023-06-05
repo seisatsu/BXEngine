@@ -50,6 +50,7 @@ class APIContext(object):
     :ivar overlay: The OverlayManager instance.
     :ivar resource: The ResourceManager instance.
     :ivar script: The ScriptManager instance.
+    :ivar tick: The TickManager instance.
     :ivar ui: The UI instance.
     :ivar world: The World instance.
     :ivar vars: The vars variable from the main App, used to share variables between event scripts.
@@ -72,6 +73,7 @@ class APIContext(object):
         self.overlay = self.app.overlay
         self.resource = self.app.resource
         self.script = self.app.script
+        self.tick = self.app.tick
         self.ui = self.app.ui
         self.world = self.app.world
         self.vars = self.app.vars
