@@ -41,6 +41,7 @@ _LOGFILE = None
 _LOGLEVEL = None
 _STDOUT = None
 _WAITONCRITICAL = None
+_SUPPRESSIONS = []
 
 
 def init(config: dict) -> None:
@@ -49,7 +50,7 @@ def init(config: dict) -> None:
     This must be run before creating any Logger instances.
     It sets up global variables that are shared between all Loggers.
     """
-    global _LOGFILE, _LOGLEVEL, _STDOUT, _WAITONCRITICAL
+    global _LOGFILE, _LOGLEVEL, _STDOUT, _WAITONCRITICAL, _SUPPRESSIONS
 
     # Note that we are initializing the logger.
     print("Initializing logger...")
@@ -88,6 +89,9 @@ def init(config: dict) -> None:
             if "stdout" in config["log"]:
                 config["log"]["stdout"] = True
                 _STDOUT = True
+
+    # Store the list of suppressions.
+    _SUPPRESSIONS = config["log"]["suppress"]
 
     # Note that we have finished initializing the logger.
     if _LOGLEVEL in ["debug", "info"]:
@@ -133,6 +137,8 @@ class Logger:
     def debug(self, msg: str, **kwargs: Any) -> None:
         """Write a debug level message to the console and/or the log file.
         """
+        if self.__check_suppress("debug", msg):
+            return
         msg = sanitize(msg)
         if _LOGLEVEL in ["debug"]:
             if _STDOUT:
@@ -143,6 +149,8 @@ class Logger:
     def info(self, msg: str, **kwargs: Any) -> None:
         """Write an info level message to the console and/or the log file.
         """
+        if self.__check_suppress("info", msg):
+            return
         msg = sanitize(msg)
         if _LOGLEVEL in ["debug", "info"]:
             if _STDOUT:
@@ -153,6 +161,8 @@ class Logger:
     def warn(self, msg: str, **kwargs: Any) -> None:
         """Write a warn level message to the console and/or the log file.
         """
+        if self.__check_suppress("warn", msg):
+            return
         msg = sanitize(msg)
         if _LOGLEVEL in ["debug", "info", "warn"]:
             if _STDOUT:
@@ -163,6 +173,8 @@ class Logger:
     def error(self, msg: str, **kwargs: Any) -> None:
         """Write an error level message to the console and/or the log file.
         """
+        if self.__check_suppress("error", msg):
+            return
         msg = sanitize(msg)
         if _LOGLEVEL in ["debug", "info", "warn", "error"]:
             if _STDOUT:
@@ -190,3 +202,14 @@ class Logger:
         print(msg)
         if _LOGFILE:
             _LOGFILE.write("{0} {1}\n".format(timestamp(), msg))
+
+    def __check_suppress(self, level: str, msg: str) -> bool:
+        """Check whether a suppression rule suppresses this log message from appearing.
+        """
+        for S in _SUPPRESSIONS:
+            if S[0] == level and S[1] == self._namespace:
+                if S[2] in msg:
+                    return True
+        return False
+
+

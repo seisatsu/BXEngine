@@ -20,7 +20,10 @@
 		"wait_on_critical": true,
 		"level": "debug",
 		"stdout": true,
-		"file": "bxengine.log"
+		"file": "bxengine.log",
+		"suppress": [
+			["debug", "Tick", "_tick()"]
+		]
 	},
 	"audio": {
 		"sfx_volume": 0.5,

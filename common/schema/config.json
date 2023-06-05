@@ -102,13 +102,39 @@
         },
         "file": {
           "type": "string"
+        },
+        "suppress": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "string",
+                "enum": [
+                  "debug",
+                  "info",
+                  "warn",
+                  "error"
+                ]
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "minItems": 3,
+            "maxItems": 3
+          }
         }
       },
       "required": [
         "wait_on_critical",
         "level",
         "stdout",
-        "file"
+        "file",
+        "suppress"
       ]
     },
     "audio": {

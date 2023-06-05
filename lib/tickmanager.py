@@ -59,12 +59,12 @@ class TickManager:
         """
         # If this callback is already in the registry, fail.
         if callback in self.registry:
-            self.log.error("register(): Attempt to register already registered callback: {0}".format(callback.__name__))
+            self.log.warn("register(): Attempt to register already registered callback: {0}".format(callback.__name__))
             return False
 
         # Otherwise, add it to the registry.
         self.registry[callback] = {"start_time": pygame.time.get_ticks(), "delay": delay, "continuous": continuous}
-        self.log.info("register(): Registered callback: {0}".format(callback.__name__))
+        self.log.info("register(): Registered event callback: {0}".format(callback.__name__))
 
         # Success.
         return True
@@ -78,12 +78,12 @@ class TickManager:
         """
         # If this callback is not in the registry, fail.
         if callback not in self.registry:
-            self.log.error("unregister(): Attempt to unregister nonexistent callback: {0}".format(callback.__name__))
+            self.log.warn("unregister(): Attempt to unregister nonexistent callback: {0}".format(callback.__name__))
             return False
 
         # Otherwise, remove it from the registry.
         del self.registry[callback]
-        self.log.info("register(): Unregistered callback: {0}".format(callback.__name__))
+        self.log.info("register(): Unregistered event callback: {0}".format(callback.__name__))
 
         # Success.
         return True
@@ -97,8 +97,11 @@ class TickManager:
             if pygame.time.get_ticks() - self.registry[callback]["start_time"] > self.registry[callback]["delay"]:
                 # Call the callback.
                 self.registry[callback]()
+                self.log.debug("_tick(): Called event callback: {0}".format(callback.__name__))
                 # If the event is continuous, update its start time to the current time. Otherwise, delete it.
                 if self.registry[callback]["continuous"]:
                     self.registry[callback]["start_time"] = pygame.time.get_ticks()
+                    self.log.debug("_tick(): Reset time on continuous event callback: {0}".format(callback.__name__))
                 else:
                     del self.registry[callback]
+                    self.log.debug("_tick(): Deleted expired event callback: {0}".format(callback.__name__))
