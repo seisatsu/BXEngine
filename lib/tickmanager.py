@@ -46,7 +46,7 @@ class TickManager:
 
         self.registry = {}  # {callback: {start_time: int, delay: int, continuous: bool}}
 
-    def register(self, callback: object, delay: int, continuous: bool = False) -> bool:
+    def register(self, callback: object, delay: int, arg: object = None, continuous: bool = False) -> bool:
         """Register a timed event callback.
 
         The registered event is a function that will be called, perhaps repeatedly, after a set interval in
@@ -55,6 +55,7 @@ class TickManager:
 
         :param callback: A function to be called when the event comes due.
         :param delay: The delay in milliseconds until the event comes due.
+        :param arg: Optional data to pass to the callback function as an argument when it is called.
         :param continuous: Whether the event should keep being called at the same interval or be deleted after one call.
         """
         # If this callback is already in the registry, fail.
@@ -63,7 +64,8 @@ class TickManager:
             return False
 
         # Otherwise, add it to the registry.
-        self.registry[callback] = {"start_time": pygame.time.get_ticks(), "delay": delay, "continuous": continuous}
+        self.registry[callback] = {"start_time": pygame.time.get_ticks(), "delay": delay, "arg": arg,
+                                   "continuous": continuous}
         self.log.info("register(): Registered event callback: {0}".format(callback.__name__))
 
         # Success.
@@ -91,17 +93,25 @@ class TickManager:
     def _tick(self) -> None:
         """This is called repeatedly by the mainloop.
         """
-        # Loop through the registry and look for delayed events that have come due.
-        for callback in self.registry:
-            # The event is due if the correct amount of milliseconds has passed since the start_time.
-            if pygame.time.get_ticks() - self.registry[callback]["start_time"] > self.registry[callback]["delay"]:
-                # Call the callback.
-                self.registry[callback]()
-                self.log.debug("_tick(): Called event callback: {0}".format(callback.__name__))
-                # If the event is continuous, update its start time to the current time. Otherwise, delete it.
-                if self.registry[callback]["continuous"]:
-                    self.registry[callback]["start_time"] = pygame.time.get_ticks()
-                    self.log.debug("_tick(): Reset time on continuous event callback: {0}".format(callback.__name__))
-                else:
-                    del self.registry[callback]
-                    self.log.debug("_tick(): Deleted expired event callback: {0}".format(callback.__name__))
+        # This has to be wrapped in a try block because the registry could change size during iteration.
+        try:
+            # Loop through the registry and look for delayed events that have come due.
+            for callback in self.registry:
+                # The event is due if the correct amount of milliseconds has passed since the start_time.
+                if pygame.time.get_ticks() - self.registry[callback]["start_time"] > self.registry[callback]["delay"]:
+                    # Call the callback.
+                    if self.registry[callback]["arg"]:
+                        callback(self.registry[callback]["arg"])
+                    else:
+                        callback()
+                    self.log.debug("_tick(): Called event callback: {0}".format(callback.__name__))
+                    # If the event is continuous, update its start time to the current time. Otherwise, delete it.
+                    if self.registry[callback]["continuous"]:
+                        self.registry[callback]["start_time"] = pygame.time.get_ticks()
+                        self.log.debug("_tick(): Reset time on continuous event callback: {0}".format(
+                            callback.__name__))
+                    else:
+                        del self.registry[callback]
+                        self.log.debug("_tick(): Deleted expired event callback: {0}".format(callback.__name__))
+        except RuntimeError:
+            pass
