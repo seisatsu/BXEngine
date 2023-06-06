@@ -114,17 +114,6 @@ def timestamp() -> str:
     return "{0}{1}".format(datetime.datetime.now().isoformat(), str(int(utc_offset / 3.6)))
 
 
-def sanitize(msg: str) -> str:
-    """Sanitize messages containing dictionaries, so they don't raise a KeyError.
-
-    All curly braces are replaced with double curly braces.
-
-    :param msg: The message to be sanitized.
-    :return: The sanitized string.
-    """
-    return msg.replace("{", "{{").replace("}", "}}")
-
-
 class Logger:
     """Logger.
 
@@ -141,79 +130,69 @@ class Logger:
         """
         self._namespace = namespace
 
-    def debug(self, msg: str, **kwargs: Any) -> None:
+    def debug(self, msg: str) -> None:
         """Write a debug level message to the console and/or the log file.
 
         :param msg: The message to log.
-        :param kwargs: Optional str.format() parameters for the message.
         """
         if self.__check_suppress("debug", msg):
             return
-        msg = sanitize(msg)
         if _LOGLEVEL in ["debug"]:
             if _STDOUT:
-                print("{0} [{1}#debug] {2}".format(timestamp(), self._namespace, msg.format(**kwargs)))
+                print("{0} [{1}#debug] {2}".format(timestamp(), self._namespace, msg))
             if _LOGFILE:
-                _LOGFILE.write("{0} [{1}#debug] {2}\n".format(timestamp(), self._namespace, msg.format(**kwargs)))
+                _LOGFILE.write("{0} [{1}#debug] {2}\n".format(timestamp(), self._namespace, msg))
 
-    def info(self, msg: str, **kwargs: Any) -> None:
+    def info(self, msg: str) -> None:
         """Write an info level message to the console and/or the log file.
 
         :param msg: The message to log.
-        :param kwargs: Optional str.format() parameters for the message.
         """
         if self.__check_suppress("info", msg):
             return
-        msg = sanitize(msg)
         if _LOGLEVEL in ["debug", "info"]:
             if _STDOUT:
-                print("{0} [{1}#info] {2}".format(timestamp(), self._namespace, msg.format(**kwargs)))
+                print("{0} [{1}#info] {2}".format(timestamp(), self._namespace, msg))
             if _LOGFILE:
-                _LOGFILE.write("{0} [{1}#info] {2}\n".format(timestamp(), self._namespace, msg.format(**kwargs)))
+                _LOGFILE.write("{0} [{1}#info] {2}\n".format(timestamp(), self._namespace, msg))
 
-    def warn(self, msg: str, **kwargs: Any) -> None:
+    def warn(self, msg: str) -> None:
         """Write a warn level message to the console and/or the log file.
 
         :param msg: The message to log.
-        :param kwargs: Optional str.format() parameters for the message.
         """
         if self.__check_suppress("warn", msg):
             return
-        msg = sanitize(msg)
         if _LOGLEVEL in ["debug", "info", "warn"]:
             if _STDOUT:
-                print("{0} [{1}#warn] {2}".format(timestamp(), self._namespace, msg.format(**kwargs)))
+                print("{0} [{1}#warn] {2}".format(timestamp(), self._namespace, msg))
             if _LOGFILE:
-                _LOGFILE.write("{0} [{1}#warn] {2}\n".format(timestamp(), self._namespace, msg.format(**kwargs)))
+                _LOGFILE.write("{0} [{1}#warn] {2}\n".format(timestamp(), self._namespace, msg))
 
-    def error(self, msg: str, **kwargs: Any) -> None:
+    def error(self, msg: str) -> None:
         """Write an error level message to the console and/or the log file.
 
         :param msg: The message to log.
-        :param kwargs: Optional str.format() parameters for the message.
         """
         if self.__check_suppress("error", msg):
             return
-        msg = sanitize(msg)
         if _LOGLEVEL in ["debug", "info", "warn", "error"]:
             if _STDOUT:
-                print("{0} [{1}#error] {2}".format(timestamp(), self._namespace, msg.format(**kwargs)))
+                print("{0} [{1}#error] {2}".format(timestamp(), self._namespace, msg))
             if _LOGFILE:
-                _LOGFILE.write("{0} [{1}#error] {2}\n".format(timestamp(), self._namespace, msg.format(**kwargs)))
+                _LOGFILE.write("{0} [{1}#error] {2}\n".format(timestamp(), self._namespace, msg))
 
-    def critical(self, msg: str, **kwargs: Any) -> None:
+    def critical(self, msg: str) -> None:
         """Write a critical level message to the console and/or the log file.
 
         All log levels include critical, so these messages cannot be disabled.
         Critical messages also cannot be suppressed.
 
         :param msg: The message to log.
-        :param kwargs: Optional str.format() parameters for the message.
         """
-        msg = sanitize(msg)
-        print("{0} [{1}#critical] {2}".format(timestamp(), self._namespace, msg.format(**kwargs)))
+        print("{0} [{1}#critical] {2}".format(timestamp(), self._namespace, msg))
         if _LOGFILE:
-            _LOGFILE.write("{0} [{1}#critical] {2}\n".format(timestamp(), self._namespace, msg.format(**kwargs)))
+            _LOGFILE.write("{0} [{1}#critical] {2}\n".format(timestamp(), self._namespace, msg))
 
         # Be nice to Windows users who ran the program by double-clicking. :)
         if _WAITONCRITICAL:
