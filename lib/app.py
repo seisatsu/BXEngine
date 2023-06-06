@@ -380,7 +380,7 @@ class App(object):
         self.log.info("Entering main loop.")
 
         # Until we are told to stop:
-        # * Check for and process delayed events
+        # * Check for and process delayed events.
         # * Check for and process input events.
         # * Render a frame.
         # * Update the Cursor.

@@ -251,7 +251,7 @@ class AudioManager:
         :param loop: If 0, only play once. If -1, loop forever. If > 0, replay this many times. (1 plays twice, etc.)
         :param start: Time position to start the music from, in seconds.
         :param fade: If greater than 0.0, time to fade in the music, in seconds.
-        :returns: True if succeeded, False if failed.
+        :return: True if succeeded, False if failed.
         """
         # Stop and unload any previously loaded music.
         if self.playing_music:
@@ -288,7 +288,7 @@ class AudioManager:
         """Get or adjust the volume of the currently playing music.
 
         :param volume: Get the current volume if None, otherwise set the new volume. Takes a float between 0.0 and 1.0.
-        :returns: Returns the current volume after any adjustments if succeeded, None if failed.
+        :return: Returns the current volume after any adjustments if succeeded, None if failed.
         """
         if self.playing_music:
             if volume is not None:
@@ -307,7 +307,7 @@ class AudioManager:
         """Stop and unload any currently loaded music.
 
         :param fade: If greater than 0.0, time to fade out the music, in seconds.
-        :returns: True if succeeded, false if no music was playing.
+        :return: True if succeeded, false if no music was playing.
         """
         if not self.playing_music:
             self.log.warn("stop_music(): No music is currently playing.")

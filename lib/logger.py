@@ -49,13 +49,15 @@ def init(config: dict) -> None:
 
     This must be run before creating any Logger instances.
     It sets up global variables that are shared between all Loggers.
+
+    :param config: This contains the engine's configuration variables.
     """
     global _LOGFILE, _LOGLEVEL, _STDOUT, _WAITONCRITICAL, _SUPPRESSIONS
 
     # Note that we are initializing the logger.
     print("Initializing logger...")
 
-    # On windows, we might not want to immediately close the console on a critical error.
+    # On Windows, we might not want to immediately close the console on a critical error.
     if "wait_on_critical" in config["log"]:
         _WAITONCRITICAL = config["log"]["wait_on_critical"]
 
@@ -114,6 +116,11 @@ def timestamp() -> str:
 
 def sanitize(msg: str) -> str:
     """Sanitize messages containing dictionaries, so they don't raise a KeyError.
+
+    All curly braces are replaced with double curly braces.
+
+    :param msg: The message to be sanitized.
+    :return: The sanitized string.
     """
     return msg.replace("{", "{{").replace("}", "}}")
 
@@ -136,6 +143,9 @@ class Logger:
 
     def debug(self, msg: str, **kwargs: Any) -> None:
         """Write a debug level message to the console and/or the log file.
+
+        :param msg: The message to log.
+        :param kwargs: Optional str.format() parameters for the message.
         """
         if self.__check_suppress("debug", msg):
             return
@@ -148,6 +158,9 @@ class Logger:
 
     def info(self, msg: str, **kwargs: Any) -> None:
         """Write an info level message to the console and/or the log file.
+
+        :param msg: The message to log.
+        :param kwargs: Optional str.format() parameters for the message.
         """
         if self.__check_suppress("info", msg):
             return
@@ -160,6 +173,9 @@ class Logger:
 
     def warn(self, msg: str, **kwargs: Any) -> None:
         """Write a warn level message to the console and/or the log file.
+
+        :param msg: The message to log.
+        :param kwargs: Optional str.format() parameters for the message.
         """
         if self.__check_suppress("warn", msg):
             return
@@ -172,6 +188,9 @@ class Logger:
 
     def error(self, msg: str, **kwargs: Any) -> None:
         """Write an error level message to the console and/or the log file.
+
+        :param msg: The message to log.
+        :param kwargs: Optional str.format() parameters for the message.
         """
         if self.__check_suppress("error", msg):
             return
@@ -186,6 +205,10 @@ class Logger:
         """Write a critical level message to the console and/or the log file.
 
         All log levels include critical, so these messages cannot be disabled.
+        Critical messages also cannot be suppressed.
+
+        :param msg: The message to log.
+        :param kwargs: Optional str.format() parameters for the message.
         """
         msg = sanitize(msg)
         print("{0} [{1}#critical] {2}".format(timestamp(), self._namespace, msg.format(**kwargs)))
@@ -196,8 +219,11 @@ class Logger:
         if _WAITONCRITICAL:
             input("Press Enter Key to Continue...")
 
-    def write(self, msg: str) -> None:
+    @staticmethod
+    def write(msg: str) -> None:
         """Write an untagged message to the console and/or the log file, regardless of log level.
+
+        :param msg: The message to log.
         """
         print(msg)
         if _LOGFILE:
@@ -205,6 +231,9 @@ class Logger:
 
     def __check_suppress(self, level: str, msg: str) -> bool:
         """Check whether a suppression rule suppresses this log message from appearing.
+
+        :param level: The log level to check suppressions for.
+        :param msg: The message to check suppressions for.
         """
         for S in _SUPPRESSIONS:
             if S[0] == level and S[1] == self._namespace:

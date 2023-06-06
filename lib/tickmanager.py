@@ -91,7 +91,9 @@ class TickManager:
         return True
 
     def _tick(self) -> None:
-        """This is called repeatedly by the mainloop.
+        """This is called repeatedly by the mainloop each iteration.
+
+        It looks for, executes, and cleans up delayed events which have come due.
         """
         # This has to be wrapped in a try block because the registry could change size during iteration.
         try:
