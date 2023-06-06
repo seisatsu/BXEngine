@@ -141,7 +141,7 @@ class ResourceManager(object):
                 # Load the schema needed to validate the config file, and perform validation.
                 schema = self.load_schema("config")
                 if not schema:
-                    print("{0} [config#critical] _load_initial_config(): "
+                    print("{0} [Resource#critical] _load_initial_config(): "
                           "Could not validate BXEngine config file: {1}".format(timestamp(), filename))
                     sys.exit(2)
                 jsonschema.validate(rsrc, schema)
@@ -150,9 +150,13 @@ class ResourceManager(object):
                 self.resources[filename] = rsrc
                 self.config = rsrc
 
-                # Success.
-                init(self.config)  # This is the init() from Logger.
+                # Initialize the Logger.
+                init(self.config["log"]["level"], self.config["log"]["file"], self.config["log"]["stdout"],
+                     self.config["log"]["suppress"],
+                     self.config["log"]["wait_on_critical"])  # This is the init() from Logger.
                 self.log = Logger("Resource")
+
+                # Success.
                 return self.config
 
         # Failed to open the config file.

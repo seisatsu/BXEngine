@@ -42,13 +42,20 @@ _WAITONCRITICAL = None
 _SUPPRESSIONS = []
 
 
-def init(config: dict) -> None:
+def init(level: str, logfile: str = None, use_stdout: bool = True, suppressions: list = None,
+         wait_on_critical: bool = False) -> None:
     """Initialize the Logger system.
 
     This must be run before creating any Logger instances.
-    It sets up global variables that are shared between all Loggers.
+    It sets up global variables that are shared between all Loggers used by your program during runtime.
 
-    :param config: This contains the engine's configuration variables.
+    :param level: The highest log level to output messages for.
+    :param logfile: The log file to write to, if any.
+    :param use_stdout: Whether to write log messages to stdout.
+    :param suppressions: If given, a list of suppressions for log messages, of format:
+        [["loglevel", "namespace", "message substring to match"], ...]
+    :param wait_on_critical: Whether to hold the console with an input() call after a critical error. This is useful
+        for Windows users so that the console doesn't close before they can see the error message.
     """
     global _LOGFILE, _LOGLEVEL, _STDOUT, _WAITONCRITICAL, _SUPPRESSIONS
 
@@ -56,42 +63,37 @@ def init(config: dict) -> None:
     print("Initializing logger...")
 
     # On Windows, we might not want to immediately close the console on a critical error.
-    if "wait_on_critical" in config["log"]:
-        _WAITONCRITICAL = config["log"]["wait_on_critical"]
+    _WAITONCRITICAL = wait_on_critical
 
     # Make sure the chosen log level is valid. Otherwise force the highest log level.
-    if config["log"]["level"] not in ["critical", "error", "warn", "info", "debug"]:
-        print(timestamp(), "[Logger#error] init(): Invalid log level in config, defaulting to \"debug\".")
-        config["log"]["level"] = "debug"
-    _LOGLEVEL = config["log"]["level"]
+    if level not in ["critical", "error", "warn", "info", "debug"]:
+        print(timestamp(), "[Logger#error] init(): Invalid log level given, defaulting to \"debug\".")
+        level = "debug"
+    _LOGLEVEL = level
 
     # Give a warning if no logging option is selected, and default to stdout.
-    if "stdout" in config["log"]:
-        if not config["log"]["stdout"] and not config["log"]["file"]:
-            # No logging target is set, so force stdout.
-            print(timestamp(), "[Logger#warn] init(): No logging target in config, defaulting to stdout.")
-            config["log"]["stdout"] = True
-            _STDOUT = True
-        elif config["log"]["stdout"]:
-            _STDOUT = True
-    else:
+    if not use_stdout and not logfile:
+        # No logging target is set, so force stdout.
+        print(timestamp(), "[Logger#warn] init(): No logging target given, defaulting to stdout.")
         _STDOUT = True
+    elif use_stdout:
+        _STDOUT = True
+    else:
+        _STDOUT = False
 
     # Try to open the log file. If this fails, give an error and default to stdout.
-    if config["log"]["file"]:
+    if logfile:
         try:
-            _LOGFILE = open(config["log"]["file"], 'a')
+            _LOGFILE = open(logfile, 'a')
         except:
             if _LOGLEVEL in ["debug", "info", "warn", "error"]:
-                print(timestamp(), "[Logger#error] init(): Could not open log file: {0}".format(
-                    config["log"]["file"]))
+                print(timestamp(), "[Logger#error] init(): Could not open log file: {0}".format(logfile))
                 print(traceback.format_exc(1))
-            if "stdout" in config["log"]:
-                config["log"]["stdout"] = True
-                _STDOUT = True
+            print(timestamp(), "[Logger#warn] init(): Could not open log file, defaulting to stdout.")
+            _STDOUT = True
 
     # Store the list of suppressions.
-    _SUPPRESSIONS = config["log"]["suppress"]
+    _SUPPRESSIONS = suppressions
 
     # Note that we have finished initializing the logger.
     if _LOGLEVEL in ["debug", "info"]:
@@ -127,6 +129,10 @@ class Logger:
         :param namespace: The name of the subsystem this Logger instance is logging for.
         """
         self._namespace = namespace
+
+        if not _LOGLEVEL:
+            print(timestamp(), "[Logger#error] __init__(): Attempted to instantiate a Logger without first running "
+                  "Logger.init() from the base module. This will not work correctly.")
 
     def debug(self, msg: str) -> None:
         """Write a debug level message to the console and/or the log file.
