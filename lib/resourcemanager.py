@@ -151,7 +151,7 @@ class ResourceManager(object):
                 self.config = rsrc
 
                 # Success.
-                init(self.config)
+                init(self.config)  # This is the init() from Logger.
                 self.log = Logger("Resource")
                 return self.config
 

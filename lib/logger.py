@@ -34,8 +34,6 @@ import datetime
 import time
 import traceback
 
-from typing import Any
-
 # Variables shared between all Logger instances.
 _LOGFILE = None
 _LOGLEVEL = None
@@ -67,11 +65,11 @@ def init(config: dict) -> None:
         config["log"]["level"] = "debug"
     _LOGLEVEL = config["log"]["level"]
 
-    # Give an error if no logging option is selected, and default to stdout.
+    # Give a warning if no logging option is selected, and default to stdout.
     if "stdout" in config["log"]:
         if not config["log"]["stdout"] and not config["log"]["file"]:
             # No logging target is set, so force stdout.
-            print(timestamp(), "[Logger#error] init(): No logging target in config, defaulting to stdout.")
+            print(timestamp(), "[Logger#warn] init(): No logging target in config, defaulting to stdout.")
             config["log"]["stdout"] = True
             _STDOUT = True
         elif config["log"]["stdout"]:
