@@ -83,7 +83,7 @@ def init(config: dict) -> None:
             _LOGFILE = open(config["log"]["file"], 'a')
         except:
             if _LOGLEVEL in ["debug", "info", "warn", "error"]:
-                print(timestamp(), "[logger#error] init(): Could not open log file: {0}".format(
+                print(timestamp(), "[Logger#error] init(): Could not open log file: {0}".format(
                     config["log"]["file"]))
                 print(traceback.format_exc(1))
             if "stdout" in config["log"]:
@@ -96,9 +96,9 @@ def init(config: dict) -> None:
     # Note that we have finished initializing the logger.
     if _LOGLEVEL in ["debug", "info"]:
         if _STDOUT:
-            print(timestamp(), "[logger#info] init(): Finished initializing logger.")
+            print(timestamp(), "[Logger#info] init(): Finished initializing logger.")
         if _LOGFILE:
-            _LOGFILE.write(timestamp() + " [logger#info] init(): Finished initializing logger.\n")
+            _LOGFILE.write(timestamp() + " [Logger#info] init(): Finished initializing logger.\n")
 
 
 def timestamp() -> str:

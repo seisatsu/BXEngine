@@ -239,7 +239,7 @@ class DatabaseManager:
                 with open(self.filename, 'wb') as dbfile:
                     dbfile.write(ubjson.dumpb(self.__database))
             except:
-                self.log.critical("_cleanup(): Suddenly cannot write database to disk: {0}".format(self.filename))
+                self.log.critical("_update(): Suddenly cannot write database to disk: {0}".format(self.filename))
                 sys.exit(6)
             self.__changed = False
 

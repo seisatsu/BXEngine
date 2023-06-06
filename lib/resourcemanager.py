@@ -80,7 +80,7 @@ class ResourceManager(object):
 
         # Begin loading a schema file.
         if self.log:
-            self.log.info("Loading JSON Schema file: {0}".format(schema + ".json"))
+            self.log.info("load_schema(): Loading JSON Schema file: {0}".format(schema + ".json"))
 
         # Check the world directory for the schema first, followed by the common directory.
         if self.config and os.path.exists(self.config["world"] + "/schema/" + schema + ".json"):
@@ -89,7 +89,7 @@ class ResourceManager(object):
             schema_fullpath = "common/schema/"+schema+".json"
         else:
             if self.log:
-                self.log.error("Could not locate schema file: {1}".format(timestamp(), schema + ".json"))
+                self.log.error("load_schema(): Could not locate schema file: {1}".format(timestamp(), schema + ".json"))
             return None
 
         # Attempt to load the schema.
@@ -100,20 +100,20 @@ class ResourceManager(object):
         # Failed to load the schema.
         except (OSError, IOError):
             if self.log:
-                self.log.error("Could not open schema file: {1}".format(timestamp(), schema+".json"))
+                self.log.error("load_schema(): Could not open schema file: {1}".format(timestamp(), schema+".json"))
             else:
-                print("{0} [Resource#error] Could not open config schema file: {1}".format(timestamp(),
-                                                                                              schema+".json"))
+                print("{0} [Resource#error] load_schema(): Could not open config schema file: {1}".format(
+                    timestamp(), schema+".json"))
             print(traceback.format_exc(1))
             return None
 
         # Failed to decode the schema due to JSON error.
         except json.JSONDecodeError:
             if self.log:
-                self.log.error("JSON error from schema file: {1}".format(timestamp(), schema+".json"))
+                self.log.error("load_schema(): JSON error from schema file: {1}".format(timestamp(), schema+".json"))
             else:
-                print("{0} [Resource#error] JSON error from config schema file: {1}".format(timestamp(),
-                                                                                               schema+".json"))
+                print("{0} [Resource#error] load_schema(): JSON error from config schema file: {1}".format(
+                    timestamp(), schema+".json"))
             print(traceback.format_exc(1))
             return None
 
@@ -141,8 +141,8 @@ class ResourceManager(object):
                 # Load the schema needed to validate the config file, and perform validation.
                 schema = self.load_schema("config")
                 if not schema:
-                    print("{0} [config#critical] Could not validate bxengine config file: {1}".format(timestamp(),
-                                                                                                      filename))
+                    print("{0} [config#critical] _load_initial_config(): "
+                          "Could not validate BXEngine config file: {1}".format(timestamp(), filename))
                     sys.exit(2)
                 jsonschema.validate(rsrc, schema)
 
@@ -157,20 +157,22 @@ class ResourceManager(object):
 
         # Failed to open the config file.
         except (OSError, IOError):
-            print("{0} [config#critical] Could not open bxengine config file: {1}".format(timestamp(), filename))
+            print("{0} [config#critical] _load_initial_config(): Could not open BXEngine config file: {1}".format(
+                timestamp(), filename))
             print(traceback.format_exc(1))
             sys.exit(1)
 
         # Failed to decode the config file due to JSON error.
         except json.JSONDecodeError:
-            print("{0} [config#critical] JSON error from bxengine config file: {1}".format(timestamp(), filename))
+            print("{0} [config#critical] _load_initial_config(): JSON error from BXEngine config file: {1}".format(
+                timestamp(), filename))
             print(traceback.format_exc(1))
             sys.exit(2)
 
         # The config file failed validation.
         except jsonschema.ValidationError:
-            print("{0} [config#critical] JSON schema validation error from bxengine config file: {1}".format(
-                  timestamp(), filename))
+            print("{0} [config#critical] _load_initial_config(): "
+                  "JSON schema validation error from BXEngine config file: {1}".format(timestamp(), filename))
             print(traceback.format_exc(1))
             sys.exit(3)
 
@@ -195,7 +197,7 @@ class ResourceManager(object):
 
         # Attempt to load and optionally validate the JSON file.
         try:
-            self.log.info("Loading JSON file: {0}".format(filename))
+            self.log.info("load_json(): Loading JSON file: {0}".format(filename))
             with open(filename) as f:
                 rsrc = json.load(f)
 
@@ -219,13 +221,13 @@ class ResourceManager(object):
 
         # Failed to decode the JSON file due to JSON error.
         except json.JSONDecodeError:
-            self.log.error("load_json(): JSON error from bxengine config file: {0}".format(filename))
+            self.log.error("load_json(): JSON error from BXEngine config file: {0}".format(filename))
             print(traceback.format_exc(1))
             return None
 
         # The JSON file failed validation.
         except jsonschema.ValidationError:
-            self.log.error("JSON schema validation error from file: {0}".format(filename))
+            self.log.error("load_json(): JSON schema validation error from file: {0}".format(filename))
             print(traceback.format_exc(1))
             return None
 

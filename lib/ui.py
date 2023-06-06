@@ -28,6 +28,8 @@
 import pygame
 import pygame_gui
 
+from lib.logger import Logger
+
 
 class UI(object):
     def __init__(self, config, clock, fps, screen):
@@ -37,6 +39,7 @@ class UI(object):
         self.screen = screen
         self.pgui = pygame_gui.UIManager(self.config["window"]["size"])
         self.curr_dialog = None
+        self.log = Logger("UI")
 
     def _process_events(self, event):
         self.pgui.process_events(event)
@@ -61,6 +64,7 @@ class UI(object):
                                self.config["gui"]["textbox_height"])
         self.curr_dialog = pygame_gui.elements.ui_text_box.UITextBox(contents, gui_rect, self.pgui)
         self._refresh()
+        self.log.info("text_box(): Drew text box with contents: {0}".format(contents))
 
     def reset(self):
         if self.curr_dialog:

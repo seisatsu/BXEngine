@@ -121,12 +121,12 @@ class AudioManager:
             if channel_id in self.__sfx:
                 # Set the volume.
                 self.__sfx[channel_id]["channel"].set_volume(volume)
-                self.log.debug("volume_sfx: Set volume of {0} for sfx by Channel ID: {1}".format(volume, channel_id))
+                self.log.debug("volume_sfx(): Set volume of {0} for sfx by Channel ID: {1}".format(volume, channel_id))
                 return volume
         elif channel_id is not None and volume is None:
             if channel_id in self.__sfx:
                 volume = self.__sfx[channel_id]["channel"].get_volume()
-                self.log.debug("volume_sfx: Retrieved volume of {0} for sfx by Channel ID: {1}".format(
+                self.log.debug("volume_sfx(): Retrieved volume of {0} for sfx by Channel ID: {1}".format(
                     volume, channel_id))
                 return self.__sfx[channel_id]["channel"].get_volume()
         elif channel_id is None and volume is not None:
@@ -134,7 +134,7 @@ class AudioManager:
             for chtmp in self.__sfx:
                 self.__sfx[chtmp]["channel"].set_volume(volume)
             self.__iter_lock = False
-            self.log.debug("volume_sfx: Set volume of {0} for all sfx.".format(volume))
+            self.log.debug("volume_sfx(): Set volume of {0} for all sfx.".format(volume))
             return volume
         else:
             self.log.error("volume_sfx(): Sound and volume cannot both be None.")
@@ -165,10 +165,10 @@ class AudioManager:
             current_volume = [volume]
         if found:
             if volume is not None:
-                self.log.debug("volume_sfx_by_filename: Set volume of {0} for all sfx of filename: {1}".format(
+                self.log.debug("volume_sfx_by_filename(): Set volume of {0} for all sfx of filename: {1}".format(
                     volume, filename))
             else:
-                self.log.debug("volume_sfx_by_filename: Retrieved volume of {0} for all sfx of filename: {1}".format(
+                self.log.debug("volume_sfx_by_filename(): Retrieved volume of {0} for all sfx of filename: {1}".format(
                     volume, filename))
             return current_volume
         self.log.warn("volume_sfx_by_filename(): No sound with this filename currently playing: {0}".format(filename))

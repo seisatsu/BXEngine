@@ -81,9 +81,9 @@ class ScriptManager:
         if ret not in [None, False]:
             return ret
         elif ret is False:
-            self.log.error("No such module: {0}".format(item))
+            self.log.error("__getitem__(): No such module: {0}".format(item))
         else:
-            self.log.error("Error from module: {0}".format(item))
+            self.log.error("__getitem__(): Error from module: {0}".format(item))
         return None
 
     def call(self, filename: str, func: str, *args: Any) -> Any:
@@ -108,7 +108,8 @@ class ScriptManager:
             self.log.error("call(): Module not loaded for call: {0}: {1}".format(filename, func + "()"))
             return None
         except SystemExit:
-            self.log.critical("sys.exit() called: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))
+            self.log.critical("call(): Script called sys.exit(): {0}\n{1}".format(
+                filename, traceback.format_exc(10).rstrip()))
             sys.exit(11)
         except:
             self.log.error("call(): Error from function: {0}: {1}\n{2}".format(filename, func + "()",
@@ -150,7 +151,7 @@ class ScriptManager:
         else:
             fullpath = "{0}/{1}".format(self.world.dir, filename)
         if not os.path.exists(fullpath):
-            self.log.error("No such script: {0}".format(fullpath))
+            self.log.error("__load(): No such script: {0}".format(fullpath))
             return False
 
         mname = os.path.splitext(os.path.split(filename)[-1])[0]
@@ -163,13 +164,14 @@ class ScriptManager:
             self.__modules[filename] = mod
             self.__modules[filename].BXE = APIContext(filename, self.app)
 
-            self.log.info("Loaded script: {0}".format(filename))
+            self.log.info("__load(): Loaded script: {0}".format(filename))
             return self.__modules[filename]
 
         except SystemExit:
-            self.log.critical("sys.exit() called: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))
+            self.log.critical("__load(): Script called sys.exit(): {0}\n{1}".format(
+                filename, traceback.format_exc(10).rstrip()))
             sys.exit(11)
 
         except:
-            self.log.error("Error from script: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))
+            self.log.error("__load(): Error from script: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))
             return None

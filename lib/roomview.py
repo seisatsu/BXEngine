@@ -77,17 +77,17 @@ class Roomview(object):
         :return: True if succeeded, False if failed.
         """
         # Attempt to load the room file.
-        self.log.info("Loading room and view: {0}:{1}".format(self.file, self.view))
+        self.log.info("_load(): Loading room and view: {0}:{1}".format(self.file, self.view))
         whole_room = self.resource.load_json(self.file, "room")
 
         # We were unable to load the room file.
         if not whole_room:
-            self.log.error("Unable to load room descriptor: {0}".format(self.file))
+            self.log.error("_load(): Unable to load room descriptor: {0}".format(self.file))
             return False
 
         # Make sure the view we are loading exists.
         if self.view not in whole_room:
-            self.log.error("No such view in room: {0}: {1}".format(self.file, self.view))
+            self.log.error("_load(): No such view in room: {0}: {1}".format(self.file, self.view))
             return False
 
         # Load the requested view.
@@ -103,7 +103,7 @@ class Roomview(object):
 
         # We were unable to load the background image.
         if not self.image:
-            self.log.error("Unable to load room image: {0}".format(self.vars["image"]))
+            self.log.error("_load(): Unable to load room image: {0}".format(self.vars["image"]))
             return False
 
         # Music is defined for this view.
@@ -123,7 +123,7 @@ class Roomview(object):
         self.__calculate_all_exits()
 
         # Success.
-        self.log.info("Finished loading room: {0}".format(self.file))
+        self.log.info("_load(): Finished loading room: {0}".format(self.file))
         return True
 
     def __calculate_all_exits(self) -> bool:
