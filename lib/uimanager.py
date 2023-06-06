@@ -1,6 +1,6 @@
 ##################
 # BXEngine       #
-# ui.py          #
+# uimanager.py   #
 # Copyright 2021 #
 # Sei Satzparad  #
 ##################
@@ -31,8 +31,27 @@ import pygame_gui
 from lib.logger import Logger
 
 
-class UI(object):
+class UIManager(object):
+    """The UI Manager
+
+    This class handles the creation and placement of UI elements.
+
+    :ivar config: This contains the engine's configuration variables.
+    :ivar clock: The PyGame clock.
+    :ivar fps: The fps setting of the engine.
+    :ivar screen: The PyGame screen surface.
+    :ivar pgui: The PyGame GUI library's internal UI Manager.
+    :ivar curr_dialog: Object for the currently visible/active UI element.
+    :ivar log: The Logger instance for this class.
+    """
     def __init__(self, config, clock, fps, screen):
+        """UIManager Class Initializer
+
+        :param config: This contains the engine's configuration variables.
+        :param clock: The PyGame clock.
+        :param fps: The fps setting of the engine.
+        :param screen: The PyGame screen surface.
+        """
         self.config = config
         self.clock = clock
         self.fps = fps
@@ -56,6 +75,8 @@ class UI(object):
         pygame.display.update()
 
     def text_box(self, contents: str):
+        """Draw string contents to a text dialog on screen.
+        """
         wsize = self.config["window"]["size"]
         gui_rect = pygame.Rect(self.config["gui"]["textbox_margin_sides"],
                                wsize[1] - self.config["gui"]["textbox_margin_bottom"] -

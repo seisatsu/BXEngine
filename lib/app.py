@@ -36,7 +36,7 @@ from lib.logger import Logger
 from lib.overlaymanager import OverlayManager
 from lib.scriptmanager import ScriptManager
 from lib.tickmanager import TickManager
-from lib.ui import UI
+from lib.uimanager import UIManager
 from lib.world import World
 
 
@@ -55,7 +55,7 @@ class App(object):
     :ivar config: This contains the engine's configuration variables.
     :ivar images: This is a dict containing all of the common required images.
     :ivar audio: The AudioManager instance.
-    :ivar ui: The UI instance.
+    :ivar ui: The UIManager instance.
     :ivar resource: The ResourceManager instance.
     :ivar database: The DatabaseManager instance.
     :ivar tick: The TickManager instance.
@@ -84,7 +84,7 @@ class App(object):
         self.config = config
         self.images = images
         self.audio = AudioManager(self.config)
-        self.ui = UI(config, self.clock, self.fps, self.screen)
+        self.ui = UIManager(config, self.clock, self.fps, self.screen)
         self.resource = resource
         self.database = database
         self.tick = TickManager()
