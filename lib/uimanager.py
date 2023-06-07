@@ -61,21 +61,33 @@ class UIManager(object):
         self.log = Logger("UI")
 
     def _process_events(self, event):
+        """Call PyGame GUI to process an event.
+
+        :param event: PyGame GUI internal event.
+        """
         self.pgui.process_events(event)
 
     def _draw_ui(self):
+        """Call PyGame GUI to draw to the screen.
+        """
         self.pgui.draw_ui(self.screen)
 
     def _update(self):
+        """Call PyGame GUI to update / perform a tick.
+        """
         self.pgui.update(self.clock.tick(self.fps) / 1000.0)
 
     def _refresh(self):
+        """Refresh what is drawn and call PyGame GUI to update.
+        """
         self._update()
         self._draw_ui()
         pygame.display.update()
 
     def text_box(self, contents: str):
         """Draw string contents to a text dialog on screen.
+
+        :param contents: A string containing the contents to be drawn to the text box.
         """
         wsize = self.config["window"]["size"]
         gui_rect = pygame.Rect(self.config["gui"]["textbox_margin_sides"],
@@ -88,6 +100,8 @@ class UIManager(object):
         self.log.info("text_box(): Drew text box with contents: {0}".format(contents))
 
     def reset(self):
+        """Delete the currently active UI element.
+        """
         if self.curr_dialog:
             self.curr_dialog.kill()
             self.curr_dialog = None

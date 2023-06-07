@@ -50,7 +50,7 @@ class AudioManager:
     """
 
     def __init__(self, config):
-        """The AudioManager Class
+        """AudioManager Class Initializer
 
         :param config: The engine's configuration variables.
         """
@@ -75,6 +75,7 @@ class AudioManager:
         :param volume: Use the current volume if None, otherwise set the new volume. Takes a float between 0.0 and 1.0.
         :param loop: If 0, only play once. If -1, loop forever. If > 0, replay this many times. (1 plays twice, etc.)
         :param fade: If greater than 0.0, time to fade in the sound effect, in seconds.
+
         :return: A unique identifier for this sound effect's channel. This is used as an argument to other methods.
         """
         filename = normalize_path(filename)
@@ -98,6 +99,7 @@ class AudioManager:
         """Get the raw PyGame Mixer Sound channel for a sound effect.
 
         :param channel_id: The abstracted channel ID given by play_sfx().
+
         :return: The raw PyGame Mixer channel for this sound effect.
         """
         return self.__sfx[channel_id]["channel"]
@@ -114,6 +116,7 @@ class AudioManager:
 
         :param channel_id: The abstracted channel ID given by play_sfx().
         :param volume: Get the current volume if None, otherwise set the new volume. Takes a float between 0.0 and 1.0.
+
         :return: Returns the current volume after any adjustments if succeeded, None if failed.
         """
         # Search for the sound effect.
@@ -145,6 +148,7 @@ class AudioManager:
 
         :param filename: The filename of the sound effects to adjust.
         :param volume: Get the current volume if None, otherwise set the new volume. Takes a float between 0.0 and 1.0.
+
         :return: Returns a list containing the current volume, after any adjustments. If there were no adjustments but
                  multiple volumes for channels playing this file, return a list of volumes found. If the filename was
                  not found, return None.
@@ -179,6 +183,7 @@ class AudioManager:
 
         :param channel_id: The abstracted channel ID given by play_sfx().
         :param fade: If set, time to fade out the sound effect, in seconds.
+
         :return: True if succeeded, False if channel is nonexistent or already stopped.
         """
         if channel_id in self.__sfx:
@@ -200,6 +205,7 @@ class AudioManager:
 
         :param filename: Filename of the sound effects to stop.
         :param fade: If greater than 0.0, time to fade out the sound effects, in seconds.
+
         :return: True if succeeded, False if no sfx were playing.
         """
         result = 0
@@ -237,6 +243,7 @@ class AudioManager:
         """Fade out all currently playing SFX.
 
         :param fade: Time to fade out the sound effects, in seconds.
+
         :return: True
         """
         pygame.mixer.fadeout(int(fade*1000))
@@ -251,6 +258,7 @@ class AudioManager:
         :param loop: If 0, only play once. If -1, loop forever. If > 0, replay this many times. (1 plays twice, etc.)
         :param start: Time position to start the music from, in seconds.
         :param fade: If greater than 0.0, time to fade in the music, in seconds.
+
         :return: True if succeeded, False if failed.
         """
         # Stop and unload any previously loaded music.
@@ -288,6 +296,7 @@ class AudioManager:
         """Get or adjust the volume of the currently playing music.
 
         :param volume: Get the current volume if None, otherwise set the new volume. Takes a float between 0.0 and 1.0.
+
         :return: Returns the current volume after any adjustments if succeeded, None if failed.
         """
         if self.playing_music:
@@ -307,6 +316,7 @@ class AudioManager:
         """Stop and unload any currently loaded music.
 
         :param fade: If greater than 0.0, time to fade out the music, in seconds.
+
         :return: True if succeeded, false if no music was playing.
         """
         if not self.playing_music:

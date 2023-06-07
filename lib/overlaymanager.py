@@ -33,7 +33,24 @@ from lib.logger import Logger
 
 
 class OverlayManager(object):
+    """The Overlay Manager
+
+    Keeps track of and draws images that are overlaid onto the base room image.
+
+    :ivar config: This contains the engine's configuration variables.
+    :ivar app: The main App instance.
+    :ivar resource: The ResourceManager instance.
+    :ivar world: The World instance.
+    :ivar log: The Logger instance for this class.
+    """
     def __init__(self, config, app, resource, world):
+        """OverlayManager Class Initializer
+
+        :param config: This contains the engine's configuration variables.
+        :param app: The main App instance.
+        :param resource: The ResourceManager instance.
+        :param world: The World instance.
+        """
         self.config = config
         self.app = app
         self.resource = resource
@@ -51,8 +68,17 @@ class OverlayManager(object):
         self.overlays = {}
 
     def insert_overlay(self, imagefile: [str, pygame.Surface], position: tuple[int, int],
-                       scale: tuple[int, int] = None, persistent: bool = False) -> Optional[int]:
+                       scale: tuple[float, float] = None, persistent: bool = False) -> Optional[int]:
         """Insert an overlay image into the roomview.
+
+        The image will be inserted at the specified position and scale.
+
+        :param imagefile: The image filename or a Pygame surface loaded through ResourceManager.
+        :param position: The X and Y position on the screen to draw the overlay at, as a tuple of floats.
+        :param scale: If given, the X and Y scale the overlay should be drawn at, as a tuple of floats.
+        :param persistent: Whether the overlay should stay on screen after switching roomviews.
+
+        :return: Integer overlay ID if succeeded, None if failed.
         """
         # Attempt to load the overlay image from a filename.
         if type(imagefile) is str:
@@ -84,7 +110,12 @@ class OverlayManager(object):
         return id(overlay_image)
 
     def remove_overlay(self, overlay_id: int) -> bool:
-        """Remove an overlay image from the roomview."""
+        """Remove an overlay image from the roomview.
+
+        :param overlay_id: The ID of the overlay to remove, which was given as the return value from insert_overlay().
+
+        :return: True if succeeded, False if failed.
+        """
         # The overlay does not exist.
         if overlay_id not in self.overlays:
             self.log.error("remove_overlay(): Overlay ID does not exist to remove: ".format(overlay_id))
@@ -98,6 +129,11 @@ class OverlayManager(object):
 
     def reposition_overlay(self, overlay_id: int, position: tuple[int, int]) -> bool:
         """Reposition an overlay image on the window.
+
+        :param overlay_id: The ID of the overlay to remove, which was given as the return value from insert_overlay().
+        :param position: The X and Y position on the screen to move the overlay to, as a tuple of floats.
+
+        :return: True if succeeded, False if failed.
         """
         # The overlay does not exist.
         if overlay_id not in self.overlays:
@@ -113,6 +149,11 @@ class OverlayManager(object):
 
     def rescale_overlay(self, overlay_id: int, scale: tuple[int, int]) -> bool:
         """Rescale an overlay image.
+
+        :param overlay_id: The ID of the overlay to remove, which was given as the return value from insert_overlay().
+        :param scale: The X and Y scale the overlay should be redrawn at, as a tuple of floats.
+
+        :return: True if succeeded, False if failed.
         """
         # The overlay does not exist.
         if overlay_id not in self.overlays:
@@ -127,6 +168,8 @@ class OverlayManager(object):
         return True
 
     def _cleanup(self):
+        """Delete non-persistent overlay images.
+        """
         to_remove = []
         for overlay in self.overlays:
             if not self.overlays[overlay]["persistent"]:

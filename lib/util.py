@@ -31,8 +31,9 @@ from lib.logger import Logger
 
 
 def normalize_path(path):
-    """
-    Normalize paths between Windows and other systems.
+    """Normalize paths between Windows and other systems.
+
+    :param path: The path to be normalized.
     """
     new_path = path.replace('\\', '/')
     if "../" in new_path:

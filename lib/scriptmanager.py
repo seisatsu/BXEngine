@@ -70,7 +70,7 @@ class ScriptManager:
         self.ui = ui
         self.world = world
 
-        # Dictionary of module instances mapped by filename.
+        # Dictionary registry of module instances mapped by filename.
         self.__modules = {}
 
     def __contains__(self, item: str) -> bool:
@@ -89,28 +89,35 @@ class ScriptManager:
     def call(self, filename: str, func: str, *args: Any) -> Any:
         """Call a function from a script, loading if not already loaded.
 
-        Usually you just want to run "Driftwood.script[path].function(args)". This wraps around that, and is cleaner
+        Usually you just want to run "BXE.script[path].function(args)". This wraps around that, and is cleaner
         for the engine to use in most cases. It also prevents exceptions from raising into the engine scope and
         crashing it, so the engine will always call scripts through this method.
 
-        Args:
-            filename: Filename of the python script containing the function.
-            func: Name of the function to call.
-            args: Arguments to pass.
+        :param filename: Filename of the python script containing the function.
+        :param func: Name of the function to call.
+        :param args: Arguments to pass.
 
-        Returns:
-            Function return code if succeeded, None if failed.
+        :return: Function return code if succeeded, None if failed.
         """
+        # Normalize the path across operating systems to always use forward slashes.
         filename = normalize_path(filename)
+
+        # Call the module function from our registry if it can be loaded or is loaded already.
         try:
             return getattr(self[filename], func)(*args)
+
+        # Give an error if we are attempting to call a module that could not be loaded.
         except AttributeError:
             self.log.error("call(): Module not loaded for call: {0}: {1}".format(filename, func + "()"))
             return None
+
+        # Exit with a critical error if the module called sys.exit().
         except SystemExit:
             self.log.critical("call(): Script called sys.exit(): {0}\n{1}".format(
                 filename, traceback.format_exc(10).rstrip()))
             sys.exit(11)
+
+        # If the module gave an error, record it.
         except:
             self.log.error("call(): Error from function: {0}: {1}\n{2}".format(filename, func + "()",
                                                                                traceback.format_exc().rstrip()))
@@ -128,12 +135,14 @@ class ScriptManager:
         not be caught and the engine will crash if a problem occurs. This is mostly used internally by ScriptManager
         to load a module or check if one exists.
 
-        Args:
-            filename: Filename of the python script whose module instance should be returned.
+        :param filename: Filename of the python script whose module instance should be returned.
 
-        Returns: Python module instance if succeeded, False if nonexistent, or None if error.
+        :return: Python module instance if succeeded, False if nonexistent, or None if error.
         """
+        # Normalize the path across operating systems to always use forward slashes.
         filename = normalize_path(filename)
+
+        # Load the module if not loaded and then return it, otherwise return the existing module.
         if filename not in self.__modules:
             return self.__load(filename)
         else:
@@ -142,22 +151,29 @@ class ScriptManager:
     def __load(self, filename: str) -> Optional[bool]:
         """Load a script.
 
-        Args:
-            filename: Filename of the python script to load.
+        :param filename: Filename of the python script to load.
+
+        :return: Python module instance if succeeded, False if nonexistent, or None if error.
         """
+        # Normalize the path across operating systems to always use forward slashes.
         filename = normalize_path(filename)
+
+        # Determine the full path of the module.
         if filename.startswith("$COMMON$/"):
             fullpath = "{0}/{1}".format("common", filename.split('/', 1)[1])
         else:
             fullpath = "{0}/{1}".format(self.world.dir, filename)
+
+        # If the path does not exist, give an error.
         if not os.path.exists(fullpath):
             self.log.error("__load(): No such script: {0}".format(fullpath))
             return False
 
+        # Determine the appropriate name of the module.
         mname = os.path.splitext(os.path.split(filename)[-1])[0]
 
+        # Build the module into memory from a file and load it into our registry.
         try:
-            # Build the module.
             spec = importlib.util.spec_from_file_location(mname, fullpath)
             mod = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(mod)
@@ -167,11 +183,13 @@ class ScriptManager:
             self.log.info("__load(): Loaded script: {0}".format(filename))
             return self.__modules[filename]
 
+        # Exit with a critical error if the module called sys.exit().
         except SystemExit:
             self.log.critical("__load(): Script called sys.exit(): {0}\n{1}".format(
                 filename, traceback.format_exc(10).rstrip()))
             sys.exit(11)
 
+        # If the module gave an error, record it.
         except:
             self.log.error("__load(): Error from script: {0}\n{1}".format(filename, traceback.format_exc(10).rstrip()))
             return None

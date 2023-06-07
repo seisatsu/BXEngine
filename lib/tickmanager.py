@@ -57,6 +57,8 @@ class TickManager:
         :param delay: The delay in milliseconds until the event comes due.
         :param arg: Optional data to pass to the callback function as an argument when it is called.
         :param continuous: Whether the event should keep being called at the same interval or be deleted after one call.
+
+        :return: True if succeeded, False if failed.
         """
         # If this callback is already in the registry, fail.
         if callback in self.registry:
@@ -77,6 +79,8 @@ class TickManager:
         This takes the original function object as an argument, and unregisters that function's event.
 
         :param callback: The function of the event to be unregistered.
+
+        :return: True if succeeded, false if failed.
         """
         # If this callback is not in the registry, fail.
         if callback not in self.registry:
@@ -107,6 +111,7 @@ class TickManager:
                     else:
                         callback()
                     self.log.debug("_tick(): Called event callback: {0}".format(callback.__name__))
+
                     # If the event is continuous, update its start time to the current time. Otherwise, delete it.
                     if self.registry[callback]["continuous"]:
                         self.registry[callback]["start_time"] = pygame.time.get_ticks()
@@ -115,5 +120,7 @@ class TickManager:
                     else:
                         del self.registry[callback]
                         self.log.debug("_tick(): Deleted expired event callback: {0}".format(callback.__name__))
+
+        # If the registry list changed its size during iteration, just try again next cycle.
         except RuntimeError:
             pass

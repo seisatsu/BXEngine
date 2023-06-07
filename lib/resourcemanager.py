@@ -124,6 +124,7 @@ class ResourceManager(object):
         """Load the engine configuration file.
 
         :param filename: The filename of the configuration file to load.
+
         :return: Dictionary of configuration values if succeeded, otherwise the engine exits.
         """
         # Normalize the path to a Unix-style path for internal consistency.
@@ -186,6 +187,7 @@ class ResourceManager(object):
         :param filename: The filename of the JSON file to load.
         :param validate: If set, the schema type to validate with. (Filename minus the ".json".)
         :param rootdir: Whether to search from the engine root directory instead of the world directory.
+
         :return: JSON object if succeeded, None if failed.
         """
         # Normalize the path to a Unix-style path for internal consistency.
@@ -241,6 +243,7 @@ class ResourceManager(object):
         :param filename: The filename of the image to load.
         :param scale: A two-member tuple of the width and height to scale the image to.
         :param rootdir: Whether to search from the engine root directory instead of the world directory.
+
         :return: PyGame surface if succeeded, None if failed.
         """
         # Normalize the path to a Unix-style path for internal consistency.
@@ -282,6 +285,7 @@ class ResourceManager(object):
         :param filename: The filename of the file to load.
         :param binary: Whether to load the file in binary mode.
         :param rootdir: Whether to search from the engine root directory instead of the world directory.
+
         :return: Raw file data if succeeded, None if failed.
         """
         # Normalize the path to a Unix-style path for internal consistency.

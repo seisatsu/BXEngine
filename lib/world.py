@@ -34,11 +34,24 @@ from lib.roomview import Roomview
 
 
 class World(object):
-    """
-    A class to represent the game world.
-    """
+    """A class to represent the game world.
 
+    :ivar config: This contains the engine's configuration variables.
+    :ivar app: The main App instance.
+    :ivar dir: The directory of the game world.
+    :ivar vars: The JSON object representing the world file.
+    :ivar roomview: The currently focused roomview.
+    :ivar resource: The ResourceManager instance.
+    :ivar log: The Logger instance for this class.
+    :ivar funvalue: The world's funvalue, which is set on first load and affects what may happen this playthrough.
+    """
     def __init__(self, config, app, resource):
+        """World Class Initializer
+
+        :param config: This contains the engine's configuration variables.
+        :param app: The main App instance.
+        :param resource: The ResourceManager instance.
+        """
         self.config = config
         self.app = app
         self.dir = self.config["world"]
@@ -49,8 +62,9 @@ class World(object):
         self.funvalue = None
 
     def load(self) -> bool:
-        """
-        Load the world descriptor JSON file.
+        """Load the world descriptor JSON file and prepare the world.
+
+        :return: True if succeeded, False if failed.
         """
         self.vars = self.resource.load_json("world.json", "world")
 
@@ -73,8 +87,11 @@ class World(object):
         return self.change_roomview(self.vars["first_roomview"])
 
     def navigate(self, direction: str) -> bool:
-        """
-        Change roomviews by exit name in the current roomview.
+        """Change roomviews by exit name in the current roomview.
+
+        :param direction: Name of the direction to exit by.
+
+        :return: True if succeeded, False if failed.
         """
         if direction in self.roomview.exits:
             return self.change_roomview(self.roomview.exits[direction])
@@ -82,8 +99,11 @@ class World(object):
         return False
 
     def change_roomview(self, room_name: str) -> bool:
-        """
-        Change roomviews by room descriptor filename and optionally included view name.
+        """Change roomviews by room descriptor filename and optionally included view name.
+
+        :param room_name: The room descriptor filename and optionally included view name.
+
+        :return: True if succeeded, False if failed.
         """
         # If there is a colon in the room name, a particular view is being chosen.
         # Otherwise, load the "default" view.
@@ -113,6 +133,10 @@ class World(object):
 
         This is displayed in the window title area, after the world name.
         If "caption" is empty, just set the title to the world name by itself.
+
+        :param: If given, the window caption to be set, otherwise reset the window title to just the world name.
+
+        :return: True.
         """
         if caption:
             pygame.display.set_caption("{0} - {1}".format(self.vars["name"], caption))

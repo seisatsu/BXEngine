@@ -39,6 +39,8 @@ class Cursor(object):
     """
 
     def __init__(self):
+        """Cursor Class Initializer
+        """
         self.click = False
         self.last_click = None
         self.pos = [0, 0]

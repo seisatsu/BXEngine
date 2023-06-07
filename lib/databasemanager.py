@@ -93,6 +93,7 @@ class DatabaseManager:
         If opening the new database fails, the old one stays loaded.
 
         :param filename: The filename of the database to load, relative to the database root.
+
         :return: True if succeeded, False if failed.
         """
         self.flush()  # Write the current database to disk first.
@@ -120,6 +121,7 @@ class DatabaseManager:
         """Retrieve an object from the database by its key .
 
         :param key: The key whose object to retrieve.
+
         :return: Python object if succeeded, None if failed.
         """
         # Get the key.
@@ -135,8 +137,9 @@ class DatabaseManager:
     def put(self, key: str, obj: Any) -> bool:
         """Create or update a key with a new object.
 
-        :var key: The key to create or update.
-        :var obj: The object to store.
+        :param key: The key to create or update.
+        :param obj: The object to store.
+
         :return: True if succeeded, False if failed.
         """
         # Is it serializable?
@@ -155,6 +158,7 @@ class DatabaseManager:
         """Removes a key and its object from the database.
 
         :param key: The key to remove.
+
         :return: True if succeeded, False if failed.
         """
         # Remove the key.
@@ -168,7 +172,7 @@ class DatabaseManager:
             return False
 
     def flush(self) -> None:
-        """Force the database to write to disk now.
+        """Force the database to write to disk immediately.
         """
         self.__changed = True
         self._update()

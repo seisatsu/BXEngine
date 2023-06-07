@@ -131,12 +131,17 @@ class Roomview(object):
 
         Processing is handed off to _calculate_exit() for each exit. The information is stored in the self.exits
         variable for named exits, and the self.action_exits variable for go action exits.
+
+        :return: True if succeeded, False if failed.
         """
+        # Calculate each named exit in the view, adding it to the list of exits if it is present.
         for e in self.vars["exits"]:
             thisexit = self.vars["exits"][e]
             dest = self.__calculate_exit(thisexit)
             if dest:
                 self.exits[e] = dest
+
+        # Calculate each action exit in the room, adding it to the list of action exits if it is present.
         for a in self.vars["actions"]:
             for act_type in ["go", "look", "use"]:
                 if act_type in a and a[act_type]["result"] == "exit":
@@ -147,6 +152,7 @@ class Roomview(object):
                             self.action_exits[tuple(a["rect"])] = {}
                         self.action_exits[tuple(a["rect"])][act_type] = dest
 
+        # Done.
         return True
 
     def __calculate_exit(self, thisexit: dict) -> [str, None]:
@@ -155,6 +161,10 @@ class Roomview(object):
         Taking into account chance and funvalue_constraints conditionals for presence and destination the exit,
         calculate the actual destination (and presence or lack thereof). A string destination is returned if the exit
         is present, otherwise None is returned.
+
+        :param thisexit: A dictionary containing an exit description section from the roomview.
+
+        :return: Destination string if the exit should be present, otherwise None.
         """
         # If the exit name maps to a string, this is a simple, static exit.
         if type(thisexit) is str:
