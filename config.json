@@ -22,12 +22,19 @@
 		"stdout": true,
 		"file": "bxengine.log",
 		"suppress": [
-			["debug", "Tick", "_tick()"]
+			["debug", "Tick", "_tick()"],
+			["debug", "Tick", "Registered event callback: unload"],
+			["debug", "Resource", "unload()"],
+			["info", "Tick", "register(): Registered event callback: unload"]
 		]
 	},
 	"audio": {
 		"sfx_volume": 0.5,
 		"music_volume": 0.5
+	},
+	"cache": {
+		"enabled": true,
+		"ttl": 30000
 	},
 	"debug": {
 		"enabled": true,

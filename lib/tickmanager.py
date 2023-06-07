@@ -25,6 +25,8 @@
 # IN THE SOFTWARE.
 # **********
 
+from typing import Callable
+
 import pygame
 
 from lib.logger import Logger
@@ -46,7 +48,12 @@ class TickManager:
 
         self.registry = {}  # {callback: {start_time: int, delay: int, continuous: bool}}
 
-    def register(self, callback: object, delay: int, arg: object = None, continuous: bool = False) -> bool:
+    def __contains__(self, item: Callable) -> bool:
+        if item in self.registry:
+            return True
+        return False
+
+    def register(self, callback: Callable, delay: int, arg: list = None, continuous: bool = False) -> bool:
         """Register a timed event callback.
 
         The registered event is a function that will be called, perhaps repeatedly, after a set interval in
@@ -55,7 +62,7 @@ class TickManager:
 
         :param callback: A function to be called when the event comes due.
         :param delay: The delay in milliseconds until the event comes due.
-        :param arg: Optional data to pass to the callback function as an argument when it is called.
+        :param arg: Optional argument list to pass to the callback function when it is called.
         :param continuous: Whether the event should keep being called at the same interval or be deleted after one call.
 
         :return: True if succeeded, False if failed.
@@ -73,7 +80,7 @@ class TickManager:
         # Success.
         return True
 
-    def unregister(self, callback: object) -> bool:
+    def unregister(self, callback: Callable) -> bool:
         """Unregister a timed event callback.
 
         This takes the original function object as an argument, and unregisters that function's event.
@@ -94,6 +101,25 @@ class TickManager:
         # Success.
         return True
 
+    def renew(self, callback: Callable) -> bool:
+        """Reset a delayed event timer's start time to now.
+
+        If a delayed event was originally registered to happen in 5 minutes, this will reset the timer so that it will
+        wait another 5 minutes starting now.
+
+        :param callback: The function of the event to be renewed.
+
+        :return: True if succeeded, false if failed.
+        """
+        # If this callback is not in the registry, fail.
+        if callback not in self.registry:
+            self.log.warn("renew(): Attempt to renew nonexistent callback: {0}".format(callback.__name__))
+            return False
+
+        # Otherwise, renew it.
+        self.registry[callback]["start_time"] = pygame.time.get_ticks()
+        self.log.debug("renew(): Renewed event callback: {0}".format(callback.__name__))
+
     def _tick(self) -> None:
         """This is called repeatedly by the mainloop each iteration.
 
@@ -107,7 +133,7 @@ class TickManager:
                 if pygame.time.get_ticks() - self.registry[callback]["start_time"] > self.registry[callback]["delay"]:
                     # Call the callback.
                     if self.registry[callback]["arg"]:
-                        callback(self.registry[callback]["arg"])
+                        callback(*self.registry[callback]["arg"])
                     else:
                         callback()
                     self.log.debug("_tick(): Called event callback: {0}".format(callback.__name__))

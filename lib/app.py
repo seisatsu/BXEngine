@@ -56,9 +56,9 @@ class App(object):
     :ivar images: This is a dict containing all of the common required images.
     :ivar audio: The AudioManager instance.
     :ivar ui: The UIManager instance.
+    :ivar tick: The TickManager instance.
     :ivar resource: The ResourceManager instance.
     :ivar database: The DatabaseManager instance.
-    :ivar tick: The TickManager instance.
     :ivar vars: A storage space for variables to be shared between event scripts.
     :ivar log: The Logger instance for this class.
     :ivar world: The World instance for the currently loaded world.
@@ -66,12 +66,13 @@ class App(object):
     :ivar script: The ScriptManager instance.
     """
 
-    def __init__(self, screen, config, images, resource, database):
+    def __init__(self, screen, config, images, tick, resource, database):
         """App Class Initializer
 
         :param screen: The PyGame screen surface.
         :param config: This contains the engine's configuration variables.
         :param images: This is a dict containing all of the common required images.
+        :param tick: The TickManager instance.
         :param resource: The ResourceManager instance.
         :param database: The DatabaseManager instance.
         """
@@ -85,9 +86,9 @@ class App(object):
         self.images = images
         self.audio = AudioManager(self.config)
         self.ui = UIManager(config, self.clock, self.fps, self.screen)
+        self.tick = tick
         self.resource = resource
         self.database = database
-        self.tick = TickManager()
         self.vars = {}
         self.log = Logger("App")
 

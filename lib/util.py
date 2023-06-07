@@ -25,12 +25,16 @@
 # IN THE SOFTWARE.
 # **********
 
+import functools
 import sys
+import types
+
+from typing import Callable
 
 from lib.logger import Logger
 
 
-def normalize_path(path):
+def normalize_path(path: str) -> str:
     """Normalize paths between Windows and other systems.
 
     :param path: The path to be normalized.
@@ -40,3 +44,20 @@ def normalize_path(path):
         Logger("Util").critical("normalize_path(): Detected illegal upward traversal attempt: {0}".format(new_path))
         sys.exit(10)
     return new_path
+
+
+def copy_function(f: Callable) -> Callable:
+    """Deep copy a function.
+
+    Based on https://stackoverflow.com/a/6528148/190597 (Glenn Maynard)
+
+    This is needed to pass the same function multiple times to TickManager as a callback.
+
+    :param f: The function to be copied.
+
+    :return: A function object.
+    """
+    g = types.FunctionType(f.__code__, f.__globals__, name=f.__name__, argdefs=f.__defaults__, closure=f.__closure__)
+    g = functools.update_wrapper(g, f)
+    g.__kwdefaults__ = f.__kwdefaults__
+    return g

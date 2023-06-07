@@ -81,6 +81,7 @@ from lib.app import App
 from lib.databasemanager import DatabaseManager
 from lib.logger import Logger
 from lib.resourcemanager import ResourceManager
+from lib.tickmanager import TickManager
 
 # This version string is printed when starting the engine.
 VERSION = "BXEngine PreAlpha"
@@ -146,8 +147,11 @@ def main() -> None:
     # Here we go.
     print("Starting up...")
 
-    # We need to initialize ResourceManager first so we can load the config file.
-    resource = ResourceManager()
+    # We need to initialize TickManager first since ResourceManager may need it for cache management.
+    tick = TickManager()
+
+    # We need to initialize ResourceManager next so we can load the config file.
+    resource = ResourceManager(tick)
 
     # Load the config file and initialize the logger.
     print("Loading configuration...")
@@ -172,7 +176,7 @@ def main() -> None:
     screen = pygame.display.get_surface()
 
     # Entry point to the main program.
-    App(screen, config, images, resource, database)._main_loop()
+    App(screen, config, images, tick, resource, database)._main_loop()
 
     # Shut down.
     log.info("Shutting down...")

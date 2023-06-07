@@ -36,7 +36,7 @@ from typing import Optional
 import pygame
 
 from lib.logger import init, timestamp, Logger
-from lib.util import normalize_path
+from lib.util import normalize_path, copy_function
 
 
 class ResourceManager(object):
@@ -44,15 +44,24 @@ class ResourceManager(object):
 
     Handles loading resources from disk, and validation of JSON files.
 
-    :ivar resources: A dict of all currently loaded resources.
     :ivar config: This contains the engine's configuration variables.
     :ivar log: The Logger instance for this class.
+    :ivar tick: The TickManager instance.
+    :ivar resources: A dict of all currently loaded resources.
+    :ivar unload_callbacks: A dict of unload() tick callbacks associated with cached resources.
     :ivar _loaded_schemas: A dict of all currently loaded JSON schemas.
     """
-    def __init__(self):
-        self.resources = {}
+    def __init__(self, tick):
+        """ResourceManager Class Initializer
+
+        :param tick: The TickManager instance.
+        """
         self.config = None
         self.log = None
+        self.tick = tick
+
+        self.resources = {}
+        self.unload_callbacks = {}
         self._loaded_schemas = {}
 
     def __contains__(self, item: str) -> bool:
@@ -62,6 +71,8 @@ class ResourceManager(object):
 
     def __getitem__(self, item: str) -> Optional[dict]:
         if self.__contains__(item):
+            if item in self.tick:
+                self.tick.renew(item)
             return self.resources[item]
         else:
             return None
@@ -197,8 +208,10 @@ class ResourceManager(object):
         if not rootdir:
             filename = os.path.join(self.config["world"], filename)
 
-        # If the file is already loaded, just return it.
-        if filename in self.resources:
+        # If the file is already loaded, just return it. Renew the timer if cached.
+        if filename in self.unload_callbacks:
+            if self.unload_callbacks[filename] in self.tick:
+                self.tick.renew(self.unload_callbacks[filename])
             return self.resources[filename]
 
         # Attempt to load and optionally validate the JSON file.
@@ -215,7 +228,11 @@ class ResourceManager(object):
                     jsonschema.validate(rsrc, schema)
 
                 # Success.
+                # Register a tick callback to delete this resource later if caching is enabled.
                 self.resources[filename] = rsrc
+                if self.config["cache"]["enabled"]:
+                    self.unload_callbacks[filename] = copy_function(self.unload)
+                    self.tick.register(self.unload_callbacks[filename], self.config["cache"]["ttl"], [self, filename])
                 self.log.info("load_json(): Finished loading JSON file: {0}".format(filename))
                 return self.resources[filename]
 
@@ -253,8 +270,10 @@ class ResourceManager(object):
         if not rootdir:
             filename = os.path.join(self.config["world"], filename)
 
-        # If the file is already loaded, just return it.
-        if filename in self.resources:
+        # If the file is already loaded, just return it. Renew the timer if cached.
+        if filename in self.unload_callbacks:
+            if self.unload_callbacks[filename] in self.tick:
+                self.tick.renew(self.unload_callbacks[filename])
             return self.resources[filename]
 
         # Attempt to load and optionally scale the image.
@@ -270,7 +289,11 @@ class ResourceManager(object):
                 rsrc = pygame.image.load(filename)
 
             # Success.
+            # Register a tick callback to delete this resource later if caching is enabled.
             self.resources[filename] = rsrc
+            if self.config["cache"]["enabled"]:
+                self.unload_callbacks[filename] = copy_function(self.unload)
+                self.tick.register(self.unload_callbacks[filename], self.config["cache"]["ttl"], [self, filename])
             self.log.info("load_image(): Finished loading image file: {0}".format(filename))
             return self.resources[filename]
 
@@ -295,8 +318,10 @@ class ResourceManager(object):
         if not rootdir:
             filename = os.path.join(self.config["world"], filename)
 
-        # If the file is already loaded, just return it.
-        if filename in self.resources:
+        # If the file is already loaded, just return it. Renew the timer if cached.
+        if filename in self.unload_callbacks:
+            if self.unload_callbacks[filename] in self.tick:
+                self.tick.renew(self.unload_callbacks[filename])
             return self.resources[filename]
 
         # Attempt to load the file in binary or text mode.
@@ -309,7 +334,11 @@ class ResourceManager(object):
                 rsrc = f.read()
 
                 # Success.
+                # Register a tick callback to delete this resource later if caching is enabled.
                 self.resources[filename] = rsrc
+                if self.config["cache"]["enabled"]:
+                    self.unload_callbacks[filename] = copy_function(self.unload)
+                    self.tick.register(self.unload_callbacks[filename], self.config["cache"]["ttl"], [self, filename])
                 self.log.info("load_raw(): Finished loading raw file: {0}".format(filename))
                 return self.resources[filename]
 
@@ -318,3 +347,19 @@ class ResourceManager(object):
             self.log.error("load_raw(): Could not open file: {0}".format(filename))
             print(traceback.format_exc(1))
             return None
+
+    def unload(self, filename: str) -> bool:
+        """Unload a loaded file, freeing its memory.
+
+        :param filename: The filename of the file to unload.
+
+        :return: True if succeeded, False if failed.
+        """
+        if filename in self.resources:
+            self.log.debug("unload(): Unloaded resource: {0}".format(filename))
+            del self.resources[filename]
+            del self.unload_callbacks[filename]
+            return True
+        else:
+            self.log.error("unload(): Attempt to unload nonexistent resource: {0}".format(filename))
+            return False

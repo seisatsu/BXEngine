@@ -153,6 +153,20 @@
         "music_volume"
       ]
     },
+    "cache": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "ttl": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "enabled",
+        "ttl"
+      ]
+    },
     "debug": {
       "properties": {
         "enabled": {
@@ -175,6 +189,7 @@
     "gui",
     "log",
     "audio",
+    "cache",
     "debug"
   ]
 }
