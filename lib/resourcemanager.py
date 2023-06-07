@@ -349,17 +349,28 @@ class ResourceManager(object):
             return None
 
     def unload(self, filename: str) -> bool:
-        """Unload a loaded file, freeing its memory.
+        """Unload a loaded resource, freeing its memory.
 
-        :param filename: The filename of the file to unload.
+        :param filename: The filename of the resource to unload.
 
         :return: True if succeeded, False if failed.
         """
         if filename in self.resources:
-            self.log.debug("unload(): Unloaded resource: {0}".format(filename))
+            # Delete the resource from the registry.
             del self.resources[filename]
+
+            # If a cache timer exists in TickManager for this resource, unregister it.
+            if self.unload_callbacks[filename] in self.tick:
+                self.tick.unregister(self.unload_callbacks[filename])
+
+            # Delete the unload callback from its registry.
             del self.unload_callbacks[filename]
+
+            # Success.
+            self.log.debug("unload(): Unloaded resource: {0}".format(filename))
             return True
+
         else:
+            # This resource doesn't exist. Throw an error.
             self.log.error("unload(): Attempt to unload nonexistent resource: {0}".format(filename))
             return False
