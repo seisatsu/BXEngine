@@ -129,7 +129,17 @@
                     ]
                   },
                   "contents": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "object"
+                    ],
+                    "properties": {
+                      "presence": {"$ref": "#/$defs/presence"},
+                      "destination": {"$ref": "#/$defs/destination"}
+                    },
+                    "required": [
+                      "destination"
+                    ]
                   }
                 },
                 "required": [
@@ -149,7 +159,17 @@
                     ]
                   },
                   "contents": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "object"
+                    ],
+                    "properties": {
+                      "presence": {"$ref": "#/$defs/presence"},
+                      "destination": {"$ref": "#/$defs/destination"}
+                    },
+                    "required": [
+                      "destination"
+                    ]
                   }
                 },
                 "required": [
