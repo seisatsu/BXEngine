@@ -42,6 +42,7 @@ class OverlayManager(object):
     :ivar resource: The ResourceManager instance.
     :ivar world: The World instance.
     :ivar log: The Logger instance for this class.
+    :ivar overlays: A dict of Overlay IDs mapped to overlay images currently in the roomview.
     """
     def __init__(self, config, app, resource, world):
         """OverlayManager Class Initializer
@@ -57,14 +58,12 @@ class OverlayManager(object):
         self.world = world
         self.log = Logger("Overlay")
 
-        """A dict of Overlay IDs mapped to overlays currently in the roomview.
-        self.overlays[Overlay_ID] = {
-            "filename": filename,
-            "image": pygame.Surface,
-            "position": [x, y],
-            "persistent": bool
-        }
-        """
+        # self.overlays[Overlay_ID] = {
+        #     "filename": filename,
+        #     "image": pygame.Surface,
+        #     "position": [x, y],
+        #     "persistent": bool
+        # }
         self.overlays = {}
 
     def insert_overlay(self, imagefile: [str, pygame.Surface], position: tuple[int, int],

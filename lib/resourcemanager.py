@@ -51,6 +51,7 @@ class ResourceManager(object):
     :ivar unload_callbacks: A dict of unload() tick callbacks associated with cached resources.
     :ivar _loaded_schemas: A dict of all currently loaded JSON schemas.
     """
+
     def __init__(self, tick):
         """ResourceManager Class Initializer
 

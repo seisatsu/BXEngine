@@ -43,7 +43,7 @@ class DatabaseManager:
     :ivar config: This contains the engine's configuration variables.
     :ivar log: The Logger instance for this class.
     :ivar filename: The filename of the initial database to open.
-    :ivar __change: Whether are changes to the database that haven't been written to disk yet.
+    :ivar __change: Whether there are changes to the database that haven't been written to disk yet.
     :ivar __database: The JSON contents of the currently open database.
     """
 
