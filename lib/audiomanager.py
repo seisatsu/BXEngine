@@ -354,7 +354,7 @@ class AudioManager:
                         if not self.__iter_lock:
                             del self.__sfx[sfx]
         except RuntimeError:
-            # The side of the self.__sfx dictionary changed while iterating. This is not actually a problem.
+            # The size of the self.__sfx dictionary changed while iterating. This is not actually a problem.
             pass
 
         return True
