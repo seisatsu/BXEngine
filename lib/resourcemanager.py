@@ -215,9 +215,9 @@ class ResourceManager(object):
                     jsonschema.validate(rsrc, schema)
 
                 # Success.
-                self.resources["filename"] = rsrc
+                self.resources[filename] = rsrc
                 self.log.info("load_json(): Finished loading JSON file: {0}".format(filename))
-                return self.resources["filename"]
+                return self.resources[filename]
 
         # Failed to open the JSON file.
         except (OSError, IOError):
@@ -309,9 +309,9 @@ class ResourceManager(object):
                 rsrc = f.read()
 
                 # Success.
-                self.resources["filename"] = rsrc
+                self.resources[filename] = rsrc
                 self.log.info("load_raw(): Finished loading raw file: {0}".format(filename))
-                return self.resources["filename"]
+                return self.resources[filename]
 
         # Failed to open the file.
         except (OSError, IOError):
