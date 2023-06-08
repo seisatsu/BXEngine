@@ -18,10 +18,15 @@
           },
           "minItems": 2,
           "maxItems": 2
+        },
+        "fps": {
+          "type": "integer",
+          "minimum": 1
         }
       },
       "required": [
-        "size"
+        "size",
+        "fps"
       ]
     },
     "navigation": {

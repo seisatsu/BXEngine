@@ -78,7 +78,7 @@ class App(object):
         """
         self.screen = screen
         self.clock = pygame.time.Clock()
-        self.fps = 60
+        self.fps = config["window"]["fps"]
         self.done = False
         self.keys = pygame.key.get_pressed()
         self.cursor = Cursor()

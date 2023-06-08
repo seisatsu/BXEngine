@@ -2,7 +2,8 @@
 	"world": "test_world",
 	"database": "bxengine.ubj",
 	"window": {
-		"size": [800, 600]
+		"size": [800, 600],
+		"fps": 30
 	},
 	"navigation": {
 		"indicator_size": [64, 64],
