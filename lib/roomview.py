@@ -135,22 +135,24 @@ class Roomview(object):
         :return: True if succeeded, False if failed.
         """
         # Calculate each named exit in the view, adding it to the list of exits if it is present.
-        for e in self.vars["exits"]:
-            thisexit = self.vars["exits"][e]
-            dest = self.__calculate_exit(thisexit)
-            if dest:
-                self.exits[e] = dest
+        if "exits" in self.vars:
+            for e in self.vars["exits"]:
+                thisexit = self.vars["exits"][e]
+                dest = self.__calculate_exit(thisexit)
+                if dest:
+                    self.exits[e] = dest
 
         # Calculate each action exit in the room, adding it to the list of action exits if it is present.
-        for a in self.vars["actions"]:
-            for act_type in ["go", "look", "use"]:
-                if act_type in a and a[act_type]["result"] == "exit":
-                    thisexit = a["go"]["contents"]
-                    dest = self.__calculate_exit(thisexit)
-                    if dest:
-                        if tuple(a["rect"]) not in self.action_exits:
-                            self.action_exits[tuple(a["rect"])] = {}
-                        self.action_exits[tuple(a["rect"])][act_type] = dest
+        if "actions" in self.vars:
+            for a in self.vars["actions"]:
+                for act_type in ["go", "look", "use"]:
+                    if act_type in a and a[act_type]["result"] == "exit":
+                        thisexit = a[act_type]["contents"]
+                        dest = self.__calculate_exit(thisexit)
+                        if dest:
+                            if tuple(a["rect"]) not in self.action_exits:
+                                self.action_exits[tuple(a["rect"])] = {}
+                            self.action_exits[tuple(a["rect"])][act_type] = dest
 
         # Done.
         return True
@@ -193,19 +195,19 @@ class Roomview(object):
                             return None  # Skip this exit.
                     # Check a less than constraint.
                     elif constraint[0] == "<":
-                        if constraint[1] >= self.world.funvalue:
+                        if not (self.world.funvalue < constraint[1]):
                             return None  # Skip this exit.
                     # Check a greater than constraint.
                     elif constraint[0] == ">":
-                        if constraint[1] <= self.world.funvalue:
+                        if not (self.world.funvalue > constraint[1]):
                             return None  # Skip this exit.
                     # Check a less than or equal to constraint.
                     elif constraint[0] == "<=":
-                        if constraint[1] > self.world.funvalue:
+                        if not (self.world.funvalue <= constraint[1]):
                             return None  # Skip this exit.
                     # Check a greater than or equal to constraint.
                     elif constraint[0] == ">=":
-                        if constraint[1] < self.world.funvalue:
+                        if not (self.world.funvalue >= constraint[1]):
                             return None  # Skip this exit.
             # Next calculate the destination itself.
             # If the "destination" section maps to a string, the destination is static.
@@ -226,27 +228,27 @@ class Roomview(object):
                     for constraint in thisexit["destination"]["funvalue"]:
                         # Check a range constraint.
                         if constraint[0] == "range":
-                            if not (constraint[1] > self.world.funvalue or constraint[2] < self.world.funvalue):
-                                dest = thisexit["destination"]["funvalue"][3]  # Select this alternate destination.
+                            if constraint[1] <= self.world.funvalue <= constraint[2]:
+                                dest = constraint[3]  # Select this alternate destination.
                         # Check an equality constraint.
                         elif constraint[0] == "=":
-                            if not (self.world.funvalue != constraint[1]):
-                                dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                            if self.world.funvalue == constraint[1]:
+                                dest = constraint[2]  # Select this alternate destination.
                         # Check a less than constraint.
                         elif constraint[0] == "<":
-                            if not (constraint[1] >= self.world.funvalue):
-                                dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                            if self.world.funvalue < constraint[1]:
+                                dest = constraint[2]  # Select this alternate destination.
                         # Check a greater than constraint.
                         elif constraint[0] == ">":
-                            if not (constraint[1] <= self.world.funvalue):
-                                dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                            if self.world.funvalue > constraint[1]:
+                                dest = constraint[2]  # Select this alternate destination.
                         # Check a less than or equal to constraint.
                         elif constraint[0] == "<=":
-                            if not (constraint[1] > self.world.funvalue):
-                                dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                            if self.world.funvalue <= constraint[1]:
+                                dest = constraint[2]  # Select this alternate destination.
                         # Check a greater than or equal to constraint.
                         elif constraint[0] == ">=":
-                            if not (constraint[1] < self.world.funvalue):
-                                dest = thisexit["destination"]["funvalue"][2]  # Select this alternate destination.
+                            if self.world.funvalue >= constraint[1]:
+                                dest = constraint[2]  # Select this alternate destination.
                 # Set the destination to whatever we landed on.
                 return dest

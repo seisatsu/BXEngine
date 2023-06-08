@@ -228,9 +228,18 @@ class App(object):
         # If so, draw the action indicator onto the zone,
         # And then tell the Cursor which action zone it is inside.
         # If the Cursor is not inside any zone, tell it so.
+        # Check if any types inside the action lead to a non-present exit.
+        # If so, ignore them by removing them from the temporary copy we process here.
         if "actions" in self.world.roomview.vars:
-            for action in self.world.roomview.vars["actions"]:
+            for atemp in self.world.roomview.vars["actions"]:
+                action = atemp.copy()
                 rect = action["rect"]
+                for act_type in atemp:
+                    if act_type == "rect":  # Skip this.
+                        continue
+                    if "presence" in action[act_type]["contents"] and \
+                            tuple(rect) not in self.world.roomview.action_exits:
+                        del action[act_type]
                 if "look" in action and "use" in action:
                     act_icon = "lookuse"
                 elif "look" in action and "go" in action:
@@ -242,13 +251,14 @@ class App(object):
                 elif "go" in action:
                     act_icon = "go"
                 else:
+                    self.cursor.action = None
                     return False
                 if rect[0] < x < rect[2] and rect[1] < y < rect[3]:
                     blit_x = (rect[0] + ((rect[2] - rect[0]) // 2)) - (self.images[act_icon].get_width() // 2)
                     blit_y = (rect[1] + ((rect[3] - rect[1]) // 2)) - (self.images[act_icon].get_height() // 2)
                     blit_loc = (blit_x, blit_y)
                     self.screen.blit(self.images[act_icon], blit_loc)
-                    self.cursor.action = action
+                    self.cursor.action = atemp
                     return True
         self.cursor.action = None
         return False
@@ -281,37 +291,37 @@ class App(object):
 
         # Calculate whether the mouse cursor is currently inside an existing navigation region.
         # If so, update the cursor with its current navigation region, and blit the nav indicator to the screen.
-        if x < ss_region_left and ss_min_y < y < ss_max_y and "left" in self.world.roomview.vars["exits"]:
+        if x < ss_region_left and ss_min_y < y < ss_max_y and "left" in self.world.roomview.exits:
             blit_loc = (pad, wsize[1] // 2 - self.images["chevron_left"].get_height() // 2)
             self.screen.blit(self.images["chevron_left"], blit_loc)
             self.cursor.nav = "left"
-        elif x > ss_region_right and ss_min_y < y < ss_max_y and "right" in self.world.roomview.vars["exits"]:
+        elif x > ss_region_right and ss_min_y < y < ss_max_y and "right" in self.world.roomview.exits:
             blit_loc = (wsize[0] - self.images["chevron_right"].get_width() - pad,
                         wsize[1] // 2 - self.images["chevron_right"].get_height() // 2)
             self.screen.blit(self.images["chevron_right"], blit_loc)
             self.cursor.nav = "right"
-        elif y < ss_region_up and ss_min_x < x < ss_max_x and "up" in self.world.roomview.vars["exits"]:
+        elif y < ss_region_up and ss_min_x < x < ss_max_x and "up" in self.world.roomview.exits:
             blit_loc = (wsize[0] // 2 - self.images["chevron_up"].get_width() // 2, pad)
             self.screen.blit(self.images["chevron_up"], blit_loc)
             self.cursor.nav = "up"
-        elif y > ss_region_down and ss_min_x < x < ss_max_x and "down" in self.world.roomview.vars["exits"]:
+        elif y > ss_region_down and ss_min_x < x < ss_max_x and "down" in self.world.roomview.exits:
             blit_loc = (wsize[0] // 2 - self.images["chevron_down"].get_width() // 2,
                         wsize[1] - self.images["chevron_down"].get_height() - pad)
             self.screen.blit(self.images["chevron_down"], blit_loc)
             self.cursor.nav = "down"
-        elif nf_min_x < x < nf_max_x and nf_min_y < y < nf_max_y and ("forward" in self.world.roomview.vars["exits"] or
-                                                                      "backward" in self.world.roomview.vars["exits"]):
-            if "forward" in self.world.roomview.vars["exits"] and "backward" in self.world.roomview.vars["exits"]:
+        elif nf_min_x < x < nf_max_x and nf_min_y < y < nf_max_y and ("forward" in self.world.roomview.exits or
+                                                                      "backward" in self.world.roomview.exits):
+            if "forward" in self.world.roomview.exits and "backward" in self.world.roomview.exits:
                 blit_loc = (wsize[0] // 2 - self.images["arrow_double"].get_width() // 2,
                             wsize[1] // 2 - self.images["arrow_double"].get_height() // 2)
                 self.screen.blit(self.images["arrow_double"], blit_loc)
                 self.cursor.nav = "double"
-            elif "forward" in self.world.roomview.vars["exits"]:
+            elif "forward" in self.world.roomview.exits:
                 blit_loc = (wsize[0] // 2 - self.images["arrow_forward"].get_width() // 2,
                             wsize[1] // 2 - self.images["arrow_forward"].get_height() // 2)
                 self.screen.blit(self.images["arrow_forward"], blit_loc)
                 self.cursor.nav = "forward"
-            elif "backward" in self.world.roomview.vars["exits"]:
+            elif "backward" in self.world.roomview.exits:
                 blit_loc = (wsize[0] // 2 - self.images["arrow_backward"].get_width() // 2,
                             wsize[1] // 2 - self.images["arrow_backward"].get_height() // 2)
                 self.screen.blit(self.images["arrow_backward"], blit_loc)

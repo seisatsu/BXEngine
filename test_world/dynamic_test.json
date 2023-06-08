@@ -1,0 +1,78 @@
+{
+    "default": {
+		"title": "Dynamic Test 01",
+	    "image": "dynamic_test_01.png",
+	    "music": 2.0,
+	    "exits": {
+		    "left": {
+				"presence": {
+					"chance": 0.5,
+					"funvalue": ["<", 20]
+				},
+				"destination": "room01.json"
+			},
+			"right": {
+				"presence": {
+					"chance": 0.5
+				},
+				"destination":{
+					"default": "room01.json",
+					"funvalue": [
+						["<", 19, "complex_room.json:view2"],
+						["range", 10, 20, "complex_room.json"]
+					]
+				}
+			}
+	    },
+	    "actions": [
+		    {
+			    "rect": [210, 275, 295, 340],
+			    "look": {
+				    "result": "exit",
+				    "contents": {
+						"destination": {
+							"default": "room01.json",
+							"funvalue": [
+								["=", 30, "dynamic_test.json:view02"]
+							]
+						}
+					}
+			    }
+		    },
+			{
+				"rect": [418, 216, 495, 290],
+				"go": {
+					"result": "exit",
+					"contents": {
+						"presence": {
+							"funvalue": ["=", 20]
+						},
+						"destination": "dynamic_test.json:view02"
+					}
+				}
+			},
+			{
+				"rect": [355, 430, 440, 495],
+				"go": {
+					"result": "exit",
+					"contents": {
+						"presence": {
+							"chance": 0.5
+						},
+						"destination": {
+							"default": "room01.json",
+							"funvalue": [
+								["=", 20, "room02.json"]
+							]
+						}
+					}
+				}
+			}
+	    ]
+	},
+	"view02": {
+		"title": "Dynamic Test 02",
+	    "image": "dynamic_test_02.png"
+	}
+}
+

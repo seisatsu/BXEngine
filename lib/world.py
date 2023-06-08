@@ -112,6 +112,9 @@ class World(object):
         else:
             view_name = "default"
 
+        # Temporarily hold the previous roomview in case we need to switch back.
+        backtrack = self.roomview
+
         # Create a Roomview class instance for this room and view. Load the data.
         self.roomview = Roomview(self.config, self.app, self, self.resource, room_name, view_name)
         self.roomview._load()
@@ -119,6 +122,7 @@ class World(object):
         # Make sure we loaded correctly.
         if not self.roomview.vars:
             self.log.error("change_roomview(): Unable to load room and view: {0}:{1}".format(room_name, view_name))
+            self.roomview = backtrack
             return False
 
         # Perform overlay cleanup if necessary.

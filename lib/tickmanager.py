@@ -96,7 +96,7 @@ class TickManager:
 
         # Otherwise, remove it from the registry.
         del self.registry[callback]
-        self.log.info("register(): Unregistered event callback: {0}".format(callback.__name__))
+        self.log.info("unregister(): Unregistered event callback: {0}".format(callback.__name__))
 
         # Success.
         return True
@@ -148,5 +148,6 @@ class TickManager:
                         self.log.debug("_tick(): Deleted expired event callback: {0}".format(callback.__name__))
 
         # If the registry list changed its size during iteration, just try again next cycle.
-        except RuntimeError:
+        # Sometimes we get a KeyError on the callback sometimes too which is very strange.
+        except (RuntimeError, KeyError):
             pass
