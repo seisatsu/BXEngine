@@ -84,7 +84,7 @@ from lib.resourcemanager import ResourceManager
 from lib.tickmanager import TickManager
 
 # This version string is printed when starting the engine.
-VERSION = "BXEngine PreAlpha"
+VERSION = "BXEngine v0.0.1-Alpha"
 
 
 def load_images(config: dict, resource: ResourceManager, log: Logger) -> dict:

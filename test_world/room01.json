@@ -4,7 +4,7 @@
 	    "image": "room01.jpg",
 	    "music": "A_Travellers_Tale.oga",
 	    "exits": {
-		    "forward": "dynamic_test.json",
+		    "forward": "room02.json",
 		    "right": "room03.json"
 	    },
 	    "actions": [
