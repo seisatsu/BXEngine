@@ -3,6 +3,7 @@
 	"database": "bxengine.ubj",
 	"window": {
 		"size": [800, 600],
+		"fullscreen": false,
 		"fps": 30
 	},
 	"navigation": {

@@ -19,6 +19,9 @@
           "minItems": 2,
           "maxItems": 2
         },
+        "fullscreen": {
+          "type": "boolean"
+        },
         "fps": {
           "type": "integer",
           "minimum": 1
@@ -26,6 +29,7 @@
       },
       "required": [
         "size",
+        "fullscreen",
         "fps"
       ]
     },

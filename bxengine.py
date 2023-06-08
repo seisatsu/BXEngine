@@ -170,9 +170,12 @@ def main() -> None:
         sys.exit(7)
     log.info("Finished loading common images.")
 
-    # Set the default window caption, set window size, and get the window surface.
+    # Set the default window caption, set window size, whether fullscreen, and get the window surface.
     pygame.display.set_caption(VERSION)
-    pygame.display.set_mode(config["window"]["size"])
+    if config["window"]["fullscreen"]:
+        pygame.display.set_mode(config["window"]["size"], pygame.FULLSCREEN)
+    else:
+        pygame.display.set_mode(config["window"]["size"])
     screen = pygame.display.get_surface()
 
     # Entry point to the main program.
