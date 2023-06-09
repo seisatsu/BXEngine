@@ -132,6 +132,195 @@ class ResourceManager(object):
         # Return the loaded schema.
         return self._loaded_schemas[schema]
 
+    def load_json(self, filename: str, validate: str = None, rootdir: bool = False,
+                  noexpire: bool = False) -> Optional[dict]:
+        """Load a JSON file.
+
+        :param filename: The filename of the JSON file to load.
+        :param validate: If set, the schema type to validate with. (Filename minus the ".json".)
+        :param rootdir: Whether to search from the engine root directory instead of the world directory.
+        :param noexpire: If true, this file never expires from the cache.
+
+        :return: JSON object if succeeded, None if failed.
+        """
+        # Normalize the path to a Unix-style path for internal consistency.
+        filename = normalize_path(filename)
+
+        # If we're not searching from the root directory, prepend the world directory.
+        if not rootdir:
+            filename = os.path.join(self.config["world"], filename)
+
+        # If the file is already loaded, just return it. Renew the timer if cached.
+        if filename in self.unload_callbacks:
+            if self.unload_callbacks[filename] in self.tick:
+                self.tick.renew(self.unload_callbacks[filename])
+            return self.resources[filename]
+
+        # Attempt to load and optionally validate the JSON file.
+        try:
+            self.log.info("load_json(): Loading JSON file: {0}".format(filename))
+            with open(filename) as f:
+                rsrc = json.load(f)
+
+                # Load the appropriate schema and attempt validation.
+                if validate:
+                    schema = self.load_schema(validate)
+                    if not schema:
+                        return None
+                    jsonschema.validate(rsrc, schema)
+
+                # Success.
+                # Register a tick callback to delete this resource later if caching is enabled.
+                self.resources[filename] = rsrc
+                if self.config["cache"]["enabled"] and not noexpire:
+                    self.unload_callbacks[filename] = copy_function(self.unload)
+                    self.tick.register(self.unload_callbacks[filename], self.config["cache"]["ttl"], [self, filename])
+                self.log.info("load_json(): Finished loading JSON file: {0}".format(filename))
+                return self.resources[filename]
+
+        # Failed to open the JSON file.
+        except (OSError, IOError):
+            self.log.error("load_json(): Could not open JSON file: {0}".format(filename))
+            print(traceback.format_exc(1))
+            return None
+
+        # Failed to decode the JSON file due to JSON error.
+        except json.JSONDecodeError:
+            self.log.error("load_json(): JSON error from BXEngine config file: {0}".format(filename))
+            print(traceback.format_exc(1))
+            return None
+
+        # The JSON file failed validation.
+        except jsonschema.ValidationError:
+            self.log.error("load_json(): JSON schema validation error from file: {0}".format(filename))
+            print(traceback.format_exc(1))
+            return None
+
+    def load_image(self, filename: str, scale: tuple = None, rootdir: bool = False,
+                   noexpire: bool = False) -> Optional[pygame.Surface]:
+        """Load an image file.
+
+        :param filename: The filename of the image to load.
+        :param scale: A two-member tuple of the width and height to scale the image to.
+        :param rootdir: Whether to search from the engine root directory instead of the world directory.
+        :param noexpire: If true, this file never expires from the cache.
+
+        :return: PyGame surface if succeeded, None if failed.
+        """
+        # Normalize the path to a Unix-style path for internal consistency.
+        filename = normalize_path(filename)
+
+        # If we're not searching from the root directory, prepend the world directory.
+        if not rootdir:
+            filename = os.path.join(self.config["world"], filename)
+
+        # If the file is already loaded, just return it. Renew the timer if cached.
+        if filename in self.unload_callbacks:
+            if self.unload_callbacks[filename] in self.tick:
+                self.tick.renew(self.unload_callbacks[filename])
+            return self.resources[filename]
+
+        # Attempt to load and optionally scale the image.
+        try:
+            # We are going to scale the image.
+            if scale:
+                rsrc = pygame.transform.scale(pygame.image.load(filename), scale)
+                self.log.info("load_image(): Loading image file: {0}, at scale: {1}".format(filename, scale))
+
+            # We are not going to scale the image.
+            else:
+                self.log.info("load_image(): Loading image file: {0}".format(filename))
+                rsrc = pygame.image.load(filename)
+
+            # Success.
+            # Register a tick callback to delete this resource later if caching is enabled.
+            self.resources[filename] = rsrc
+            if self.config["cache"]["enabled"] and not noexpire:
+                self.unload_callbacks[filename] = copy_function(self.unload)
+                self.tick.register(self.unload_callbacks[filename], self.config["cache"]["ttl"], [self, filename])
+            self.log.info("load_image(): Finished loading image file: {0}".format(filename))
+            return self.resources[filename]
+
+        # We were unable to load the image.
+        except:
+            self.log.error("load_image(): Could not load image file: {0}".format(filename))
+            return None
+
+    def load_raw(self, filename: str, binary: bool = False, rootdir: bool = False,
+                 noexpire: bool = False) -> Optional[dict]:
+        """Load any kind of file.
+
+        :param filename: The filename of the file to load.
+        :param binary: Whether to load the file in binary mode.
+        :param rootdir: Whether to search from the engine root directory instead of the world directory.
+        :param noexpire: If true, this file never expires from the cache.
+
+        :return: Raw file data if succeeded, None if failed.
+        """
+        # Normalize the path to a Unix-style path for internal consistency.
+        filename = normalize_path(filename)
+
+        # If we're not searching from the root directory, prepend the world directory.
+        if not rootdir:
+            filename = os.path.join(self.config["world"], filename)
+
+        # If the file is already loaded, just return it. Renew the timer if cached.
+        if filename in self.unload_callbacks:
+            if self.unload_callbacks[filename] in self.tick:
+                self.tick.renew(self.unload_callbacks[filename])
+            return self.resources[filename]
+
+        # Attempt to load the file in binary or text mode.
+        if binary:
+            mode = 'rb'
+        else:
+            mode = 'rt'
+        try:
+            with open(filename, mode) as f:
+                rsrc = f.read()
+
+                # Success.
+                # Register a tick callback to delete this resource later if caching is enabled.
+                self.resources[filename] = rsrc
+                if self.config["cache"]["enabled"] and not noexpire:
+                    self.unload_callbacks[filename] = copy_function(self.unload)
+                    self.tick.register(self.unload_callbacks[filename], self.config["cache"]["ttl"], [self, filename])
+                self.log.info("load_raw(): Finished loading raw file: {0}".format(filename))
+                return self.resources[filename]
+
+        # Failed to open the file.
+        except (OSError, IOError):
+            self.log.error("load_raw(): Could not open file: {0}".format(filename))
+            print(traceback.format_exc(1))
+            return None
+
+    def unload(self, filename: str) -> bool:
+        """Unload a loaded resource, freeing its memory.
+
+        :param filename: The filename of the resource to unload.
+
+        :return: True if succeeded, False if failed.
+        """
+        if filename in self.resources:
+            # Delete the resource from the registry.
+            del self.resources[filename]
+
+            # If a cache timer exists in TickManager for this resource, unregister it.
+            if self.unload_callbacks[filename] in self.tick:
+                self.tick.unregister(self.unload_callbacks[filename])
+
+            # Delete the unload callback from its registry.
+            del self.unload_callbacks[filename]
+
+            # Success.
+            self.log.debug("unload(): Unloaded resource: {0}".format(filename))
+            return True
+
+        else:
+            # This resource doesn't exist. Throw an error.
+            self.log.error("unload(): Attempt to unload nonexistent resource: {0}".format(filename))
+            return False
+
     def _load_initial_config(self, filename: str) -> dict:
         """Load the engine configuration file.
 
@@ -193,185 +382,27 @@ class ResourceManager(object):
             print(traceback.format_exc(1))
             sys.exit(3)
 
-    def load_json(self, filename: str, validate: str = None, rootdir: bool = False) -> Optional[dict]:
-        """Load a JSON file.
+    def _load_common_images_replacements(self, images) -> dict:
+        """Check if this world offers replacements for any engine common images, and load them.
 
-        :param filename: The filename of the JSON file to load.
-        :param validate: If set, the schema type to validate with. (Filename minus the ".json".)
-        :param rootdir: Whether to search from the engine root directory instead of the world directory.
+        :param images_list: The dict of images from load_images() in bxengine.py.
 
-        :return: JSON object if succeeded, None if failed.
+        :return: The updated dict of images.
         """
-        # Normalize the path to a Unix-style path for internal consistency.
-        filename = normalize_path(filename)
+        # Iterate through the common images and check if replacements are present.
+        for image_name in images:
+            image_path = os.path.join(self.config["world"], "common/"+image_name+".png")
+            if os.path.exists(image_path):
+                # If a replacement exists, load a scaled version and replace our current version.
+                try:
+                    rsrc = pygame.transform.scale(pygame.image.load(image_path),
+                                                         self.config["navigation"]["indicator_size"])
+                    self.resources["common/"+image_name+".png"] = rsrc
+                    images[image_name] = rsrc
 
-        # If we're not searching from the root directory, prepend the world directory.
-        if not rootdir:
-            filename = os.path.join(self.config["world"], filename)
+                # Loading one of these failed, so give an error for that one and keep the original.
+                except:
+                    self.log.error("load_image(): Could not load image file: {0}".format(image_path))
 
-        # If the file is already loaded, just return it. Renew the timer if cached.
-        if filename in self.unload_callbacks:
-            if self.unload_callbacks[filename] in self.tick:
-                self.tick.renew(self.unload_callbacks[filename])
-            return self.resources[filename]
-
-        # Attempt to load and optionally validate the JSON file.
-        try:
-            self.log.info("load_json(): Loading JSON file: {0}".format(filename))
-            with open(filename) as f:
-                rsrc = json.load(f)
-
-                # Load the appropriate schema and attempt validation.
-                if validate:
-                    schema = self.load_schema(validate)
-                    if not schema:
-                        return None
-                    jsonschema.validate(rsrc, schema)
-
-                # Success.
-                # Register a tick callback to delete this resource later if caching is enabled.
-                self.resources[filename] = rsrc
-                if self.config["cache"]["enabled"]:
-                    self.unload_callbacks[filename] = copy_function(self.unload)
-                    self.tick.register(self.unload_callbacks[filename], self.config["cache"]["ttl"], [self, filename])
-                self.log.info("load_json(): Finished loading JSON file: {0}".format(filename))
-                return self.resources[filename]
-
-        # Failed to open the JSON file.
-        except (OSError, IOError):
-            self.log.error("load_json(): Could not open JSON file: {0}".format(filename))
-            print(traceback.format_exc(1))
-            return None
-
-        # Failed to decode the JSON file due to JSON error.
-        except json.JSONDecodeError:
-            self.log.error("load_json(): JSON error from BXEngine config file: {0}".format(filename))
-            print(traceback.format_exc(1))
-            return None
-
-        # The JSON file failed validation.
-        except jsonschema.ValidationError:
-            self.log.error("load_json(): JSON schema validation error from file: {0}".format(filename))
-            print(traceback.format_exc(1))
-            return None
-
-    def load_image(self, filename: str, scale: tuple = None, rootdir: bool = False) -> Optional[pygame.Surface]:
-        """Load an image file.
-
-        :param filename: The filename of the image to load.
-        :param scale: A two-member tuple of the width and height to scale the image to.
-        :param rootdir: Whether to search from the engine root directory instead of the world directory.
-
-        :return: PyGame surface if succeeded, None if failed.
-        """
-        # Normalize the path to a Unix-style path for internal consistency.
-        filename = normalize_path(filename)
-
-        # If we're not searching from the root directory, prepend the world directory.
-        if not rootdir:
-            filename = os.path.join(self.config["world"], filename)
-
-        # If the file is already loaded, just return it. Renew the timer if cached.
-        if filename in self.unload_callbacks:
-            if self.unload_callbacks[filename] in self.tick:
-                self.tick.renew(self.unload_callbacks[filename])
-            return self.resources[filename]
-
-        # Attempt to load and optionally scale the image.
-        try:
-            # We are going to scale the image.
-            if scale:
-                rsrc = pygame.transform.scale(pygame.image.load(filename), scale)
-                self.log.info("load_image(): Loading image file: {0}, at scale: {1}".format(filename, scale))
-
-            # We are not going to scale the image.
-            else:
-                self.log.info("load_image(): Loading image file: {0}".format(filename))
-                rsrc = pygame.image.load(filename)
-
-            # Success.
-            # Register a tick callback to delete this resource later if caching is enabled.
-            self.resources[filename] = rsrc
-            if self.config["cache"]["enabled"]:
-                self.unload_callbacks[filename] = copy_function(self.unload)
-                self.tick.register(self.unload_callbacks[filename], self.config["cache"]["ttl"], [self, filename])
-            self.log.info("load_image(): Finished loading image file: {0}".format(filename))
-            return self.resources[filename]
-
-        # We were unable to load the image.
-        except:
-            self.log.error("load_image(): Could not load image file: {0}".format(filename))
-            return None
-
-    def load_raw(self, filename: str, binary: bool = False, rootdir: bool = False) -> Optional[dict]:
-        """Load any kind of file.
-
-        :param filename: The filename of the file to load.
-        :param binary: Whether to load the file in binary mode.
-        :param rootdir: Whether to search from the engine root directory instead of the world directory.
-
-        :return: Raw file data if succeeded, None if failed.
-        """
-        # Normalize the path to a Unix-style path for internal consistency.
-        filename = normalize_path(filename)
-
-        # If we're not searching from the root directory, prepend the world directory.
-        if not rootdir:
-            filename = os.path.join(self.config["world"], filename)
-
-        # If the file is already loaded, just return it. Renew the timer if cached.
-        if filename in self.unload_callbacks:
-            if self.unload_callbacks[filename] in self.tick:
-                self.tick.renew(self.unload_callbacks[filename])
-            return self.resources[filename]
-
-        # Attempt to load the file in binary or text mode.
-        if binary:
-            mode = 'rb'
-        else:
-            mode = 'rt'
-        try:
-            with open(filename, mode) as f:
-                rsrc = f.read()
-
-                # Success.
-                # Register a tick callback to delete this resource later if caching is enabled.
-                self.resources[filename] = rsrc
-                if self.config["cache"]["enabled"]:
-                    self.unload_callbacks[filename] = copy_function(self.unload)
-                    self.tick.register(self.unload_callbacks[filename], self.config["cache"]["ttl"], [self, filename])
-                self.log.info("load_raw(): Finished loading raw file: {0}".format(filename))
-                return self.resources[filename]
-
-        # Failed to open the file.
-        except (OSError, IOError):
-            self.log.error("load_raw(): Could not open file: {0}".format(filename))
-            print(traceback.format_exc(1))
-            return None
-
-    def unload(self, filename: str) -> bool:
-        """Unload a loaded resource, freeing its memory.
-
-        :param filename: The filename of the resource to unload.
-
-        :return: True if succeeded, False if failed.
-        """
-        if filename in self.resources:
-            # Delete the resource from the registry.
-            del self.resources[filename]
-
-            # If a cache timer exists in TickManager for this resource, unregister it.
-            if self.unload_callbacks[filename] in self.tick:
-                self.tick.unregister(self.unload_callbacks[filename])
-
-            # Delete the unload callback from its registry.
-            del self.unload_callbacks[filename]
-
-            # Success.
-            self.log.debug("unload(): Unloaded resource: {0}".format(filename))
-            return True
-
-        else:
-            # This resource doesn't exist. Throw an error.
-            self.log.error("unload(): Attempt to unload nonexistent resource: {0}".format(filename))
-            return False
+        # Success.
+        return images

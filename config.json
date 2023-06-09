@@ -1,6 +1,6 @@
 {
 	"world": "test_world",
-	"database": "bxengine.ubj",
+	"database": "test_world.ubj",
 	"window": {
 		"size": [800, 600],
 		"fullscreen": false,

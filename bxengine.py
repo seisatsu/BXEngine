@@ -120,7 +120,8 @@ def load_images(config: dict, resource: ResourceManager, log: Logger) -> dict:
         split_ext = os.path.splitext(common_file)
         if split_ext[1] == ".png":
             loaded_images[split_ext[0]] = resource.load_image("common/{0}".format(common_file),
-                                                              config["navigation"]["indicator_size"], True)
+                                                              config["navigation"]["indicator_size"], rootdir=True,
+                                                              noexpire=True)
 
     # Make sure all of the required common images are present and loaded.
     # If not, give a warning and put a None in the loaded_images dict so we exit afterwards.
@@ -169,6 +170,9 @@ def main() -> None:
         log.critical("Unable to load required common images.")
         sys.exit(7)
     log.info("Finished loading common images.")
+
+    # Check if the world replaces any common images, and facilitate this.
+    images = resource._load_common_images_replacements(images)
 
     # Set the default window caption, set window size, whether fullscreen, and get the window surface.
     pygame.display.set_caption(VERSION)
