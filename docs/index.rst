@@ -9,7 +9,7 @@ This documentation is unfinished. BXEngine is pre-alpha software, and undergoes 
 
    intro
    gameplay/index
-   develop/index
+   gamedev/index
    api/index
 
 
