@@ -4,7 +4,7 @@ BXEngine is a Point-and-Click Adventure Engine with the goal of being able to ma
 
 ## Gameplay and Structure
 
-A game world is made of rooms filled with views, that are linked together by exits. Navigation indicators will appear when mousing over the sides or middle of the screen, if exits exist in those directions. Areas on the screen in a particular view may also produce look or use indicatiors, or a navigation indicator of their own. Gameplay consists of exploring and interacting with features of each room. To make things more interesting, some exits may only appear once in a while, or only on certain playthroughs. Some interactions may also result in scripted events.
+A game world is made of rooms filled with views, that are linked together by exits. Navigation indicators will appear when mousing over the sides or middle of the screen, if exits exist in those directions. Areas on the screen in a particular view may also produce look or use indicators, or a navigation indicator of their own. Gameplay consists of exploring and interacting with features of each room. To make things more interesting, some exits may only appear once in a while, or only on certain playthroughs. Some interactions may also result in scripted events.
 
 ## Requirements
 
