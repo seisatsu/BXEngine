@@ -5,6 +5,7 @@ Game Development Manual
    :maxdepth: 2
    :caption: Contents:
 
+   structure
    world
    room
    scripting

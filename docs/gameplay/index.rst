@@ -5,4 +5,5 @@ Gameplay Tutorial
    :maxdepth: 2
    :caption: Contents:
 
-
+   config
+   exploration
