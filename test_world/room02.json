@@ -1,25 +1,25 @@
 {
     "default": {
-		"title": "room 02 default",
-	    "image": "room02.jpg",
-	    "music": 2.0,
-	    "exits": {
-		    "down": "room01.json",
-		    "backward": "room03.json"
-	    },
-	    "actions": [
-		    {
-			    "rect": [660, 100, 700, 310],
-			    "look": {
-				    "result": "text",
-				    "contents": "You see a window leading outside."
-			    },
-			    "go": {
-				    "result": "exit",
-				    "contents": "room04.json"
-			    }
-		    }
-	    ]
-	}
+        "title": "room 02 default",
+        "image": "room02.jpg",
+        "music": 2.0,
+        "exits": {
+            "down": "room01.json",
+            "backward": "room03.json"
+        },
+        "actions": [
+            {
+                "rect": [660, 100, 700, 310],
+                "look": {
+                    "result": "text",
+                    "contents": "You see a window leading outside."
+                },
+                "go": {
+                    "result": "exit",
+                    "contents": "room04.json"
+                }
+            }
+        ]
+    }
 }
 

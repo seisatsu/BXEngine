@@ -1,204 +1,204 @@
 {
-  "type": "object",
-  "properties": {
-    "world": {
-      "type": "string"
-    },
-    "database": {
-      "type": "string"
-    },
-    "window": {
-      "type": "object",
-      "properties": {
-        "size": {
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "minItems": 2,
-          "maxItems": 2
+    "type": "object",
+    "properties": {
+        "world": {
+            "type": "string"
         },
-        "fullscreen": {
-          "type": "boolean"
+        "database": {
+            "type": "string"
         },
-        "fps": {
-          "type": "integer",
-          "minimum": 1
+        "window": {
+            "type": "object",
+            "properties": {
+                "size": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                },
+                "fullscreen": {
+                    "type": "boolean"
+                },
+                "fps": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "required": [
+                "size",
+                "fullscreen",
+                "fps"
+            ]
+        },
+        "navigation": {
+            "type": "object",
+            "properties": {
+                "indicator_size": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                },
+                "indicator_padding": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "edge_margin_width": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "edge_region_breadth": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "forward_region_width": {
+                    "type": "number",
+                    "minimum": 0
+                }
+            },
+            "required": [
+                "indicator_size",
+                "indicator_padding",
+                "edge_margin_width",
+                "edge_region_breadth",
+                "forward_region_width"
+            ]
+        },
+        "gui": {
+            "properties": {
+                "textbox_height": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "textbox_margin_bottom": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "textbox_margin_sides": {
+                    "type": "number",
+                    "minimum": 0
+                }
+            },
+            "required": [
+                "textbox_height",
+                "textbox_margin_bottom",
+                "textbox_margin_sides"
+            ]
+        },
+        "log": {
+            "properties": {
+                "wait_on_critical": {
+                    "type": "boolean"
+                },
+                "level": {
+                    "type": "string",
+                    "enum": [
+                        "debug",
+                        "info",
+                        "warn",
+                        "error",
+                        "critical"
+                    ]
+                },
+                "stdout": {
+                    "type": "boolean"
+                },
+                "file": {
+                    "type": "string"
+                },
+                "suppress": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "prefixItems": [
+                            {
+                                "type": "string",
+                                "enum": [
+                                    "debug",
+                                    "info",
+                                    "warn",
+                                    "error"
+                                ]
+                            },
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "minItems": 3,
+                        "maxItems": 3
+                    }
+                }
+            },
+            "required": [
+                "wait_on_critical",
+                "level",
+                "stdout",
+                "file",
+                "suppress"
+            ]
+        },
+        "audio": {
+            "properties": {
+                "sfx_volume": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "music_volume": {
+                    "type": "number",
+                    "minimum": 0
+                }
+            },
+            "required": [
+                "sfx_volume",
+                "music_volume"
+            ]
+        },
+        "cache": {
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "ttl": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "enabled",
+                "ttl"
+            ]
+        },
+        "debug": {
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "key": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "enabled",
+                "key"
+            ]
         }
-      },
-      "required": [
-        "size",
-        "fullscreen",
-        "fps"
-      ]
     },
-    "navigation": {
-      "type": "object",
-      "properties": {
-        "indicator_size": {
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "minItems": 2,
-          "maxItems": 2
-        },
-        "indicator_padding": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "edge_margin_width": {
-          "type": "number",
-          "minimum": 0
-        },
-        "edge_region_breadth": {
-          "type": "number",
-          "minimum": 0
-        },
-        "forward_region_width": {
-          "type": "number",
-          "minimum": 0
-        }
-      },
-      "required": [
-        "indicator_size",
-        "indicator_padding",
-        "edge_margin_width",
-        "edge_region_breadth",
-        "forward_region_width"
-      ]
-    },
-    "gui": {
-      "properties": {
-        "textbox_height": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "textbox_margin_bottom": {
-          "type": "number",
-          "minimum": 0
-        },
-        "textbox_margin_sides": {
-          "type": "number",
-          "minimum": 0
-        }
-      },
-      "required": [
-        "textbox_height",
-        "textbox_margin_bottom",
-        "textbox_margin_sides"
-      ]
-    },
-    "log": {
-      "properties": {
-        "wait_on_critical": {
-          "type": "boolean"
-        },
-        "level": {
-          "type": "string",
-          "enum": [
-            "debug",
-            "info",
-            "warn",
-            "error",
-            "critical"
-          ]
-        },
-        "stdout": {
-          "type": "boolean"
-        },
-        "file": {
-          "type": "string"
-        },
-        "suppress": {
-          "type": "array",
-          "items": {
-            "type": "array",
-            "prefixItems": [
-              {
-                "type": "string",
-                "enum": [
-                  "debug",
-                  "info",
-                  "warn",
-                  "error"
-                ]
-              },
-              {
-                "type": "string"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "minItems": 3,
-            "maxItems": 3
-          }
-        }
-      },
-      "required": [
-        "wait_on_critical",
-        "level",
-        "stdout",
-        "file",
-        "suppress"
-      ]
-    },
-    "audio": {
-      "properties": {
-        "sfx_volume": {
-          "type": "number",
-          "minimum": 0
-        },
-        "music_volume": {
-          "type": "number",
-          "minimum": 0
-        }
-      },
-      "required": [
-        "sfx_volume",
-        "music_volume"
-      ]
-    },
-    "cache": {
-      "properties": {
-        "enabled": {
-          "type": "boolean"
-        },
-        "ttl": {
-          "type": "integer"
-        }
-      },
-      "required": [
-        "enabled",
-        "ttl"
-      ]
-    },
-    "debug": {
-      "properties": {
-        "enabled": {
-          "type": "boolean"
-        },
-        "key": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "enabled",
-        "key"
-      ]
-    }
-  },
-  "required": [
-    "world",
-    "window",
-    "navigation",
-    "gui",
-    "log",
-    "audio",
-    "cache",
-    "debug"
-  ]
+    "required": [
+        "world",
+        "window",
+        "navigation",
+        "gui",
+        "log",
+        "audio",
+        "cache",
+        "debug"
+    ]
 }

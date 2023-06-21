@@ -1,339 +1,339 @@
 {
-  "type": "object",
-  "patternProperties": {
-    "^.*$": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "image": {
-          "type": "string"
-        },
-        "music": {
-          "type": [
-            "string",
-            "null",
-            "number"
-          ]
-        },
-        "cardinal": {
-          "type": "string"
-        },
-        "exits": {
-          "type": "object",
-          "properties": {
-            "forward": {
-              "type": [
-                "string",
-                "object"
-              ],
-              "properties": {
-                "presence": {"$ref": "#/$defs/presence"},
-                "destination": {"$ref": "#/$defs/destination"}
-              },
-              "required": [
-                "destination"
-              ]
-            },
-            "backward": {
-              "type": [
-                "string",
-                "object"
-              ],
-              "properties": {
-                "presence": {"$ref": "#/$defs/presence"},
-                "destination": {"$ref": "#/$defs/destination"}
-              },
-              "required": [
-                "destination"
-              ]
-            },
-            "left": {
-              "type": [
-                "string",
-                "object"
-              ],
-              "properties": {
-                "presence": {"$ref": "#/$defs/presence"},
-                "destination": {"$ref": "#/$defs/destination"}
-              },
-              "required": [
-                "destination"
-              ]
-            },
-            "right": {
-              "type": [
-                "string",
-                "object"
-              ],
-              "properties": {
-                "presence": {"$ref": "#/$defs/presence"},
-                "destination": {"$ref": "#/$defs/destination"}
-              },
-              "required": [
-                "destination"
-              ]
-            },
-            "up": {
-              "type": [
-                "string",
-                "object"
-              ],
-              "properties": {
-                "presence": {"$ref": "#/$defs/presence"},
-                "destination": {"$ref": "#/$defs/destination"}
-              },
-              "required": [
-                "destination"
-              ]
-            },
-            "down": {
-              "type": [
-                "string",
-                "object"
-              ],
-              "properties": {
-                "presence": {"$ref": "#/$defs/presence"},
-                "destination": {"$ref": "#/$defs/destination"}
-              },
-              "required": [
-                "destination"
-              ]
-            }
-          }
-        },
-        "actions": {
-          "type": "array",
-          "items": {
+    "type": "object",
+    "patternProperties": {
+        "^.*$": {
             "type": "object",
             "properties": {
-              "rect": {
-                "type": "array",
-                "items": {
-                  "type": "integer",
-                  "minimum": 1
+                "title": {
+                    "type": "string"
                 },
-                "minItems": 4,
-                "maxItems": 4
-              },
-              "look": {
-                "type": "object",
-                "properties": {
-                  "result": {
-                    "type": "string",
-                    "enum": [
-                      "text",
-                      "exit",
-                      "script"
-                    ]
-                  },
-                  "contents": {
+                "image": {
+                    "type": "string"
+                },
+                "music": {
                     "type": [
-                      "string",
-                      "object"
-                    ],
+                        "string",
+                        "null",
+                        "number"
+                    ]
+                },
+                "cardinal": {
+                    "type": "string"
+                },
+                "exits": {
+                    "type": "object",
                     "properties": {
-                      "presence": {"$ref": "#/$defs/presence"},
-                      "destination": {"$ref": "#/$defs/destination"}
+                        "forward": {
+                            "type": [
+                                "string",
+                                "object"
+                            ],
+                            "properties": {
+                                "presence": {"$ref": "#/$defs/presence"},
+                                "destination": {"$ref": "#/$defs/destination"}
+                            },
+                            "required": [
+                                "destination"
+                            ]
+                        },
+                        "backward": {
+                            "type": [
+                                "string",
+                                "object"
+                            ],
+                            "properties": {
+                                "presence": {"$ref": "#/$defs/presence"},
+                                "destination": {"$ref": "#/$defs/destination"}
+                            },
+                            "required": [
+                                "destination"
+                            ]
+                        },
+                        "left": {
+                            "type": [
+                                "string",
+                                "object"
+                            ],
+                            "properties": {
+                                "presence": {"$ref": "#/$defs/presence"},
+                                "destination": {"$ref": "#/$defs/destination"}
+                            },
+                            "required": [
+                                "destination"
+                            ]
+                        },
+                        "right": {
+                            "type": [
+                                "string",
+                                "object"
+                            ],
+                            "properties": {
+                                "presence": {"$ref": "#/$defs/presence"},
+                                "destination": {"$ref": "#/$defs/destination"}
+                            },
+                            "required": [
+                                "destination"
+                            ]
+                        },
+                        "up": {
+                            "type": [
+                                "string",
+                                "object"
+                            ],
+                            "properties": {
+                                "presence": {"$ref": "#/$defs/presence"},
+                                "destination": {"$ref": "#/$defs/destination"}
+                            },
+                            "required": [
+                                "destination"
+                            ]
+                        },
+                        "down": {
+                            "type": [
+                                "string",
+                                "object"
+                            ],
+                            "properties": {
+                                "presence": {"$ref": "#/$defs/presence"},
+                                "destination": {"$ref": "#/$defs/destination"}
+                            },
+                            "required": [
+                                "destination"
+                            ]
+                        }
+                    }
+                },
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "rect": {
+                                "type": "array",
+                                "items": {
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "minItems": 4,
+                                "maxItems": 4
+                            },
+                            "look": {
+                                "type": "object",
+                                "properties": {
+                                    "result": {
+                                        "type": "string",
+                                        "enum": [
+                                            "text",
+                                            "exit",
+                                            "script"
+                                        ]
+                                    },
+                                    "contents": {
+                                        "type": [
+                                            "string",
+                                            "object"
+                                        ],
+                                        "properties": {
+                                            "presence": {"$ref": "#/$defs/presence"},
+                                            "destination": {"$ref": "#/$defs/destination"}
+                                        },
+                                        "required": [
+                                            "destination"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "result",
+                                    "contents"
+                                ]
+                            },
+                            "use": {
+                                "type": "object",
+                                "properties": {
+                                    "result": {
+                                        "type": "string",
+                                        "enum": [
+                                            "text",
+                                            "exit",
+                                            "script"
+                                        ]
+                                    },
+                                    "contents": {
+                                        "type": [
+                                            "string",
+                                            "object"
+                                        ],
+                                        "properties": {
+                                            "presence": {"$ref": "#/$defs/presence"},
+                                            "destination": {"$ref": "#/$defs/destination"}
+                                        },
+                                        "required": [
+                                            "destination"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "result",
+                                    "contents"
+                                ]
+                            },
+                            "go": {
+                                "type": "object",
+                                "properties": {
+                                    "result": {
+                                        "type": "string",
+                                        "enum": [
+                                            "text",
+                                            "exit",
+                                            "script"
+                                        ]
+                                    },
+                                    "contents": {
+                                        "type": [
+                                            "string",
+                                            "object"
+                                        ],
+                                        "properties": {
+                                            "presence": {"$ref": "#/$defs/presence"},
+                                            "destination": {"$ref": "#/$defs/destination"}
+                                        },
+                                        "required": [
+                                            "destination"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "result",
+                                    "contents"
+                                ]
+                            }
+                        }
                     },
-                    "required": [
-                      "destination"
-                    ]
-                  }
-                },
-                "required": [
-                  "result",
-                  "contents"
-                ]
-              },
-              "use": {
-                "type": "object",
-                "properties": {
-                  "result": {
-                    "type": "string",
-                    "enum": [
-                      "text",
-                      "exit",
-                      "script"
-                    ]
-                  },
-                  "contents": {
-                    "type": [
-                      "string",
-                      "object"
-                    ],
-                    "properties": {
-                      "presence": {"$ref": "#/$defs/presence"},
-                      "destination": {"$ref": "#/$defs/destination"}
-                    },
-                    "required": [
-                      "destination"
-                    ]
-                  }
-                },
-                "required": [
-                  "result",
-                  "contents"
-                ]
-              },
-              "go": {
-                "type": "object",
-                "properties": {
-                  "result": {
-                    "type": "string",
-                    "enum": [
-                      "text",
-                      "exit",
-                      "script"
-                    ]
-                  },
-                  "contents": {
-                    "type": [
-                      "string",
-                      "object"
-                    ],
-                    "properties": {
-                      "presence": {"$ref": "#/$defs/presence"},
-                      "destination": {"$ref": "#/$defs/destination"}
-                    },
-                    "required": [
-                      "destination"
-                    ]
-                  }
-                },
-                "required": [
-                  "result",
-                  "contents"
-                ]
-              }
-            }
-          },
-          "minItems": 1
-        }
-      },
-      "required": [
-        "image"
-      ]
-    }
-  },
-  "$defs": {
-    "presence": {
-      "type": "object",
-      "properties": {
-        "chance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1
-        },
-        "funvalue": {
-          "type": "array",
-          "anyOf": [
-            {
-              "prefixItems": [
-                {
-                  "type": "string",
-                  "pattern": "^range$"
-                },
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "integer"
+                    "minItems": 1
                 }
-              ],
-              "minItems": 3,
-              "maxItems": 3
             },
-            {
-              "prefixItems": [
-                {
-                  "type": "string",
-                  "pattern": "^(=|<|>|<=|>=)$"
-                },
-                {
-                  "type": "integer"
-                }
-              ],
-              "minItems": 2,
-              "maxItems": 2
-            }
-          ]
+            "required": [
+                "image"
+            ]
         }
-      }
     },
-    "destination": {
-      "type": [
-        "string",
-        "object"
-      ],
-      "properties": {
-        "default": {
-          "type": "string"
+    "$defs": {
+        "presence": {
+            "type": "object",
+            "properties": {
+                "chance": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "funvalue": {
+                    "type": "array",
+                    "anyOf": [
+                        {
+                            "prefixItems": [
+                                {
+                                    "type": "string",
+                                    "pattern": "^range$"
+                                },
+                                {
+                                    "type": "integer"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ],
+                            "minItems": 3,
+                            "maxItems": 3
+                        },
+                        {
+                            "prefixItems": [
+                                {
+                                    "type": "string",
+                                    "pattern": "^(=|<|>|<=|>=)$"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ],
+                            "minItems": 2,
+                            "maxItems": 2
+                        }
+                    ]
+                }
+            }
         },
-        "chance": {
-          "type": "array",
-          "items": {
-            "type": "array",
-            "prefixItems": [
-              {
-                "type": "number",
-                "minimum": 0,
-                "maximum": 1
-              },
-              {
-                "type": "string"
-              }
-            ]
-          }
-        },
-        "funvalue": {
-          "type": "array",
-          "items": {
-            "type": "array",
-            "anyOf": [
-              {
-                "prefixItems": [
-                  {
-                    "type": "string",
-                    "pattern": "^range$"
-                  },
-                  {
-                    "type": "integer"
-                  },
-                  {
-                    "type": "integer"
-                  },
-                  {
+        "destination": {
+            "type": [
+                "string",
+                "object"
+            ],
+            "properties": {
+                "default": {
                     "type": "string"
-                  }
-                ],
-                "minItems": 4,
-                "maxItems": 4
-              },
-              {
-                "prefixItems": [
-                  {
-                    "type": "string",
-                    "pattern": "^(=|<|>|<=|>=)$"
-                  },
-                  {
-                    "type": "integer"
-                  },
-                  {
-                    "type": "string"
-                  }
-                ],
-                "minItems": 3,
-                "maxItems": 3
-              }
+                },
+                "chance": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "prefixItems": [
+                            {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
+                    }
+                },
+                "funvalue": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "anyOf": [
+                            {
+                                "prefixItems": [
+                                    {
+                                        "type": "string",
+                                        "pattern": "^range$"
+                                    },
+                                    {
+                                        "type": "integer"
+                                    },
+                                    {
+                                        "type": "integer"
+                                    },
+                                    {
+                                        "type": "string"
+                                    }
+                                ],
+                                "minItems": 4,
+                                "maxItems": 4
+                            },
+                            {
+                                "prefixItems": [
+                                    {
+                                        "type": "string",
+                                        "pattern": "^(=|<|>|<=|>=)$"
+                                    },
+                                    {
+                                        "type": "integer"
+                                    },
+                                    {
+                                        "type": "string"
+                                    }
+                                ],
+                                "minItems": 3,
+                                "maxItems": 3
+                            }
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "default"
             ]
-          }
         }
-      },
-      "required": [
-        "default"
-      ]
     }
-  }
 }

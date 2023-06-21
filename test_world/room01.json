@@ -1,32 +1,32 @@
 {
     "default": {
-		"title": "room 01 default",
-	    "image": "room01.jpg",
-	    "music": "A_Travellers_Tale.oga",
-	    "exits": {
-		    "forward": "room02.json",
-		    "right": "room03.json"
-	    },
-	    "actions": [
-		    {
-			    "rect": [750, 250, 800, 310],
-			    "look": {
-				    "result": "text",
-				    "contents": "There is some kind of humanoid figure here."
-			    },
-			    "use": {
-				    "result": "script",
-				    "contents": "test.py:test_func,5,wow test"
-			    }
-		    },
-		    {
-			    "rect": [460, 330, 630, 435],
-			    "look": {
-				    "result": "text",
-				    "contents": "You see a bed. It looks comfy and it is surrounded by water."
-			    }
-		    }
-	    ]
-	}
+        "title": "room 01 default",
+        "image": "room01.jpg",
+        "music": "A_Travellers_Tale.oga",
+        "exits": {
+            "forward": "room02.json",
+            "right": "room03.json"
+        },
+        "actions": [
+            {
+                "rect": [750, 250, 800, 310],
+                "look": {
+                    "result": "text",
+                    "contents": "There is some kind of humanoid figure here."
+                },
+                "use": {
+                    "result": "script",
+                    "contents": "test.py:test_func,5,wow test"
+                }
+            },
+            {
+                "rect": [460, 330, 630, 435],
+                "look": {
+                    "result": "text",
+                    "contents": "You see a bed. It looks comfy and it is surrounded by water."
+                }
+            }
+        ]
+    }
 }
 

@@ -1,24 +1,24 @@
 {
-  "type": "object",
-  "properties": {
-    "name": {
-      "type": "string"
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "first_roomview": {
+            "type": "string"
+        },
+        "funvalue_range": {
+            "type": "array",
+            "items": {
+                "type": "integer"
+            },
+            "minItems": 2,
+            "maxItems": 2
+        }
     },
-    "first_roomview": {
-      "type": "string"
-    },
-    "funvalue_range": {
-      "type": "array",
-      "items": {
-        "type": "integer"
-      },
-      "minItems": 2,
-      "maxItems": 2
-    }
-  },
-  "required": [
-    "name",
-    "first_roomview",
-    "funvalue_range"
-  ]
+    "required": [
+        "name",
+        "first_roomview",
+        "funvalue_range"
+    ]
 }

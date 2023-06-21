@@ -1,50 +1,50 @@
 {
     "default": {
-		"title": "room 03 default",
-	    "image": "room03.jpg",
-	    "exits": {
-		    "left": "room01.json",
-		    "backward": "room01.json",
-		    "forward": "room02.json"
-	    },
-	    "actions": [
-		    {
-			    "rect": [215, 172, 260, 335],
-			    "look": {
-				    "result": "text",
-				    "contents": "You see an old broom in the corner."
-			    }
-		    },
-		    {
-			    "rect": [10, 350, 110, 465],
-			    "use": {
-				    "result": "text",
-				    "contents": "You lightly kick one of the buckets.<br>It makes a nostalgic sound."
-			    }
-		    },
-		    {
-			    "rect": [675, 135, 780, 215],
-			    "look": {
-				    "result": "text",
-				    "contents": "You see a couple of piles of books on the nightstand."
-			    },
-			    "use": {
-				    "result": "text",
-				    "contents": "You flip through the books but you can't understand the language."
-			    }
-		    },
-		    {
-			    "rect": [325, 315, 480, 415],
-			    "look": {
-				    "result": "text",
-				    "contents": "You see a couple of piles of books on the floor."
-			    },
-			    "use": {
-				    "result": "text",
-				    "contents": "You flip through the books for a while.<br>They are all filled with bizarre and unsettling diagrams."
-			    }
-		    }
-	    ]
-	}
+        "title": "room 03 default",
+        "image": "room03.jpg",
+        "exits": {
+            "left": "room01.json",
+            "backward": "room01.json",
+            "forward": "room02.json"
+        },
+        "actions": [
+            {
+                "rect": [215, 172, 260, 335],
+                "look": {
+                    "result": "text",
+                    "contents": "You see an old broom in the corner."
+                }
+            },
+            {
+                "rect": [10, 350, 110, 465],
+                "use": {
+                    "result": "text",
+                    "contents": "You lightly kick one of the buckets.<br>It makes a nostalgic sound."
+                }
+            },
+            {
+                "rect": [675, 135, 780, 215],
+                "look": {
+                    "result": "text",
+                    "contents": "You see a couple of piles of books on the nightstand."
+                },
+                "use": {
+                    "result": "text",
+                    "contents": "You flip through the books but you can't understand the language."
+                }
+            },
+            {
+                "rect": [325, 315, 480, 415],
+                "look": {
+                    "result": "text",
+                    "contents": "You see a couple of piles of books on the floor."
+                },
+                "use": {
+                    "result": "text",
+                    "contents": "You flip through the books for a while.<br>They are all filled with bizarre and unsettling diagrams."
+                }
+            }
+        ]
+    }
 }
 

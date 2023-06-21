@@ -1,29 +1,29 @@
 {
     "default": {
-		"title": "room 04 default",
-	    "image": "room04.jpg",
-	    "exits": {
-		    "backward": "room02.json"
-	    },
-	    "actions": [
-		    {
-			    "rect": [170, 475, 340, 535],
-			    "look": {
-				    "result": "text",
-				    "contents": "There are two apples and two glasses of water on the table.<br>The ice is still fresh."
-			    }
-		    },
-		    {
-			    "rect": [340, 465, 690, 565],
-			    "look": {
-				    "result": "text",
-				    "contents": "There is a swimming pool here.<br>The water looks cool refreshing."
-			    },
-			    "use": {
-				    "result": "text",
-				    "contents": "You dip your foot in the pool.<br>To your relief, the water is in fact cool and refreshing."
-			    }
-		    }
-	    ]
-	}
+        "title": "room 04 default",
+        "image": "room04.jpg",
+        "exits": {
+            "backward": "room02.json"
+        },
+        "actions": [
+            {
+                "rect": [170, 475, 340, 535],
+                "look": {
+                    "result": "text",
+                    "contents": "There are two apples and two glasses of water on the table.<br>The ice is still fresh."
+                }
+            },
+            {
+                "rect": [340, 465, 690, 565],
+                "look": {
+                    "result": "text",
+                    "contents": "There is a swimming pool here.<br>The water looks cool refreshing."
+                },
+                "use": {
+                    "result": "text",
+                    "contents": "You dip your foot in the pool.<br>To your relief, the water is in fact cool and refreshing."
+                }
+            }
+        ]
+    }
 }
