@@ -49,3 +49,5 @@ The following features are planned for future releases:
 
   - Why are the game saves stored in UBJSON format when the rest of the engine uses regular JSON?
     - This is a cheap security-by-obscurity ploy to make it slightly more tedious for players to cheat by modifying their save files.
+  - Why does the demo suck?
+    - I downloaded random images from Google Images just for testing and haven't replaced those with actual game areas yet.
