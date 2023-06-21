@@ -21,7 +21,7 @@ BXEngine has the following requirements to run on your system:
 BXEngine currently supports the following features:
 
   - Simple human-readable-writable JSON file formats for the game world and its rooms and views.
-  - UBJSON save file format for storing any custom variables.
+  - UBJSON save file format for storing any custom game state variables.
   - Powerful event scripting API that gives access to all of the engine's internal features.
   - Support for sound effects and music.
   - Image overlays for objects that can appear, disappear, or move within a view.
