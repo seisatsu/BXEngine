@@ -1,0 +1,7 @@
+pygame
+pygame-gui
+pygame_gui
+jsonschema
+py-ubjson
+
+
